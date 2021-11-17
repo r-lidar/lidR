@@ -18,6 +18,7 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), use_class = c(
   else if (!raster_is_supported(res))
     stop("'res' must be a number or a raster.", call. = FALSE)
 
+
   assert_is_algorithm(algorithm)
   assert_is_algorithm_spi(algorithm)
 
@@ -116,6 +117,21 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), use_class = c(
 }
 
 #' @export
+rasterize_terrain.LAScluster = function(las, res = 1, algorithm = tin(), use_class = c(2L,9L), shape = "convex", ...)
+{
+  x <- readLAS(las)
+  if (is.empty(x)) return(NULL)
+
+  # crop the raster to the extent of the chunk because the raster can be a very large proxy
+  # that will be materialized by rasterize_terrain LAS
+  if (is_raster(res)) res <- raster_crop(res, st_bbox(x))
+
+  dtm <- rasterize_terrain(x, res, algorithm, use_class = use_class, shape = shape, ...)
+  dtm <- raster_crop(dtm, st_bbox(las))
+  return(dtm)
+}
+
+#' @export
 rasterize_terrain.LAScatalog = function(las, res = 1, algorithm = tin(), use_class = c(2L,9L), shape = "convex", ...)
 {
   assert_is_algorithm(algorithm)
@@ -141,6 +157,6 @@ rasterize_terrain.LAScatalog = function(las, res = 1, algorithm = tin(), use_cla
 
   # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
-  output  <- catalog_map(las, rasterize_terrain, res = res, algorithm = algorithm, shape = shape, use_class = use_class, ..., .options = options)
+  output  <- catalog_apply(las, rasterize_terrain, res = res, algorithm = algorithm, shape = shape, use_class = use_class, ..., .options = options)
   return(output)
 }

@@ -347,17 +347,10 @@ raster_layout <- function(las, res, start = c(0,0), buffer = 0, format = "templa
     resolution <- raster_res(res)
     if (resolution[1] != resolution[2])
       stop("Rasters with different x y resolutions are not supported as template", call. = FALSE)
-  }
 
-  if (is(res, "RasterLayer") | is(res, "SpatRaster"))
-  {
-    suppressWarnings(res[] <- NA_real_)
-    return(res)
-  }
-
-  if (is(res, "stars"))
-  {
-    res[[1]][] <- NA_real_
+    pkg = raster_pkg(res)
+    res <- raster_template(res)
+    res <- raster_materialize(res, pkg, NA_real_)
     return(res)
   }
 
@@ -381,13 +374,14 @@ raster_layout <- function(las, res, start = c(0,0), buffer = 0, format = "templa
 
   if (format == "terra")
   {
-    bbox <- as.numeric(bbox)
-    bbox <- bbox[c(1,3,2,4)]
-    bbox <- terra::ext(bbox)
+    crs    <- st_crs(las)$wkt
+    bbox   <- as.numeric(bbox)
+    bbox   <- bbox[c(1,3,2,4)]
+    bbox   <- terra::ext(bbox)
     layout <- terra::rast(bbox)
     terra::res(layout) <- res
     suppressWarnings(layout[] <- NA_real_)
-    terra::crs(layout) <- st_crs(las)$wkt
+    terra::crs(layout) <- crs
     return(layout)
   }
 
@@ -642,4 +636,18 @@ raster_crs <- function(raster)
   }
 
   return(sf::st_crs(raster))
+}
+
+raster_pkg <- function(raster)
+{
+  if (is(raster, "stars"))
+    return("stars")
+
+  if (inherits(raster, "Raster"))
+    return("raster")
+
+  if (is(raster,"SpatRaster"))
+    return("terra")
+
+  raster_error()
 }

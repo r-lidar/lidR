@@ -9,14 +9,14 @@ catalog_intersect = function(ctg, y, ..., subset = c("subset", "flag_unprocessed
 
   i <- NULL
 
-  if (is(y, "Extent") | inherits(y, "Raster"))
+  if (is(y, "Extent"))
   {
     y <- sf::st_bbox(y)
     sf::st_crs(y) <- st_crs(ctg)
   }
 
-  if (is(y, "stars"))
-    y <- sf::st_bbox(y)
+  if (is_raster(y))
+    y <- raster_bbox(y)
 
   if (is(y, "bbox"))
     y <- sf::st_as_sfc(y)

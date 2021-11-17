@@ -89,12 +89,10 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
     plot(dtm, breaks = "equal", nbreaks = 50)
 
-    ntile33_1 <- normalize_height(montmorency_tile33, dtm) # nawak
-    expect_true(min(ntile33_1$Z) > -1)
+    ntile33_1 <- normalize_height(montmorency_tile33, dtm)
     plot(ntile33_1)
 
-    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm) # nawak
-    expect_true(min(ntile33_2$Z) > -1)
+    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm)
     plot(ntile33_2)
   })
 
@@ -110,11 +108,9 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     plot(dtm, breaks = "equal", nbreaks = 50)
 
     ntile33_1 <- normalize_height(montmorency_tile33, dtm)
-    expect_true(min(ntile33_1$Z) > -1)
     plot(ntile33_1)
 
     ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm)
-    expect_true(min(ntile33_2$Z) > -1)
     plot(ntile33_2)
   })
 
@@ -143,7 +139,6 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     plot(dtm, col = gray.colors(30,0,1))
 
     ntile33_1 <- normalize_height(montmorency_tile33, dtm) # nawak
-    expect_true(min(ntile33_1$Z) > -1)
     plot(ntile33_1)
 
     ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm) # nawak
@@ -191,6 +186,7 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
     opt_output_files(ctg) <- paste0(tempdir(), "/{*}_dtm_stars")
     dtm <- rasterize_terrain(ctg, 1, tin(), pkg = "stars")
+    dtm
     plot(dtm)
 
     opt_output_files(ctg) <- paste0(tempdir(), "/{*}_norm")
@@ -203,6 +199,7 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
     opt_output_files(ctg_norm) <- paste0(tempdir(), "/chm_stars_{*}")
     chm <- rasterize_canopy(ctg_norm, 1, p2r(0.15), , pkg = "stars")
+    chm
     plot(chm, col = height.colors(50), breaks = "equal")
 
     expect_error(dalponte2016(chm, ttops)(), "stored on disk")
@@ -224,6 +221,7 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
     opt_output_files(ctg) <- paste0(tempdir(), "/{*}_dtm_terra")
     dtm <- rasterize_terrain(ctg, 1, tin(), pkg = "terra")
+    dtm
     plot(dtm)
 
     opt_output_files(ctg) <- paste0(tempdir(), "/{*}_norm")
@@ -236,12 +234,13 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
     opt_output_files(ctg_norm) <- paste0(tempdir(), "/chm_terra_{*}")
     chm <- rasterize_canopy(ctg_norm, 1, p2r(0.15), pkg = "terra")
+    chm
     plot(chm, col = height.colors(50))
 
-    expect_error(dalponte2016(chm, ttops)(), "stored on disk")
+    expect_error(silva2016(chm, ttops)(), "stored on disk")
 
     opt_output_files(ctg_norm) <- paste0(tempdir(), "/{*}_segmented")
-    algo <- dalponte2016(chm, ttops)
+    algo <- silva2016(chm, ttops)
     ctg_segmented <- segment_trees(ctg_norm, algo)
 
     opt_output_files(ctg_segmented) <- ""
@@ -249,5 +248,49 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     plot(lasplot, color = "treeID", bg = "white", size = 4)
     pol = crown_metrics(lasplot, NULL, geom = "convex")
     plot(pol, col = pastel.colors(50))
+  })
+
+  test_that("rasterize supports proxy",
+  {
+    ctg <- lidRbook
+
+
+    opt_output_files(ctg) <- paste0(tempdir(), "/{*}_metrics")
+    m <- pixel_metrics(ctg, ~mean(Z), 13)
+    vrt = m[[1]]
+
+    # stars
+    opt_output_files(ctg) <- ""
+    dtm = rasterize_terrain(ctg, m)
+    dtm
+    plot(dtm)
+
+    chm = rasterize_canopy(ctg, m)
+    chm
+    plot(chm)
+    plot(chm-dtm)
+
+    # terra
+    m <- terra::rast(vrt)
+    opt_output_files(ctg) <- ""
+    dtm = rasterize_terrain(ctg, m)
+    dtm
+    plot(dtm)
+
+    chm = rasterize_canopy(ctg, m)
+    chm
+    plot(chm)
+    plot(chm-dtm)
+
+    # raster
+    m <- raster::raster(vrt)
+    opt_output_files(ctg) <- ""
+    dtm = rasterize_terrain(ctg, m)
+    dtm
+    plot(dtm)
+
+    chm = rasterize_canopy(ctg, m)
+    chm
+    plot(chm-dtm)
   })
 }

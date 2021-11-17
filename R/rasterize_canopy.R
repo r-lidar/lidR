@@ -40,6 +40,21 @@ rasterize_canopy.LAS = function(las, res = 1, algorithm = p2r(), ...)
 }
 
 #' @export
+rasterize_canopy.LAScluster = function(las, res = 1, algorithm = p2r(), ...)
+{
+  x <- readLAS(las)
+  if (is.empty(x)) return(NULL)
+
+  # crop the raster to the extent of the chunk because the raster can be a very large proxy
+  # that will be materialized by rasterize_terrain LAS
+  if (is_raster(res)) res <- raster_crop(res, st_bbox(x))
+
+  chm <- rasterize_terrain(x, res, algorithm, ...)
+  chm <- raster_crop(chm, st_bbox(las))
+  return(chm)
+}
+
+#' @export
 rasterize_canopy.LAScatalog = function(las, res = 1, algorithm = p2r(), ...)
 {
   # Defensive programming
@@ -66,7 +81,7 @@ rasterize_canopy.LAScatalog = function(las, res = 1, algorithm = p2r(), ...)
     stop("The chunk size is too small. Process aborted.", call. = FALSE)
 
   # Processing
-  options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment)
-  output  <- catalog_map(las, rasterize_canopy, res = res, algorithm = algorithm, ..., .options = options)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
+  output  <- catalog_apply(las, rasterize_canopy, res = res, algorithm = algorithm, ..., .options = options)
   return(output)
 }

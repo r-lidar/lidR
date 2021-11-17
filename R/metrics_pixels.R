@@ -22,6 +22,22 @@ pixel_metrics.LAS = function(las, func, res = 20, start = c(0,0), ...)
 }
 
 #' @export
+pixel_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), ...)
+{
+  x <- readLAS(las)
+  if (is.empty(x)) return(NULL)
+
+  # crop the raster to the extent of the chunk because the raster can be a very large proxy
+  # that will be materialized by rasterize_terrain LAS
+  if (is_raster(res)) res <- raster_crop(res, st_bbox(x))
+
+  M <- pixel_metrics(las, func, res, start, ...)
+  M <- raster_crop(M, st_bbox(las))
+  return(M)
+}
+
+
+#' @export
 pixel_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), ...)
 {
   if (is_a_number(res))
@@ -45,8 +61,7 @@ pixel_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), ...)
 
   # Processing
   globals <- future::getGlobalsAndPackages(func)
-  options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals), raster_alignment = alignment)
-  output  <- catalog_map(las, pixel_metrics, func = func, res = res, start = start, ..., .options = options)
-
+  options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals), raster_alignment = alignment, automerge = TRUE)
+  output  <- catalog_apply(las, pixel_metrics, func = func, res = res, start = start, ..., .options = options)
   return(output)
 }
