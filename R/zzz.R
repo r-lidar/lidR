@@ -17,11 +17,8 @@
     lidR.progress = TRUE,
     lidR.progress.delay = 2,
     lidR.verbose = FALSE,
-    lidR.interactive = TRUE,
     lidR.debug = FALSE,
-    lidR.buildVRT = TRUE,
     lidR.check.nested.parallelism = TRUE,
-    lidR.optimize.voxel.rendering = TRUE,
     lidR.raster.default = "stars")
 
   max <- R_omp_get_max_threads()

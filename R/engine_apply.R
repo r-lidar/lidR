@@ -46,6 +46,9 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
   #verbose(glue::glue("Using {workers} CPUs with future and {threads} CPU with OpenMP."))
 
   # ==== PROCESSING ====
+  use_future <- engine_use_future()
+  future <- if (!use_future) function(expr, ...) {eval(expr)} else future::future
+  value  <- if (!use_future) function(x) {x} else function(x) { suppressWarnings(future::value(x)) }
 
   for (i in seq_along(.CHUNKS))
   {
@@ -57,7 +60,7 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
     engine_update_progress(pb, .CHUNKS[[i]], states[i], percentage, i)
 
     # Asynchronous computation of .FUN on the chunk
-    futures[[i]] <- future::future(
+    futures[[i]] <- future(
     {
       setThreads(threads)
       options(lidR.progress = FALSE)
@@ -153,7 +156,7 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
       if (states[j] == CHUNK_NULL) next
 
       # The state is OK or WARNING: get the value
-      output[[j]] <- suppressWarnings(future::value(futures[[j]]))
+      output[[j]] <- value(futures[[j]])
     }
   }
 
@@ -202,7 +205,7 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
 
       if (states[j] == CHUNK_NULL) next
 
-      output[[j]] <- suppressWarnings(future::value(futures[[j]]))
+      output[[j]] <- value(futures[[j]])
     }
 
     Sys.sleep(0.5)
@@ -220,6 +223,8 @@ engine_eval_state <- function(future)
 
   cluster_state <- list(state = CHUNK_PROCESSING, msg = "")
 
+  if (is(future, "Future")) return(list(state = CHUNK_OK, msg = ""))
+
   if (is.null(future))
   {
     stop("Unexpected internal error: NULL received instead of a future. Please report this bug.", call. = FALSE)
@@ -231,19 +236,19 @@ engine_eval_state <- function(future)
 
     tryCatch(
     {
-        withCallingHandlers(
-        {
-          y <- future::value(future)
-          if (is.null(y)) cluster_state <- list(state = CHUNK_NULL, msg = "")
-        },
-        warning = function(w)
-        {
-          cluster_state <<- list(state = CHUNK_WARNING, msg = w["message"])
-        })
+      withCallingHandlers(
+      {
+        y <- future::value(future)
+        if (is.null(y)) cluster_state <- list(state = CHUNK_NULL, msg = "")
+      },
+      warning = function(w)
+      {
+        cluster_state <<- list(state = CHUNK_WARNING, msg = w["message"])
+      })
     },
     error = function(e)
     {
-        cluster_state <<- list(state = CHUNK_ERROR, msg = e["message"])
+      cluster_state <<- list(state = CHUNK_ERROR, msg = e["message"])
     })
   }
 
@@ -344,4 +349,13 @@ engine_save_logs <- function(cluster, index)
 engine_compute_progress = function(states)
 {
   sum(states != CHUNK_WAINTING & states != CHUNK_PROCESSING)/length(states)
+}
+
+engine_use_future <- function()
+{
+  if (isTRUE(getOption("lidR.debug")))
+    return(FALSE)
+
+  b <- require("future", quietly = TRUE)
+  return(b)
 }

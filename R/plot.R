@@ -332,7 +332,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
   col[is.na(col)] <- "lightgray"
 
   # Optimize the rendering of the voxels by removing voxels than can't be seen
-  if(!isFALSE(use_voxels) && getOption("lidR.optimize.voxel.rendering"))
+  if(!isFALSE(use_voxels))
   {
     nvoxels1 <- npoints(las)
     res <- as.numeric(use_voxels)
