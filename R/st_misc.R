@@ -14,10 +14,11 @@ st_expand_bbox <- function(bbox, size)
 st_adjust_bbox <- function(x, res, start = c(0,0), buffer = 0)
 {
   bbox    <- sf::st_bbox(x)
-  bbox[1] <- round_any(bbox$xmin - buffer - 0.5 * res - start[1], res) + start[1]
-  bbox[3] <- round_any(bbox$xmax + buffer - 0.5 * res - start[1], res) + res + start[1]
-  bbox[2] <- round_any(bbox$ymin - buffer - 0.5 * res - start[2], res) + start[2]
-  bbox[4] <- round_any(bbox$ymax + buffer - 0.5 * res - start[2], res) + res + start[2]
+  if (length(res) == 1) res <- c(res, res)
+  bbox[1] <- round_any(bbox$xmin - buffer - 0.5 * res[1] - start[1], res[1]) + start[1]
+  bbox[3] <- round_any(bbox$xmax + buffer - 0.5 * res[1] - start[1], res[1]) + res[1] + start[1]
+  bbox[2] <- round_any(bbox$ymin - buffer - 0.5 * res[2] - start[2], res[2]) + start[2]
+  bbox[4] <- round_any(bbox$ymax + buffer - 0.5 * res[2] - start[2], res[2]) + res[2] + start[2]
   return(bbox)
 }
 

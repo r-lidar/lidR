@@ -29,9 +29,9 @@ pixel_metrics.LAScluster = function(las, func, res = 20, start = c(0,0), ...)
 
   # crop the raster to the extent of the chunk because the raster can be a very large proxy
   # that will be materialized by rasterize_terrain LAS
-  if (is_raster(res)) res <- raster_crop(res, st_bbox(x))
+  if (is_raster(res)) res <- raster_crop(res, st_adjust_bbox(x, raster_res(res)))
 
-  M <- pixel_metrics(las, func, res, start, ...)
+  M <- pixel_metrics(x, func, res, start, ...)
   M <- raster_crop(M, st_bbox(las))
   return(M)
 }

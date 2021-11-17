@@ -124,7 +124,7 @@ rasterize_terrain.LAScluster = function(las, res = 1, algorithm = tin(), use_cla
 
   # crop the raster to the extent of the chunk because the raster can be a very large proxy
   # that will be materialized by rasterize_terrain LAS
-  if (is_raster(res)) res <- raster_crop(res, st_bbox(x))
+  if (is_raster(res)) res <- raster_crop(res, st_adjust_bbox(x, raster_res(res)))
 
   dtm <- rasterize_terrain(x, res, algorithm, use_class = use_class, shape = shape, ...)
   dtm <- raster_crop(dtm, st_bbox(las))

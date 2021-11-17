@@ -47,9 +47,9 @@ rasterize_canopy.LAScluster = function(las, res = 1, algorithm = p2r(), ...)
 
   # crop the raster to the extent of the chunk because the raster can be a very large proxy
   # that will be materialized by rasterize_terrain LAS
-  if (is_raster(res)) res <- raster_crop(res, st_bbox(x))
+  if (is_raster(res)) res <- raster_crop(res, st_adjust_bbox(x, raster_res(res)))
 
-  chm <- rasterize_terrain(x, res, algorithm, ...)
+  chm <- rasterize_canopy(x, res, algorithm, ...)
   chm <- raster_crop(chm, st_bbox(las))
   return(chm)
 }
