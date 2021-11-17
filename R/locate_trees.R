@@ -47,8 +47,14 @@ locate_trees.LAS = function(las, algorithm, uniqueness = 'incremental')
   lidR.context <- "locate_trees"
   res <- algorithm(las)
 
+  if (is(res, "SpatialPointsDataFrame"))
+    res <- sf::st_as_sf(res)
+
   if (is(res, "sf"))
+  {
+    sf::st_agr(res) <- "constant"
     return(res)
+  }
 
   if (!is.logical(res) & !is.integer(res))
     stop("The output of the algorithm is incorrect")
