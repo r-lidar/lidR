@@ -348,7 +348,7 @@ raster_layout <- function(las, res, start = c(0,0), buffer = 0, format = "templa
     if (resolution[1] != resolution[2])
       stop("Rasters with different x y resolutions are not supported as template", call. = FALSE)
 
-    pkg = raster_pkg(res)
+    pkg <- raster_pkg(res)
     res <- raster_template(res)
     res <- raster_materialize(res, pkg, NA_real_)
     return(res)
@@ -414,10 +414,13 @@ raster_materialize <- function(raster, pkg = getOption("lidR.raster.default"), v
   if (pkg == "raster")
   {
     crs  <- as(st_crs(bbox), "CRS")
+    bbox <- as.numeric(bbox)
+    bbox <- bbox[c(1,3,2,4)]
     bbox <- raster::extent(bbox)
-    res  <- suppressWarnings(raster::raster(bbox, res = raster$xres, crs = crs))
-    suppressWarnings(res[] <- values)
-    return(res)
+    res  <- as.numeric(raster$xres)
+    out  <- suppressWarnings(raster::raster(bbox, res = res, crs = crs))
+    suppressWarnings(out[] <- values)
+    return(out)
   }
 
   if (pkg == "stars")
