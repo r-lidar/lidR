@@ -1,5 +1,7 @@
 options(lidR.progress = FALSE)
 options(rgl.useNULL = TRUE)
+
+cat("Tests using:", getOption("lidR.raster.default"), "\n")
 #Sys.setenv(NOT_CRAN = "false")
 
 megaplot_laz_path <- system.file("extdata", "Megaplot.laz", package="lidR")

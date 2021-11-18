@@ -654,3 +654,33 @@ raster_pkg <- function(raster)
 
   raster_error()
 }
+
+raster_size <- function(raster)
+{
+  if (is(raster, "stars"))
+  {
+    if (raster_nlayer(raster) == 1)
+      return(c(dim(raster), 1))
+    else
+      return(dim(raster))
+  }
+
+  if (inherits(raster, "Raster") | is(raster,"SpatRaster"))
+    return(dim(raster))
+
+  raster_error()
+}
+
+raster_multilayer_class <- function(pkg = getOption("lidR.raster.default"))
+{
+  if (pkg == "raster") return("RasterBrick")
+  if (pkg == "terra") return("SpatRaster")
+  if (pkg == "stars") return("stars")
+}
+
+raster_class <- function(pkg = getOption("lidR.raster.default"))
+{
+  if (pkg == "raster") return("RasterLayer")
+  if (pkg == "terra") return("SpatRaster")
+  if (pkg == "stars") return("stars")
+}

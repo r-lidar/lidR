@@ -552,8 +552,9 @@ las_check.LAS = function(las, print = TRUE, ...)
   }
   else
   {
-    min = rasterize_fast(las, res = 20, method = "min")
-    mean_min = mean(abs(min[[1]]), na.rm = TRUE)
+    min <- rasterize_fast(las, res = 20, method = "min")
+    val <- raster_values(min)
+    mean_min <- mean(abs(val), na.rm = TRUE)
 
     if (mean_min <= 0.1) {
       .yes()

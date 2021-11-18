@@ -5,84 +5,86 @@ f2  <- ~list(meanZ = mean(Z), maxZ = max(Z))
 expected_bbox  <- sf::st_bbox(c(xmin = 0, xmax = 100, ymin = 0, ymax = 100), crs = st_crs(las))
 expected_bbox2 <- sf::st_bbox(c(xmin = -10, xmax = 110, ymin = -10, ymax = 110), crs = st_crs(las))
 
-test_that("pixel_metrics returns a named stars", {
+slr = lidR:::raster_class()
+mlr = lidR:::raster_multilayer_class()
+
+test_that("pixel_metrics returns a named raster", {
 
   x <- pixel_metrics(las, f1)
 
-  expect_true(is(x, "stars"))
+  expect_true(is(x, slr))
   expect_equal(lidR:::raster_res(x), c(20,20))
-  expect_equivalent(dim(x), c(5,5))
-  expect_equal(st_bbox(x), expected_bbox)
-  expect_equal(names(x), "Zmean")
+  expect_equivalent(lidR:::raster_size(x), c(5,5,1))
+  expect_equivalent(sf::st_bbox(x), expected_bbox)
+  expect_equal(lidR:::raster_names(x), "Zmean")
 })
 
-test_that("pixel_metrics returns a named multilayers stars", {
+test_that("pixel_metrics returns a named multilayers raster", {
 
   x <- pixel_metrics(las, f2)
   y <- pixel_metrics(las, f1)
 
-  expect_true(is(x, "stars"))
+  expect_true(is(x, mlr))
   expect_equal(lidR:::raster_res(x), c(20,20))
-  expect_equivalent(dim(x), c(5,5,2))
-  expect_equal(st_bbox(x), expected_bbox)
-  expect_equal(stars::st_dimensions(x)$z$values, c("meanZ", "maxZ"))
-
-  expect_equal(x[,,,1][[1]][,,1], y[[1]])
+  expect_equivalent(lidR:::raster_size(x), c(5,5,2))
+  expect_equivalent(sf::st_bbox(x), expected_bbox)
+  expect_equal(lidR:::raster_names(x), c("meanZ", "maxZ"))
 })
 
-test_that("pixel_metrics returns a stars aligned with the start option", {
+test_that("pixel_metrics returns a raster aligned with the start option", {
 
   x <- pixel_metrics(las, f1, start = c(10,10))
 
-  expect_true(is(x, "stars"))
+  expect_true(is(x, slr))
   expect_equal(lidR:::raster_res(x), c(20,20))
-  expect_equivalent(dim(x), c(6,6))
-  expect_equal(sf::st_bbox(x), expected_bbox2)
-  expect_equal(names(x), "Zmean")
+  expect_equivalent(lidR:::raster_size(x), c(6,6, 1))
+  expect_equivalent(sf::st_bbox(x), expected_bbox2)
+  expect_equal(lidR:::raster_names(x), "Zmean")
 })
 
-test_that("pixel_metrics returns a named multilayers stars", {
+test_that("pixel_metrics returns a named multilayers raster", {
 
   x <- pixel_metrics(las, f2)
 
-  expect_true(is(x, "stars"))
+  expect_true(is(x, mlr))
   expect_equal(lidR:::raster_res(x), c(20,20))
-  expect_equivalent(dim(x), c(5,5,2))
-  expect_equal(st_bbox(x), expected_bbox)
-  expect_equal(stars::st_dimensions(x)$z$values, c("meanZ", "maxZ"))
+  expect_equivalent(lidR:::raster_size(x), c(5,5,2))
+  expect_equivalent(sf::st_bbox(x), expected_bbox)
+  expect_equal(lidR:::raster_names(x), c("meanZ", "maxZ"))
 })
 
-test_that("pixel_metrics returns a named multilayers stars aligned with the start option", {
+test_that("pixel_metrics returns a named multilayers raster aligned with the start option", {
 
   x <- pixel_metrics(las, f2, start = c(10,10))
 
+  expect_true(is(x, mlr))
   expect_equal(lidR:::raster_res(x), c(20,20))
-  expect_equivalent(dim(x), c(6,6, 2))
-  expect_equal(sf::st_bbox(x), expected_bbox2)
-  expect_equal(stars::st_dimensions(x)$z$values, c("meanZ", "maxZ"))
+  expect_equivalent(lidR:::raster_size(x), c(6,6,2))
+  expect_equivalent(sf::st_bbox(x), expected_bbox2)
+  expect_equal(lidR:::raster_names(x), c("meanZ", "maxZ"))
 })
 
-test_that("pixel_metrics returns a stars  -- tricky case", {
+test_that("pixel_metrics returns a raster  -- tricky case", {
 
   las2 <- filter_poi(las, X < 20 | X > 70)
   out  <- pixel_metrics(las2, f1)
 
-  expect_equivalent(dim(out), c(5, 5))
+  expect_equivalent(lidR:::raster_size(out), c(5,5,1))
   expect_equal(lidR:::raster_res(out), c(20, 20))
 
   las2 <- filter_poi(las, (X < 20 | X > 70) & (Y < 20 | Y > 70))
   out  <- pixel_metrics(las2, f1, 10)
 
-  expect_equivalent(dim(out), c(10, 10))
+  expect_equivalent(lidR:::raster_size(out), c(10,10,1))
   expect_equal(lidR:::raster_res(out), c(10, 10))
 })
 
-test_that("pixel_metrics return a stars -- tricky case", {
+test_that("pixel_metrics return a raster -- tricky case", {
 
   las2 <- filter_poi(las, (X < 20 | X > 80) & (Y < 20 | Y > 80))
   out  <- pixel_metrics(las2, f2, 10)
 
-  expect_equivalent(dim(out), c(10, 10, 2))
+  expect_equivalent(lidR:::raster_size(out), c(10,10,2))
   expect_equal(lidR:::raster_res(out), c(10, 10))
 })
 
@@ -99,23 +101,23 @@ test_that("pixel_metrics splits by echo type", {
   x <- pixel_metrics(las, f1, by_echo = c("first"))
 
   expect_equal(lidR:::raster_res(x), c(20,20))
-  expect_equivalent(dim(x), c(5,5))
-  expect_equal(st_bbox(x), expected_bbox)
-  expect_equal(names(x), "Zmean.first")
+  expect_equivalent(lidR:::raster_size(x), c(5,5,1))
+  expect_equivalent(sf::st_bbox(x), expected_bbox)
+  expect_equal(lidR:::raster_names(x), "Zmean.first")
 
   x <- pixel_metrics(las, f1, by_echo = c("first", "lastofmany"))
 
   expect_equal(lidR:::raster_res(x), c(20,20))
-  expect_equivalent(dim(x), c(5,5,2))
-  expect_equal(st_bbox(x), expected_bbox)
-  expect_equal(stars::st_dimensions(x)$z$values, c("Zmean.first", "Zmean.lastofmany"))
+  expect_equivalent(lidR:::raster_size(x), c(5,5,2))
+  expect_equivalent(sf::st_bbox(x), expected_bbox)
+  expect_equal(lidR:::raster_names(x), c("Zmean.first", "Zmean.lastofmany"))
 
   x <- pixel_metrics(las, f2, by_echo = c("all", "first", "lastofmany"))
 
   expect_equal(lidR:::raster_res(x), c(20,20))
-  expect_equivalent(dim(x), c(5,5,6))
-  expect_equal(st_bbox(x), expected_bbox)
-  expect_equal(stars::st_dimensions(x)$z$values, c("meanZ", "maxZ", "meanZ.first", "maxZ.first", "meanZ.lastofmany", "maxZ.lastofmany"))
+  expect_equivalent(lidR:::raster_size(x), c(5,5,6))
+  expect_equivalent(sf::st_bbox(x), expected_bbox)
+  expect_equal(lidR:::raster_names(x), c("meanZ", "maxZ", "meanZ.first", "maxZ.first", "meanZ.lastofmany", "maxZ.lastofmany"))
 })
 
 
