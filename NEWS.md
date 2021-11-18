@@ -44,12 +44,12 @@ In version 4 `lidR` now no longer uses `sp`, it uses `sf` and it no longer uses 
 
 ### New modern functions
 
-Former functions that return `Spatial*` objects from package `sp` should no longer be used. It is time for everybody to embrace `sf`. These functions are still in `lidR` for backward compatibility though. They won't be removed exept if package `sp` is removed from CRAN. It might happen on Jan 1st 2024, it might happen later. We do not know. New functions return `sf` or `sfc` objects. Old function are not documented so new users won't be able to use them.
+Former functions that return `Spatial*` objects from package `sp` should no longer be used. It is time for everybody to embrace `sf`. These functions are still in `lidR` for backward compatibility though. They won't be removed except if package `sp` is removed from CRAN. It might happen on Jan 1st 2024, it might happen later. We do not know. New functions return `sf` or `sfc` objects. Old function are not documented so new users won't be able to use them.
 
 - `tree_metrics()` and `delineate_crowns()` are replaced by a single function `crown_metrics()` that do the same and more.
 - `find_trees()` is replaced by `locate_trees()`.
 
-Former functions that return `Raster*` objects from package `raster` should no longer be used. It is time for everybody to embrace `terra/stars`. These functions are still in `lidR` for backward compatibility though.  They won't be removed exept if package `raster` is removed from CRAN. New functions return either a `Raster*` a `SpatRaster` or a `stars` as preferred by users.
+Former functions that return `Raster*` objects from package `raster` should no longer be used. It is time for everybody to embrace `terra/stars`. These functions are still in `lidR` for backward compatibility though.  They won't be removed except if package `raster` is removed from CRAN. New functions return either a `Raster*` a `SpatRaster` or a `stars` as preferred by users.
 
 - `grid_metrics()` is replaced by `pixel_metrics()`
 - `grid_terrain()`, `grid_canopy()`, `grid_density()` are replaced by `rasterize_terrain()`, `rasterize_canopy()`, `rasterize_density()` 
