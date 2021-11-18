@@ -6,7 +6,7 @@
   if (!interactive()) return(invisible())
 
   v = utils::packageVersion("lidR") # nocov
-  packageStartupMessage("lidR ", v, " using ", getThreads(), " threads. Help on <gis.stackexchange.com>. Bug report on <github.com/Jean-Romain/lidR>.") # nocov
+  packageStartupMessage("lidR ", v, " using ", getThreads(), " threads. Help on <gis.stackexchange.com>. Bug report on <github.com/r-lidar/lidR>.") # nocov
 }
 
 # nocov start

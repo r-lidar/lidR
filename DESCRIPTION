@@ -17,8 +17,8 @@ Description: Airborne LiDAR (Light Detection and Ranging) interface for data
     of metrics in area based approach, point filtering, artificial point reduction,
     classification from geographic data, normalization, individual tree segmentation
     and other manipulations.
-URL: https://github.com/Jean-Romain/lidR
-BugReports: https://github.com/Jean-Romain/lidR/issues
+URL: https://github.com/r-lidar/lidR
+BugReports: https://github.com/r-lidar/lidR/issues
 License: GPL-3
 Depends:
     R (>= 3.4.0),
