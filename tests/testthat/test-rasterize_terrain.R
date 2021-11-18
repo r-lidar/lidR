@@ -36,7 +36,7 @@ test_that("grid_terrain is backward compatible", {
 
   expect_true(is(dtm, "RasterLayer"))
   expect_equal(lidR:::raster_res(dtm), c(1,1))
-  expect_equivalent(lidR::raster_size(dtm), c(100, 100, 1))
+  expect_equivalent(lidR:::raster_size(dtm), c(100, 100, 1))
   expect_equivalent(sf::st_bbox(dtm), sf::st_bbox(tdtm))
   expect_equal(lidR:::raster_names(dtm), "Z")
   expect_equal(sum(is.na(lidR:::raster_values(dtm))), 1L)
@@ -50,7 +50,7 @@ test_that("rasterize_terrain works with delaunay", {
   expect_equal(lidR:::raster_res(dtm), c(1,1))
   expect_equal(dim(dtm), dim(tdtm))
   expect_equivalent(sf::st_bbox(dtm), sf::st_bbox(tdtm))
-  expect_equal(lidR::raster_names(dtm), "Z")
+  expect_equal(lidR:::raster_names(dtm), "Z")
   expect_equal(sum(is.na(lidR:::raster_values(dtm))), 1L)
 
   error <- abs(dtm - tdtm)
@@ -70,7 +70,7 @@ test_that("rasterize_terrain works with kriging", {
   expect_equal(lidR:::raster_res(dtm), c(1,1))
   expect_equal(dim(dtm), dim(tdtm))
   expect_equivalent(sf::st_bbox(dtm), sf::st_bbox(tdtm))
-  expect_equal(lidR::raster_names(dtm), "Z")
+  expect_equal(lidR:::raster_names(dtm), "Z")
   expect_equal(sum(is.na(lidR:::raster_values(dtm))), 1L)
 
   error <- abs(dtm - tdtm)

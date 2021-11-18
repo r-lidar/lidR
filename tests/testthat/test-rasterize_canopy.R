@@ -11,7 +11,7 @@ test_that("rasterize_canopy with p2r() returns a georeferenced RasterLayer", {
 
   expect_true(is(x, slr))
   expect_equal(lidR:::raster_res(x), c(4,4))
-  expect_equivalent(lidR::raster_size(x), c(25,25,1))
+  expect_equivalent(lidR:::raster_size(x), c(25,25,1))
   expect_equivalent(sf::st_bbox(x), expected_bbox)
   expect_equal(lidR:::raster_names(x), "Z")
 })
