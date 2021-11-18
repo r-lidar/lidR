@@ -1,203 +1,686 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2019 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
-#' RasterLayer tools
-#'
-#' Internal function: a set of tools related to \code{Raster*}
-#' \itemize{
-#' \item \code{rOverlay}: Generates an (empty) \code{RasterLayer} that encompasse a point cloud
-#' \item \code{rMergeList}: Merge a list of \code{Raster*} in a single \code{Raster*} preserving the
-#' layer names
-#' \item \code{rBuildVRT}: Create a Virtual Raster Mosaic from a set of Raster file on disk.
-#' }
-#'
-#' @param las An object of class \code{LAS}
-#' @param res numeric. resolution of the raster
-#' @param start vector of x and y coordinates for the reference raster. Default is (0,0) meaning that
-#' the grid aligns on (0,0).
-#' @param buffer numeric. Extend the bounding box of the LAS object to generate a RasterLayer larger
-#' than the point cloud
-#' @param raster_list list. List of \code{Raster*} objects
-#' @param file_list list. List of path to \code{Raster*} file
-#' @param vrt character. Name of the VRT that must be written
-#'
-#' @keywords internal
-#' @noRd
-rOverlay = function(las, res, start = c(0,0), buffer = 0)
+raster_template <- function(raster)
 {
-  if (is(res, "RasterLayer"))
-  {
-    resolution <- raster::res(res)
-    if (round(resolution[1], 4) != round(resolution[2], 4))
-      stop("Rasters with different x y resolutions are not supported", call. = FALSE)
+  if (is(raster, "raster_template"))
+    return(raster)
 
-    return(raster::raster(res))
+  if (inherits(raster, "Raster") | is(raster, "SpatRaster"))
+  {
+    bbox <- raster_bbox(raster)
+    xmin <- bbox$xmin
+    xmax <- bbox$xmax
+    ymin <- bbox$ymin
+    ymax <- bbox$ymax
+    nrow <- nrow(raster)
+    ncol <- ncol(raster)
+    xres <- round((xmax - xmin)/ncol, 5)
+    yres <- round((ymax - ymin)/nrow, 5)
+    crs  <- sf::st_crs(bbox)
+  }
+  else if (is(raster, "stars"))
+  {
+    sdim   <- stars::st_dimensions(raster)
+    stattr <- attr(stars::st_dimensions(raster), "raster")
+
+    # https://r-spatial.github.io/stars/articles/stars4.html
+    if (sdim$y$delta > 0) stop("stars objects with delta > 0 are not supported yet", call. = FALSE)
+    if (!all(stattr$affine == 0)) stop("Rotated and sheared stars objects are not supported yet", call. = FALSE)
+    if (stattr$curvilinear == TRUE) stop("Curvilinear stars objects are not supported yet", call. = FALSE)
+
+    bbox <- raster_bbox(raster)
+    xmin <- bbox$xmin
+    xmax <- bbox$xmax
+    ymin <- bbox$ymin
+    ymax <- bbox$ymax
+    xres <- sdim$x$delta
+    yres <- abs(sdim$y$delta)
+    ncol <- as.integer(round((xmax-xmin)/xres))
+    nrow <- as.integer(round((ymax-ymin)/yres))
+    crs  <- raster_crs(raster)
+  }
+  else
+  {
+    raster_error() # nocov
   }
 
-  bbox      <- raster::extent(las) + 2 * buffer
-  bbox@xmin <- round_any(bbox@xmin - 0.5 * res - start[1], res) + start[1]
-  bbox@xmax <- round_any(bbox@xmax - 0.5 * res - start[1], res) + res + start[1]
-  bbox@ymin <- round_any(bbox@ymin - 0.5 * res - start[2], res) + start[2]
-  bbox@ymax <- round_any(bbox@ymax - 0.5 * res - start[2], res) + res + start[2]
-  layout    <- suppressWarnings(raster::raster(bbox, res = res, crs = las@proj4string))
-  layout@data@values <- rep(NA, raster::ncell(layout))
-  raster::crs(layout) <- raster::crs(las)
+  layout <- list(xmin = xmin, xmax = xmax,
+                 ymin = ymin, ymax = ymax,
+                 ncol = ncol, nrow = nrow,
+                 xres = xres, yres = yres,
+                 crs  = crs)
+
+  class(layout) <- "raster_template"
   return(layout)
 }
 
-#' @rdname rOverlay
-rMergeList = function(raster_list)
+raster_cell_from_xy = function(raster, x, y)
 {
-  if (length(raster_list) == 1)
-    return(raster_list)
+  e    <- raster_template(raster)
+  xmin <- e$xmin
+  xmax <- e$xmax
+  ymin <- e$ymin
+  ymax <- e$ymax
+  xres <- e$xres
+  yres <- e$yres
+  ncol <- e$ncol
+  nrow <- e$nrow
 
-  names    <- names(raster_list[[1]])
-  factor   <- raster_list[[1]]@data@isfactor
-  issingle <- sapply(raster_list, function(x) { raster::nrow(x) == 1 & raster::ncol(x) == 1 })
-  single   <- list()
+  col  <- floor((x - xmin) / xres);
+  col[x == xmax] <- ncol-1;
+  col[col >= ncol | col < 0L] <- NA_integer_
 
-  if (any(issingle))
-  {
-    single <- raster_list[issingle]
-    raster_list <- raster_list[!issingle]
-  }
+  row  <- floor((ymax - y) / yres);
+  row[y == ymin] <- nrow-1;
+  row[row >= nrow | row < 0L] <- NA_integer_
 
-  raster <- do.call(raster::merge, raster_list)
-  names(raster) <- names
-
-  if (is(raster, "RasterBrick") && raster::inMemory(raster))
-    colnames(raster@data@values) <- names
-
-  for (pixel in single)
-  {
-    pix = raster::rasterToPoints(pixel, spatial = TRUE)
-    raster[pix] <- as.matrix(pix@data)
-  }
-
-  raster::crs(raster) <- raster::crs(raster_list[[1]]) # patch for raster not updated with rgal 1.5-8
-  return(raster)
+  cell <- as.integer(row * ncol + col + 1)
+  return(cell)
 }
 
-#' @rdname rOverlay
-rBuildVRT = function(file_list, vrt)
+raster_value_from_xy = function(raster, x, y, layer = 1)
 {
-  if (!options("lidR.buildVRT")[[1]])
-    return(unlist(file_list))
+  if (is(raster, "stars_proxy"))
+  {
+    xrange <- range(x)
+    yrange <- range(y)
+    bbox   <- sf::st_bbox(c(xmin = xrange[1], xmax = xrange[2], ymin = yrange[1], ymax = yrange[2]), crs = raster_crs(raster))
+    raster <- raster[bbox]
+    raster <- stars::st_as_stars(raster)
+  }
 
+  cells <- raster_cell_from_xy(raster, x, y)
+  return(raster_value_from_cells(raster, cells, layer))
+}
+
+raster_value_from_cells = function(raster, cells, layer = 1)
+{
+  if (inherits(raster, "Raster"))
+    return(raster::getValues(raster[[layer]])[cells])
+
+  if (is(raster, "stars_proxy"))
+    stop("stars_proxy not supported yet in 'raster_value_from_cells()'", call. = FALSE) # nocov
+
+  if (is(raster, "stars"))
+  {
+    dims <- dim(raster)
+
+    if (is.na(dims[3]))
+      return(raster[[1]][cells])
+
+    return(raster[,,,layer][[1]][cells])
+  }
+
+  if (is(raster, "SpatRaster"))
+    return(terra::values(raster[[layer]])[cells])
+
+  raster_error() # nocov
+}
+
+raster_crop <- function(raster, bbox)
+{
+  if (inherits(raster, "Raster"))
+  {
+    bbox <- raster::extent(bbox)
+    return(raster::crop(raster, bbox))
+  }
+
+  if (is(raster, "stars"))
+  {
+    # Workaround for https://github.com/r-spatial/stars/issues/463
+    rbbox <- sf::st_bbox(raster)
+    xmin  <- max(rbbox$xmin, bbox$xmin)
+    ymin  <- max(rbbox$ymin, bbox$ymin)
+    xmax  <- min(rbbox$xmax, bbox$xmax)
+    ymax  <- min(rbbox$ymax, bbox$ymax)
+    bbox  <- sf::st_bbox(c(xmin = xmin , ymin = ymin, xmax = xmax, ymax = ymax), crs = sf::st_crs(bbox))
+    return(sf::st_crop(raster, bbox))
+  }
+
+  if (is(raster, "SpatRaster"))
+  {
+    bbox <- as.numeric(bbox)
+    bbox <- bbox[c(1,3,2,4)]
+    bbox <- terra::ext(bbox)
+    return(terra::crop(raster, bbox))
+  }
+
+  raster_error() # nocov
+}
+
+raster_as_matrix <- function(raster, downsample = FALSE)
+{
+  size <- 1000*1000*10
+
+  if (raster_is_proxy(raster))
+  {
+    if (raster_ncell(raster) > size)
+    {
+      if (downsample == FALSE)
+        stop("Cannot convert this ondisk raster into a matrix without downsampling")
+
+      raster <- raster_downsample(raster, size)
+    }
+    else
+    {
+      if (is(raster, "stars"))
+        raster <- stars::st_as_stars(raster)
+    }
+  }
+
+  if (is(raster, "RasterLayer"))
+  {
+    mx <-  t(apply(raster::as.matrix(raster), 2, rev))
+    x  <- sort(raster::xFromCol(raster, 1:raster::ncol(raster)))
+    y  <- sort(raster::yFromRow(raster, 1:raster::nrow(raster)))
+    return(list(x = x, y = y, z = mx))
+  }
+
+  if (is(raster, "stars"))
+  {
+    sdim   <- stars::st_dimensions(raster)
+    if (sdim$y$delta > 0) stop("stars objects with delta > 0 are not supported yet", call. = FALSE)
+
+    dims <- dim(raster)
+
+    if (is.na(dims[3]))
+      mx <-  raster[[1]]
+    else
+      mx <- raster[,,,1][[1]]
+
+    x <- stars::st_get_dimension_values(raster, 'x')
+    y <- stars::st_get_dimension_values(raster, 'y')
+    mx <- t(apply(mx, 1, rev))
+    return(list(x = x, y = rev(y), z = mx))
+  }
+
+  if (is(raster, "SpatRaster"))
+  {
+    mx <- t(apply(terra::as.matrix(raster, wide = TRUE), 2, rev))
+    x  <- sort(terra::xFromCol(raster, 1:terra::ncol(raster)))
+    y  <- sort(terra::yFromRow(raster, 1:terra::nrow(raster)))
+    return(list(x = x, y = y, z = mx))
+  }
+
+  raster_error() # nocov
+}
+
+#' @importFrom stats na.omit
+raster_as_dataframe <- function(raster,  xy = TRUE, na.rm = TRUE)
+{
+  if (raster_is_proxy(raster))
+    stop("stars_proxy not supported in 'raster_as_dataframe()'", call. = FALSE) # nocov
+
+  m <- raster_as_matrix(raster)
+  z <- as.numeric(m$z)
+  x <- rep(m$x, length(m$y))
+  y <- rep(m$y, each = length(m$x))
+  d <- data.frame(X = x, Y = y)
+
+  if (!xy) d$Z = z
+
+  data.table::setDT(d)
+
+  if (na.rm)
+  {
+    nas <- is.na(z)
+    d <- d[!nas]
+  }
+
+  return(d)
+}
+
+raster_as_las <- function(raster, bbox = NULL)
+{
+  if (is(raster, "stars_proxy") & is.null(bbox))
+    stop("stars_proxy not supported without a bbox in 'raster_as_las()'", call. = FALSE) # nocov
+
+  if (is(raster, "stars_proxy"))
+  {
+    raster <- raster[bbox]
+    raster <- stars::st_as_stars(raster)
+  }
+
+  data <- raster_as_dataframe(raster, xy = FALSE, na.rm = TRUE)
+  header <- rlas::header_create(data)
+  las <- LAS(data, header, crs = raster_crs(raster), check = FALSE)
+  return(las)
+}
+
+raster_res <- function(raster)
+{
+  res <- raster_template(raster)
+  return(unname(c(res$xres, res$yres)))
+}
+
+raster_ncell <- function(raster)
+{
+  res <- raster_template(raster)
+  return(unname(res$nrow * res$ncol))
+}
+
+raster_names <- function(raster)
+{
+  if (inherits(raster, "Raster") | is(raster, "SpatRaster"))
+    return(names(raster))
+
+  if (is(raster, "stars"))
+  {
+    dims <- dim(raster)
+
+    if (is.na(dims[3]))
+      return(names(raster))
+    else
+      return(stars::st_get_dimension_values(raster, 3))
+  }
+
+  raster_error() # nocov
+}
+
+`raster_names<-` <- function(raster, value)
+{
+  if (inherits(raster, "Raster") | is(raster, "SpatRaster"))
+  {
+    names(raster) <- value
+    return(raster)
+  }
+
+  if (is(raster, "stars"))
+  {
+    dims <- dim(raster)
+
+    if (is.na(dims[3]))
+      names(raster) <- value
+    else
+      raster <- stars::st_set_dimensions(raster, 3, values = value)
+
+    return(raster)
+  }
+
+  raster_error() # nocov
+}
+
+as_Raster <- function(raster)
+{
+  if (is(raster, "list"))
+  {
+    return(lapply(raster, as_Raster))
+  }
+
+  if (is(raster, "stars"))
+  {
+    names <- raster_names(raster)
+    raster <- as(raster, "Raster")
+    names(raster) <- names
+    return(raster)
+  }
+
+  if (inherits(raster, "Raster"))
+  {
+    return(raster)
+  }
+
+  raster_error() # nocov
+}
+
+raster_is_supported <- function(raster)
+{
+  return(inherits(raster, "Raster") | is(raster, "stars") | is(raster, "SpatRaster") | is(raster, "raster_template"))
+}
+
+raster_build_vrt = function(file_list, vrt)
+{
   file_list <- unlist(file_list)
   layers    <- names(raster::stack(file_list[1]))
   folder    <- dirname(file_list[1])
   file      <- paste0("/", vrt, ".vrt")
   vrt       <- paste0(folder, file)
   sf::gdal_utils("buildvrt", source = file_list, destination = vrt, quiet = TRUE)
-  if (!file.exists(vrt)) return(unlist(file_list))
-  file_list <- raster::brick(vrt)
-  names(file_list) <- layers
-
-  if (dim(file_list)[3] == 1)
-    return(file_list[[1]])
-  else
-    return(file_list)
+  return(vrt)
 }
 
-match_chm_and_seeds = function(chm, seeds, field)
+raster_layout <- function(las, res, start = c(0,0), buffer = 0, format = "template")
 {
-  assert_is_all_of(chm, "RasterLayer")
-  assert_is_all_of(seeds, "SpatialPointsDataFrame")
-  stopif_forbidden_name(field)
-
-  null = list(cells = integer(), ids = numeric())
-
-  # Check if the CHM and the seeds overlap. If not exit
-  if (is.null(raster::intersect(raster::extent(chm), raster::extent(seeds))))
+  if (is_raster(res))
   {
-    warning("No tree can be used as seed: canopy height model and tree tops extents do not overlap.", call. = FALSE)
-    return(null)
+    if (raster_nlayer(res) > 1)
+      stop("Multilayer rasters are not supported as template", call. = FALSE)
+
+    resolution <- raster_res(res)
+    if (resolution[1] != resolution[2])
+      stop("Rasters with different x y resolutions are not supported as template", call. = FALSE)
+
+    pkg <- raster_pkg(res)
+    res <- raster_template(res)
+    res <- raster_materialize(res, pkg, NA_real_)
+    return(res)
   }
 
-  # Check if seed IDs are valid or generate IDs
-  if (field %in% names(seeds@data))
+  assert_all_are_non_negative(res)
+  bbox <- st_adjust_bbox(las, res, start, buffer)
+
+  if (format == "stars")
   {
-    ids <- seeds@data[[field]]
-
-    if (!is.numeric(ids))
-      stop("Tree IDs much be of a numeric type",  call. = FALSE)
-
-    if (length(unique(ids)) < length(ids))
-      stop("Duplicated tree IDs found.", call. = FALSE)
+    layout  <- stars::st_as_stars(bbox, dx = res, value = NA_real_)
+    return(layout)
   }
-  else
-    ids <- 1:nrow(seeds@data)
 
-  cells <- raster::cellFromXY(chm, seeds)
-
-  if (anyNA(cells))
+  if (format == "raster")
   {
-    if (all(is.na(cells)))
-    {
-      warning("No tree can be used as seed: all tree tops are outside the CHM", call. = FALSE)
-      return(null)
-    }
+    bbox   <- raster::extent(bbox)
+    layout <- suppressWarnings(raster::raster(bbox, res = res, crs = as(st_crs(las), "CRS")))
+    suppressWarnings(layout[] <- NA_real_)
+    raster::crs(layout) <- raster::crs(las)
+    return(layout)
+  }
+
+  if (format == "terra")
+  {
+    crs    <- st_crs(las)$wkt
+    bbox   <- as.numeric(bbox)
+    bbox   <- bbox[c(1,3,2,4)]
+    bbox   <- terra::ext(bbox)
+    layout <- terra::rast(bbox)
+    terra::res(layout) <- res
+    suppressWarnings(layout[] <- NA_real_)
+    terra::crs(layout) <- crs
+    return(layout)
+  }
+
+  xmin <- bbox$xmin
+  xmax <- bbox$xmax
+  ymin <- bbox$ymin
+  ymax <- bbox$ymax
+  xres <- res
+  yres <- res
+  ncol <- round((xmax - xmin)/xres)
+  nrow <- round((ymax - ymin)/yres)
+
+  layout <- list(xmin = xmin, xmax = xmax,
+                 ymin = ymin, ymax = ymax,
+                 ncol = ncol, nrow = nrow,
+                 xres = xres, yres = yres,
+                 crs  = st_crs(las))
+
+  class(layout) <- "raster_template"
+  return(layout)
+}
+
+raster_materialize <- function(raster, pkg = getOption("lidR.raster.default"), values = NA_real_)
+{
+  if (!is(raster, "raster_template"))
+    return(raster)
+
+  bbox <- raster_bbox(raster)
+
+  if (pkg == "raster")
+  {
+    crs  <- as(st_crs(bbox), "CRS")
+    bbox <- as.numeric(bbox)
+    bbox <- bbox[c(1,3,2,4)]
+    bbox <- raster::extent(bbox)
+    res  <- as.numeric(raster$xres)
+    out  <- suppressWarnings(raster::raster(bbox, res = res, crs = crs))
+    suppressWarnings(out[] <- values)
+    return(out)
+  }
+
+  if (pkg == "stars")
+  {
+    res  <- stars::st_as_stars(bbox, dx = raster$xres, dy = raster$yres, values = values)
+    return(res)
+  }
+
+  if (pkg == "terra")
+  {
+    crs  <- sf::st_crs(bbox)$wkt
+    bbox <- as.numeric(bbox)
+    bbox <- bbox[c(1,3,2,4)]
+    bbox <- terra::ext(bbox)
+    res  <- terra::rast(bbox)
+    terra::res(res) <- raster$xres
+    suppressWarnings(res[] <- values)
+    terra::crs(res) <- crs
+    return(res)
+  }
+
+  raster_error() # nocov
+}
+
+raster_alignment <- function(res, start = c(0, 0))
+{
+  if (is_raster(res))
+  {
+    ext       <- raster_bbox(res)
+    r         <- round(raster_res(res)[1], 5)
+    start     <- round(c(ext$xmin, ext$ymin), 5)
+    alignment <- list(res = r, start = start)
+    return(alignment)
+  }
+
+  alignment   <- list(res = res, start = start)
+  return(alignment)
+}
+
+raster_pkg <- function(raster)
+{
+  if (inherits(raster, "Raster"))
+    return("raster")
+
+  if (is(raster, "stars"))
+    return("stars")
+
+  if (is(raster, "SpatRaster"))
+    return("terra")
+
+  raster_error() # nocov
+}
+
+raster_nlayer <- function(raster)
+{
+  if (inherits(raster, "Raster") | is(raster, "SpatRaster"))
+  {
+    return(dim(raster)[3])
+  }
+
+  if (is(raster, "stars"))
+  {
+    dims <- dim(raster)
+    if (is.na(dims[3])) return(1L)
+    return(dims[3])
+  }
+
+  raster_error() # nocov
+}
+
+raster_set_values <- function(raster, values, cells = NULL)
+{
+  if (is(raster, "raster_template"))
+    stop("Internal error in raster_value: the raster must be materialized. Please report.", call. = FALSE) # nocov
+
+  if (raster_nlayer(raster) > 1)
+    stop("Internal error in raster_values: the raster must be single layer. Please report.", call. = FALSE) # nocov
+
+  if (is.null(cells))
+    cells <- 1:raster_ncell(raster)
+
+  if (inherits(raster, "Raster") | is(raster, "SpatRaster"))
+  {
+    suppressWarnings(raster[cells] <- values)
+    return(raster)
+  }
+
+  if (is(raster, "stars"))
+  {
+    raster[[1]][cells] <- values
+    storage.mode(raster[[1]]) <- storage.mode(values)
+    return(raster)
+  }
+
+  raster_error() # nocov
+}
+
+raster_values <- function(raster)
+{
+  if (is(raster, "raster_template"))
+    stop("Internal error in raster_value: the raster must be materialized. Please report.", call. = FALSE) # nocov
+
+  if (raster_nlayer(raster) > 1)
+    stop("Internal error in raster_values: the raster must a single layer. Please report.", call. = FALSE) # nocov
+
+  if (inherits(raster, "Raster") | is(raster, "SpatRaster"))
+    return(raster[])
+
+  if (is(raster, "stars"))
+    return(as.numeric(raster[[1]][]))
+
+  raster_error() # nocov
+}
+
+raster_replace_na <- function(raster, value = 0)
+{
+  if (is(raster, "raster_template"))
+    stop("Internal error in replace_na: the raster must be materialized. Please report.", call. = FALSE) # nocov
+
+  if (inherits(raster, "Raster") | is(raster, "SpatRaster"))
+  {
+    raster[is.na(raster)] <- value
+    return(raster)
+  }
+
+  if (is(raster, "stars"))
+  {
+    raster[[1]][is.na(raster[[1]])] <- value
+    return(raster)
+  }
+
+  raster_error() # nocov
+}
+
+raster_error <- function()
+{
+  parent = deparse(sys.calls()[[sys.nframe()-1]])
+  stop(glue::glue("Internal error in {parent}: raster must be a raster from raster, stars or terra. Please report"), call. = FALSE) # nocov
+}
+
+raster_is_proxy <- function(raster)
+{
+  if (is(raster, "stars_proxy"))
+    return(TRUE)
+
+  if (inherits(raster, "Raster"))
+    return(!raster::inMemory(raster))
+
+  if (is(raster,"SpatRaster"))
+    return(!terra::inMemory(raster))
+
+  return(FALSE)
+}
+
+raster_downsample <- function(raster, size)
+{
+  cat("downsample to", size, "cells\n")
+
+  if (raster_ncell(raster) < size)
+    return(raster)
+
+  if (is(raster, "stars"))
+  {
+    downsample <- floor(1/sqrt(size/raster_ncell(raster)))
+    raster <- stars::st_as_stars(raster, downsample = downsample)
+    return(raster)
+  }
+
+  if (inherits(raster, "Raster"))
+  {
+    raster = raster::sampleRegular(raster, size, asRaster = TRUE, useGDAL = TRUE)
+    return(raster)
+  }
+
+  if (is(raster, "SpatRaster"))
+  {
+    raster = terra::spatSample(raster, size, method = "regular", as.raster = TRUE)
+    return(raster)
+  }
+
+  raster_error() # nocov
+}
+
+raster_bbox <- function(raster)
+{
+  if (is(raster, "raster_template"))
+    return(sf::st_bbox(raster))
+
+  if (is(raster, "stars"))
+    return(sf::st_bbox(raster))
+
+  if (inherits(raster, "Raster"))
+    return(sf::st_bbox(raster))
+
+  if (is(raster, "SpatRaster"))
+  {
+    if (terra::crs(raster) != "")
+      return(sf::st_bbox(raster))
+
+    bbox <- terra::ext(raster)
+    bbox <- bbox@ptr$vector
+    names(bbox) <- c("xmin", "xmax", "ymin", "ymax")
+    bbox <- sf::st_bbox(bbox)
+    return(bbox)
+  }
+
+  raster_error() # nocov
+}
+
+raster_crs <- function(raster)
+{
+  if (is(raster, "SpatRaster"))
+  {
+    if (terra::crs(raster) == "")
+      return(sf::NA_crs_)
+  }
+
+  return(sf::st_crs(raster))
+}
+
+raster_pkg <- function(raster)
+{
+  if (is(raster, "stars"))
+    return("stars")
+
+  if (inherits(raster, "Raster"))
+    return("raster")
+
+  if (is(raster,"SpatRaster"))
+    return("terra")
+
+  raster_error()
+}
+
+raster_size <- function(raster)
+{
+  if (is(raster, "stars"))
+  {
+    if (raster_nlayer(raster) == 1)
+      return(c(dim(raster), 1))
     else
-    {
-      warning("Some trees are outside the canopy height model: they can't be used as seeds", call. = FALSE)
-    }
-
-    no_na = !is.na(cells)
-    seeds = seeds[no_na,]
-    cells = cells[no_na]
+      return(dim(raster))
   }
 
-  return(list(cells = cells, ids = ids))
+  if (inherits(raster, "Raster") | is(raster,"SpatRaster"))
+    return(dim(raster))
+
+  raster_error()
 }
 
-raster2dataframe = function(x, xy = FALSE, na.rm = FALSE, fast = FALSE)
+raster_multilayer_class <- function(pkg = getOption("lidR.raster.default"))
 {
-  if (!fast) return(raster::as.data.frame(x, xy = xy, na.rm = na.rm))
+  if (pkg == "raster") return("RasterBrick")
+  if (pkg == "terra") return("SpatRaster")
+  if (pkg == "stars") return("stars")
+}
 
-  v <- raster::getValues(x)
-
-  if (xy) {
-    XY <- data.frame(raster::xyFromCell(x, 1:raster::ncell(x)))
-    v <- cbind(XY, v)
-  }
-
-  if (na.rm)
-    v <- stats::na.omit(cbind(1:raster::ncell(x), v))
-
-  v <- as.data.frame(v)
-
-  if (na.rm) {
-    rownames(v) <- as.character(v[,1])
-    v <- v[,-1,drop=FALSE]
-  }
-
-  if (raster::nlayers(x) == 1)
-    colnames(v)[ncol(v)] <- names(x)  # for nlayers = 1
-
-  return(v)
+raster_class <- function(pkg = getOption("lidR.raster.default"))
+{
+  if (pkg == "raster") return("RasterLayer")
+  if (pkg == "terra") return("SpatRaster")
+  if (pkg == "stars") return("stars")
 }

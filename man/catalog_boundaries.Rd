@@ -9,12 +9,7 @@ catalog_boundaries(ctg, concavity = 5, length_threshold = 5)
 \arguments{
 \item{ctg}{A LAScatalog}
 
-\item{concavity}{numeric. A relative measure of concavity. 1 results in a relatively detailed shape,
-Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy
-shapes.}
-
-\item{length_threshold}{numeric. When a segment length is under this threshold, it stops being
-considered for further detailed processing. Higher values result in simpler shapes.}
+\item{concavity, length_threshold}{see \link{concaveman}}
 }
 \value{
 A LAScatalog with true boundaries
@@ -24,21 +19,6 @@ Computes the polygon that encloses the points. It reads all the files one by one
 concave hull using the \link{concaveman} function. When all the hulls are computed it updates the
 LAScatalog to set the true polygons instead of the bounding boxes.
 }
-\section{Supported processing options}{
-
-Supported processing options for more details see the
-\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
-\itemize{
-\item chunk size: Not supported, it processes by file.
-\item chunk buffer: Not supported, it processes by file with no buffer.
-\item chunk alignment: Not supported, it processes by file.
-\item \strong{progress}: Displays a progress estimate.
-\item output files: Not supported, it returns an R object.
-\item select: Not supported, it loads XYZ only.
-\item \strong{filter}: Read only the points of interest.
-}
-}
-
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg <- readLAScatalog(LASfile, filter = "-drop_z_below 0.5")

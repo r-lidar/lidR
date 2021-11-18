@@ -1,45 +1,44 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016-2018 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 #' @param data a \link[data.table:data.table]{data.table} containing the data of a las or laz file.
 #' @param header a \code{list} or a \link[=LASheader-class]{LASheader} containing the header of
 #' a las or laz file.
-#' @param proj4string projection string of class \link[sp:CRS-class]{CRS-class}.
+#' @param crs crs object of class \link[sf:st_crs]{crs} from sf
 #' @param check logical. Conformity tests while building the object.
 #' @param index list with two elements \code{list(sensor = 0L, index = 0L)}.
 #' See \link[=lidR-spatial-index]{spatial indexing}
+#' @param ... internal use
 #' @return An object of class \code{LAS}
 #' @export
 #' @describeIn LAS-class creates objects of class LAS. The original data is updated by reference to
 #' quantize the coordinates according to the scale factor of the header if no header is provided.
 #' In this case the scale factor is set to 0.001
-LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE, index = NULL)
+LAS <- function(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = NULL, ...)
 {
   .N <- X <- Y <- Z <- NULL
+
+  # This is a repair feature for lidR v3 to lidR v4
+  if (is(data, "LAS"))
+  {
+    if (methods::.hasSlot(data, "proj4string"))
+    {
+      pts  <- payload(data)
+      phb  <- phb(data)
+      vlr  <- vlr(data)
+      crs  <- st_crs(data)
+      evlr <- evlr(data)
+      head <- c(phb, vlr, evlr)
+      return(LAS(pts, head, crs = crs, check = FALSE))
+    }
+
+    return(data)
+  }
+
+  # For backward compatibility
+  dots <- list(...)
+  if (!is.null(dots$proj4string))
+  {
+    warning("Argument proj4string is deprecated. Use argument crs instead.", call. = TRUE)
+    crs <- sf::st_crs(dots$proj4string)
+  }
 
   if (is.data.frame(data))
     data.table::setDT(data)
@@ -159,65 +158,72 @@ LAS <- function(data, header = list(), proj4string = sp::CRS(), check = TRUE, in
 
   header <- LASheader(header)
 
-  if (is.na(proj4string@projargs))
-    proj4string <- projection(header, asText = FALSE)
+  if (is.na(crs))
+    crs <- st_crs(header)
 
   if (is.null(index))
     index <- LIDRDEFAULTINDEX
 
   index$xprt <- NULL
 
-  las             <- new("LAS")
-  las@bbox        <- with(header@PHB, matrix(c(`Min X`, `Min Y`, `Max X`, `Max Y`), ncol = 2, dimnames = list(c("x", "y"), c("min", "max"))))
-  las@header      <- header
-  las@data        <- data
-  las@proj4string <- proj4string
-  las@index       <- index
+  las        <- new("LAS")
+  las@header <- header
+  las@data   <- data
+  las@crs    <- crs
+  las@index  <- index
 
+  if (isTRUE(sf::st_is_longlat(crs)))
+    warning("Point-clouds with lon/lat coordinates are not well supported.", call. = FALSE)
 
   return(las)
 }
 
-
-#' Extent
+#' Extract or Replace Parts of a LAS* Object
 #'
-#' Returns an Extent object of a \code{LAS*}.
-#'
-#' @rdname extent
-#' @param x An object of the class \code{LAS} or \code{LAScatalog}
-#' @param \dots Unused
-#' @return Extent object from \pkg{raster}
-#' @seealso \code{\link[raster:extent]{raster::extent}}
-#' @export
-#' @importMethodsFrom raster extent
-setMethod("extent", "LAS",
-  function(x, ...) {
-    return(raster::extent(min(x@data$X), max(x@data$X), min(x@data$Y), max(x@data$Y)))
-  }
-)
-
-#' Inherited but modified methods from sp
-#'
-#' \code{LAS*} objects are \link[sp:Spatial-class]{Spatial} objects so they inherit several methods
-#' from \code{sp}. However, some have modified behaviors to prevent some irrelevant modifications. Indeed,
-#' a \code{LAS*} object cannot contain anything, as the content is restricted by the LAS specifications.
-#' If a user attempts to use one of these functions inappropriately an informative error will be thrown.
+#' Operators acting on \code{LAS*} objects. However, some have modified behaviors to prevent some
+#' irrelevant modifications. Indeed, a \code{LAS*} object cannot contain anything, as the content
+#' is restricted by the LAS specifications. If a user attempts to use one of these functions
+#' inappropriately an informative error will be thrown.
 #'
 #' @param x A \code{LAS*} object
 #' @param name A literal character string or a name (possibly backtick quoted).
 #' @param value typically an array-like R object of a similar class as x.
-#' @export
-#' @rdname redefined_behaviors
+#' @param i string, name of elements to extract or replace.
+#' @param j Unused.
+#'
+#' @name Extract
 #' @examples
-#' \dontrun{
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+#' LASfile <- system.file("extdata", "example.laz", package="rlas")
 #' las = readLAS(LASfile)
 #'
+#' las$Intensity
+#' las[["Z"]]
+#' las[["Number of points by return"]]
+#'
+#' \dontrun{
 #' las$Z = 2L
 #' las[["Z"]] = 1:10
 #' las$NewCol = 0
 #' las[["NewCol"]] = 0
 #' }
+NULL
+
+#' @export
+#' @rdname Extract
+setMethod("$", "LAS", function(x, name) { x[[name]] })
+
+#' @export
+#' @rdname Extract
+setMethod("[[", c("LAS", "ANY", "missing"), function(x, i, j, ...) {
+
+  if (is.character(i) && !i %in% names(x@data))
+    return(x@header[[i]])
+
+  return(x@data[[i]])
+})
+
+#' @export
+#' @rdname Extract
 setMethod("$<-", "LAS", function(x, name, value)
 {
   if (!name %in% names(x@data))
@@ -238,20 +244,20 @@ setMethod("$<-", "LAS", function(x, name, value)
     {
       scale_string <- paste(name, "scale factor")
       offset_string <- paste(name, "offset")
-      scale  <- x@header@PHB[[scale_string]]
-      offset <- x@header@PHB[[offset_string]]
+      scale  <- x[[scale_string]]
+      offset <- x[[offset_string]]
       valid_range <- storable_coordinate_range(scale, offset)
       value_range <- range(value)
 
       if (value_range[1] < valid_range[1] | value_range[2] > valid_range[2])
         stop(glue::glue("Trying to store values ranging in [{value_range[1]}, {value_range[2]}] but storable range is [{valid_range[1]}, {valid_range[2]}]"), call. = FALSE)
 
-      if(!is.quantized(value, scale, offset))
+      if (!is.quantized(value, scale, offset))
         value <- quantize(value, scale, offset, FALSE)
     }
   }
 
-  x@data[[name]] = value
+  x@data[[name]] <- value
 
   if (name %in% c("X", "Y", "Z"))
     x <- las_update(x)
@@ -259,10 +265,8 @@ setMethod("$<-", "LAS", function(x, name, value)
   return(x)
 })
 
-#' @param i string, name of elements to extract or replace.
-#' @param j Unused.
-#' @rdname redefined_behaviors
 #' @export
+#' @rdname Extract
 setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 {
   if (!i %in% names(x@data))
@@ -295,8 +299,8 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
     {
       scale_string <- paste(i, "scale factor")
       offset_string <- paste(i, "offset")
-      scale  <- x@header@PHB[[scale_string]]
-      offset <- x@header@PHB[[offset_string]]
+      scale  <- x[[scale_string]]
+      offset <- x[[offset_string]]
       valid_range <- storable_coordinate_range(scale, offset)
       value_range <- range(value)
 
@@ -316,13 +320,62 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
   return(x)
 })
 
-#' @rdname redefined_behaviors
 #' @export
+#' @rdname Extract
 setMethod("[", c("LAS", "numeric"),  function(x, i)
 {
-  data = x@data[i]
-  return(LAS(data, x@header, x@proj4string, FALSE, x@index))
+  data <- x@data[i]
+  return(LAS(data, x@header, st_crs(x), FALSE, x@index))
 })
+
+#' @export
+#' @rdname Extract
+setMethod("[", c("LAS", "logical"),  function(x, i)
+{
+  data <- x@data[i]
+  return(LAS(data, x@header, st_crs(x), FALSE, x@index))
+})
+
+#' @export
+#' @rdname Extract
+setMethod("[", c("LAS", "logical"),  function(x, i)
+{
+  data <- x@data[i]
+  return(LAS(data, x@header, st_crs(x), FALSE, x@index))
+})
+
+#' @export
+#' @rdname Extract
+setMethod("[", c("LAS", "sf"),  function(x, i)
+{
+  return(x[sf::st_geometry(i)])
+})
+
+#' @export
+#' @rdname Extract
+setMethod("[", c("LAS", "sfc"),  function(x, i)
+{
+  if (length(i) > 1)
+    stop("A single geometry feature is supported for subsetting. See clip_roi() for more options", call. = FALSE)
+
+  i <- i[[1]]
+
+  if (!is(i, "POLYGON") && !is(i, "MULTIPOLYGON"))
+    stop("Only POLYGONS are supported for subsetting. See clip_roi() for more options", call. = FALSE)
+
+  return(clip_roi(x, i))
+})
+
+#' @export
+#' @rdname Extract
+setMethod("[", c("LAS", "sfg"),  function(x, i)
+{
+  if (!is(i, "POLYGON") | !is(i, "MULTIPOLYGON"))
+    stop("Only POLYGONS are supported for subsetting. See clip_roi() for more options", call. = FALSE)
+
+  return(clip_roi(x, i))
+})
+
 
 fix_name_convention <- function(names)
 {

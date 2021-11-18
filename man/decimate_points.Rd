@@ -19,53 +19,18 @@ If the input is a \code{LAS} object, returns a \code{LAS} object. If the input i
 \description{
 Reduce the number of points using several possible algorithms.
 }
-\section{Working with a \code{LAScatalog}}{
-
-This section appears in each function that supports a LAScatalog as input.\cr
-
-In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-function uses the LAScatalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful reading of the
-\link[lidR:LAScatalog-class]{engine documentation} is recommended before processing \code{LAScatalogs}. Each
-\code{lidR} function should come with a section that documents the supported engine options.\cr
-
-The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advantage a \code{.lax} files,
-but this is not mandatory.\cr
-}
-
-\section{Supported processing options}{
-
-Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
-\itemize{
-\item \strong{chunk size}: How much data is loaded at once.
-\item chunk buffer: This function guarantee a strict wall-to-wall continuous output. The \code{buffer}
-option is not considered.
-\item \strong{chunk alignment}: Align the processed chunks.
-\item \strong{progress}: Displays a progression estimation.
-\item \strong{output files*}: Mandatory because the output is likely to be too big to be returned
-in R and needs to be written in las/laz files. Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
-\code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if
-chunk size is equal to 0 (processing by file), \code{\{ORIGINALFILENAME\}}.
-\item select: The function will write files equivalent to the original ones. Thus \code{select = "*"}
-and cannot be changed.
-\item \strong{filter}: Read only points of interest.
-}
-}
-
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las = readLAS(LASfile, select = "xyz")
+las <- readLAS(LASfile, select = "xyz")
 
 # Select points randomly to reach an overall density of 1
-thinned1 = decimate_points(las, random(1))
-#plot(grid_density(las))
-#plot(grid_density(thinned1))
+thinned1 <- decimate_points(las, random(1))
+#plot(rasterize_density(las))
+#plot(rasterize_density(thinned1))
 
 # Select points randomly to reach an homogeneous density of 1
-thinned2 = decimate_points(las, homogenize(1,5))
-#plot(grid_density(thinned2))
+thinned2 <- decimate_points(las, homogenize(1,5))
+#plot(rasterize_density(thinned2))
 
 # Select the highest point within each pixel of an overlayed grid
 thinned3 = decimate_points(las, highest(5))

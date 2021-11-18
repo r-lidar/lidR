@@ -1,32 +1,3 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016-2018 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
-
-
 #' Point Cloud Decimation Algorithm
 #'
 #' This function is made to be used in \link{decimate_points}. It implements an algorithm that
@@ -50,6 +21,7 @@
 #' thinned1 = decimate_points(las, random(1))
 #' plot(grid_density(las))
 #' plot(grid_density(thinned1))
+#' @name sample_random
 random = function(density, use_pulse = FALSE)
 {
   assert_is_a_number(density)
@@ -63,7 +35,7 @@ random = function(density, use_pulse = FALSE)
   {
     assert_is_valid_context(LIDRCONTEXTDEC, "random")
 
-    if(use_pulse & !"pulseID" %in% names(las@data))
+    if(use_pulse & !"pulseID" %in% names(las))
     {
       warning("No 'pulseID' attribute found. Decimation by points is used.")
       use_pulse <- FALSE
@@ -116,6 +88,7 @@ random = function(density, use_pulse = FALSE)
 #' # Select points randomly to reach an homogeneous density of 1
 #' thinned <- decimate_points(las, homogenize(1,5))
 #' plot(grid_density(thinned, 10))
+#' @name sample_homogenize
 homogenize = function(density, res = 5, use_pulse = FALSE)
 {
   assert_is_a_number(density)
@@ -132,7 +105,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
   {
     assert_is_valid_context(LIDRCONTEXTDEC, "homogenize")
 
-    if (use_pulse & !"pulseID" %in% names(las@data))
+    if (use_pulse & !"pulseID" %in% names(las))
     {
       warning("No 'pulseID' attribute found. Decimation by points is used.")
       use_pulse <- FALSE
@@ -141,8 +114,8 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
     pulseID <- NULL
 
     n       <- round(density*res^2)
-    layout  <- rOverlay(las, res)
-    cells   <- raster::cellFromXY(layout, coordinates(las))
+    layout  <- raster_layout(las, res)
+    cells   <- get_group(layout, las)
 
     if (use_pulse)
       return(las@data[, .I[.selected_pulses(pulseID, n)], by = cells]$V1)
@@ -157,7 +130,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 #' Point Cloud Decimation Algorithm
 #'
 #' These functions are made to be used in \link{decimate_points}. They implement algorithms that
-#' creates a grid with a given resolution and filters the point cloud by selecting the highest/lowest
+#' create a grid with a given resolution and filters the point cloud by selecting the highest/lowest
 #' point within each cell.
 #'
 #' @param res numeric. The resolution of the grid used to filter the point cloud
@@ -177,8 +150,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 #' # Select the lowest point within each cell of an overlayed grid
 #' thinned = decimate_points(las, lowest(4))
 #' #plot(thinned)
-#' @rdname maxima
-#' @name maxima
+#' @name sample_maxima
 highest = function(res = 1)
 {
   assert_is_a_number(res)
@@ -189,7 +161,7 @@ highest = function(res = 1)
   f = function(las)
   {
     assert_is_valid_context(LIDRCONTEXTDEC, "highest")
-    layout  <- rOverlay(las, res)
+    layout <- raster_layout(las, res)
     return(C_highest(las, layout))
   }
 
@@ -197,9 +169,9 @@ highest = function(res = 1)
   return(f)
 }
 
-#' @rdname maxima
 #' @family point cloud decimation algorithms
 #' @export
+#' @name sample_maxima
 lowest = function(res = 1)
 {
   assert_is_a_number(res)
@@ -210,7 +182,7 @@ lowest = function(res = 1)
   f = function(las)
   {
     assert_is_valid_context(LIDRCONTEXTDEC, "lowest")
-    layout  <- rOverlay(las, res)
+    layout <- raster_layout(las, res)
     return(C_lowest(las, layout))
   }
 
@@ -234,6 +206,7 @@ lowest = function(res = 1)
 #' #plot(thinned)
 #' @family point cloud decimation algorithms
 #' @export
+#' @name sample_per_voxel
 random_per_voxel = function(res = 1, n = 1)
 {
   assert_all_are_positive(n)

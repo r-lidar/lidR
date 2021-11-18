@@ -77,17 +77,17 @@ test_that("LAS builds a LAS object with a CRS", {
 
   las2 <- LAS(data)
 
-  expect_true(is.na(las2@proj4string))
+  expect_true(is.na(las2@crs))
   expect_equal(epsg(las2), 0)
 
   las2 <- LAS(data, las@header, check = FALSE)
 
-  expect_equal(projection(las2), projection(las))
+  expect_equal(st_crs(las2), st_crs(las))
   expect_equal(epsg(las2), 26917)
 
-  las2 <- LAS(data, proj4string = las@proj4string)
+  las2 <- LAS(data, crs = las@crs)
 
-  expect_equal(projection(las2), projection(las))
+  expect_equal(st_crs(las2), st_crs(las))
   #expect_equal(epsg(las2), 26917)
 })
 
@@ -202,7 +202,6 @@ test_that("LAS operator $ quantize on the fly and update header", {
   xbbox = range(quantize(x, 0.001, 0, FALSE))
   ybbox = range(quantize(y, 0.001, 0, FALSE))
 
-  expect_equivalent(las@bbox, matrix(c(xbbox, ybbox), ncol = 2, byrow = T))
   expect_equal(las@header@PHB[["Min X"]], xbbox[1])
   expect_equal(las@header@PHB[["Min Y"]], ybbox[1])
 })
@@ -226,7 +225,6 @@ test_that("LAS operator [[ quantize on the fly and update header", {
   xbbox = range(quantize(x, 0.001, 0, FALSE))
   ybbox = range(quantize(y, 0.001, 0, FALSE))
 
-  expect_equivalent(las@bbox, matrix(c(xbbox, ybbox), ncol = 2, byrow = T))
   expect_equal(las@header@PHB[["Min X"]], xbbox[1])
   expect_equal(las@header@PHB[["Min Y"]], ybbox[1])
 })
@@ -253,13 +251,13 @@ test_that("LAS conversion to SpatialPointsDataFrame works", {
 test_that("LAS build an empty point cloud with no header (#314)", {
   las = LAS(data.frame(X = numeric(0), Y = numeric(0), Z = numeric(0)))
   expect_equal(npoints(las), 0L)
-  expect_equal(names(las@data), c("X", "Y", "Z"))
+  expect_equal(names(las), c("X", "Y", "Z"))
 })
 
 test_that("LAS rename the attribute", {
   x <- outs[["x"]]
   las = LAS(outs)
-  expect_equal(names(las@data), c("X", "Y", "Z", "PointSourceID"))
+  expect_equal(names(las), c("X", "Y", "Z", "PointSourceID"))
   expect_reference(las@data[["X"]], x)
 })
 

@@ -1,30 +1,3 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 round_any <- function(x, accuracy)
 {
   roundc(x / accuracy) * accuracy
@@ -52,46 +25,17 @@ verbose = function(...)
 
 dummy_las <- lasgenerator
 
-subcircled = function(dt, r, n)
+uuid <- function()
 {
-  X <- Y <- Z <- NULL
-
-  f = function(x, y, z, px, py)
-  {
-    x = x + px
-    y = y + py
-    z = rep(z, length(px))
-
-    list(X = x, Y = y, Z = z)
-  }
-
-  n = n + 1
-
-  alpha = seq(0, 2*pi, length.out = n)[-n]
-  px = r*cos(alpha)
-  py = r*sin(alpha)
-
-  return(dt[, f(X, Y, Z, px, py), by = 1:nrow(dt)][, nrow := NULL][])
+  hex_digits <- c(as.character(0:9), letters[1:6])
+  y_digits <- hex_digits[9:12]
+  paste(
+    paste0(sample(hex_digits, 8), collapse=''),
+    paste0(sample(hex_digits, 4), collapse=''),
+    paste0('4', sample(hex_digits, 3), collapse=''),
+    paste0(sample(y_digits,1),
+           sample(hex_digits, 3),
+           collapse=''),
+    paste0(sample(hex_digits, 12), collapse=''),
+    sep='-')
 }
-
-coordinates = function(las)
-{
-  DT <- las@data
-  X  <- DT[["X"]]
-  Y  <- DT[["Y"]]
-  DF <- data.frame(X,Y)
-  data.table::setDT(DF)
-  return(DF)
-}
-
-coordinates3D = function(las)
-{
-  DT <- las@data
-  X  <- DT[["X"]]
-  Y  <- DT[["Y"]]
-  Z  <- DT[["Z"]]
-  DF <- data.frame(X,Y,Z)
-  data.table::setDT(DF)
-  return(DF)
-}
-

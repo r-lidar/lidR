@@ -32,7 +32,6 @@
 \alias{lassmooth}
 \alias{lasunsmooth}
 \alias{lassnags}
-\alias{lastransform}
 \alias{lastrees}
 \alias{lasadddata}
 \alias{lasaddextrabytes}
@@ -43,6 +42,9 @@
 \alias{tree_detection}
 \alias{tree_hulls}
 \alias{hexbin_metrics}
+\alias{filter_surfacepoints}
+\alias{filter_surfacepoints.LAS}
+\alias{filter_surfacepoints.LAScatalog}
 \title{Deprecated functions in lidR}
 \usage{
 lascheck(las)
@@ -125,8 +127,6 @@ lasunsmooth(las)
 
 lassnags(las, algorithm, attribute = "snagCls")
 
-lastransform(las, CRSobj)
-
 lastrees(las, algorithm, attribute = "treeID", uniqueness = "incremental")
 
 lasadddata(las, x, name)
@@ -168,6 +168,12 @@ tree_hulls(
 )
 
 hexbin_metrics(...)
+
+filter_surfacepoints(las, res)
+
+\method{filter_surfacepoints}{LAS}(las, res)
+
+\method{filter_surfacepoints}{LAScatalog}(las, res)
 }
 \arguments{
 \item{las}{See the new functions that replace the old ones}
@@ -202,8 +208,6 @@ hexbin_metrics(...)
 
 \item{size, method, shape, sigma}{See the new functions that replace the old ones}
 
-\item{CRSobj}{See the new functions that replace the old ones}
-
 \item{uniqueness}{See the new functions that replace the old ones}
 
 \item{x, name, desc, type, offset, scale, NA_value}{See the new functions that replace the old ones}
@@ -213,9 +217,10 @@ hexbin_metrics(...)
 \item{concavity, length_threshold, func}{See the new functions that replace the old ones}
 }
 \description{
-These functions are provided for compatibility with older versions of lidR but are deprecated
-since lidR version 3. They will progressively print a message, throw a warning and eventually be
-removed. The links below point to the documentation of the new names \cr\cr
+These functions are provided for compatibility with older versions of lidR but are deprecated. They
+will progressively print a message, throw a warning and eventually be removed. The links below point
+to the documentation of the new names. In version 4 they now throw an error. In version 4.1 they
+ill be removed definitively.\cr\cr
 \link[=add_attribute]{lasadd} \link[=las_check]{lascheck} \link[=clip]{lasclip}
 \link[=segment_shapes]{lasdetectshape} \link[=filter_poi]{lasfilter}
 \link[=filter_surfacepoints]{lasfiltersurfacepoints} \link[=retrieve_flightlines]{lasflightline}
@@ -226,6 +231,6 @@ removed. The links below point to the documentation of the new names \cr\cr
 \link[=retrieve_scanlines]{lasscanlines} \link[=smooth_height]{lassmooth}
 \link[=segment_snags]{lassnags}
 \link[=segment_trees]{lastrees} \link[=voxelize_points]{lasvoxelize}
-\link[=track_sensor]{sensor_tracking} \link[=find_trees]{tree_detection}
-\link[=delineate_crowns]{tree_hull}
+\link[=track_sensor]{sensor_tracking} \link[=locate_trees]{tree_detection}
+\link[=crown_metrics]{tree_hull}
 }

@@ -59,27 +59,25 @@ data = structure(list(Max.X = c(332099.99, 333600, 335099.99, 336217.52,
     "folder/file11.las", "folder/file12.las")), row.names = c(NA, 
 -12L), class = "data.frame")
 
-pgeom <- lapply(1:nrow(data), function(i)
+geom <- lapply(1:nrow(data), function(i)
 {
   mtx <- matrix(c(data$Min.X[i], data$Max.X[i], data$Min.Y[i], data$Max.Y[i])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
-  sp::Polygons(list(sp::Polygon(mtx)),as.character(i))
+  sf::st_polygon(list(mtx))
 })
 
-Sr = sp::SpatialPolygons(pgeom, proj4string = sp::CRS("+init=epsg:3005"))
+geom <-sf::st_sfc(geom)
+sf::st_crs(geom) <- 26917
+data <- sf::st_set_geometry(data, geom)
 
-ctg <- new("LAScatalog")
-ctg@bbox <- Sr@bbox
-ctg@proj4string <- Sr@proj4string
-ctg@plotOrder <- Sr@plotOrder
-ctg@data <- data
-ctg@polygons <- Sr@polygons
+ctg       <- new("LAScatalog")
+ctg@data  <- data
 ```
 
-In `lidR` the `LAScatalog` processing engine refers to the function `catalog_apply()`. This function is the core of the package and drives, internally, every single other function that is capable of processing a `LAScatalog`, including `clip_roi()`, `find_trees()`, `grid_terrain()`, `decimate_points()` and many others as well as some experimental functions in third party packages such as [lidRplugins](https://github.com/Jean-Romain/lidRplugins). This engine is powerful and versatile but also relatively hard to understand for new users and especially for R beginners. This vignette documents how it works by going deeper and deeper inside the engine. It is highly recommended to read the vignette named [LAScatalog formal class](lidR-LAScatalog-class.html) before this one even if one may find some overlap between these two vignettes.
+In `lidR` the `LAScatalog` processing engine refers to the function `catalog_apply()`. This function is the core of the package and drives, internally, every single other function that is capable of processing a `LAScatalog`, including `clip_roi()`, `locate_trees()`, `rasterize_terrain()`, `decimate_points()` and many others as well as some experimental functions in third party packages such as [lidRplugins](https://github.com/Jean-Romain/lidRplugins). This engine is powerful and versatile but also relatively hard to understand for new users and especially for R beginners. This vignette documents how it works by going deeper and deeper inside the engine. It is highly recommended to read the vignette named [LAScatalog formal class](lidR-LAScatalog-class.html) before this one even if one may find some overlap between these two vignettes.
 
 ## Overview
 
-When processing a `LAScatalog` the area covered is split into chunks. A chunk can be seen as a square region of interest (ROI) and altogether the chunks cover the collection of files. The collection of files is not physically split, rather the chunks correspond to a virtual splitting of the coverage. Then the chunk are processed sequentially (one after the other) or in parallel but always **independently**. To process each chunk, the corresponding point cloud is extracted from the collection of files and loaded into memory. Any function can be applied on these independent point clouds and the independent outputs are stored in a `list`. The `list` contains one output per chunk and once each chunk is processed the `list` is collapsed into a single continuous valid object such as a `RasterLayer` or a `SpatialPolygonsDataFrame`. The roles of the catalog engine are to:
+When processing a `LAScatalog` the area covered is split into chunks. A chunk can be seen as a square region of interest (ROI) and altogether the chunks cover the collection of files. The collection of files is not physically split, rather the chunks correspond to a virtual splitting of the coverage. Then the chunk are processed sequentially (one after the other) or in parallel but always **independently**. To process each chunk, the corresponding point cloud is extracted from the collection of files and loaded into memory. Any function can be applied on these independent point clouds and the independent outputs are stored in a `list`. The `list` contains one output per chunk and once each chunk is processed the `list` is collapsed into a single continuous valid object such as a raster or a spatial vector. The roles of the catalog engine are to:
 
 - Create a set of chunks that encompass the collection of files
 - Load a buffer on-the-fly around each chunk
@@ -91,7 +89,7 @@ When processing a `LAScatalog` the area covered is split into chunks. A chunk ca
 
 When using the `LAScatalog` engine, users only need to think about which function they want to apply over their coverage, all the above-mentioned features being managed internally. There are many possible processing tuning tools and this is why one may feel lost by all the options to consider. To simplify, we can make two categories of tools:
 
-1. **High-level API** are `lidR` functions that perform a given operation either on a `LAS` or `LAScatalog` object transparently in a straightforward way. For example, `grid_metrics()`, `grid_terrain()`, and `find_trees()` are high-level API. Rule of thumb: if the function `catalog_apply()` is not directly used it is a high-level API. Processing options can be tuned with functions that start with `opt_` (for option).
+1. **High-level API** are `lidR` functions that perform a given operation either on a `LAS` or `LAScatalog` object transparently in a straightforward way. For example, `pixel_metrics()`, `rasterize_terrain()`, and `locate_trees()` are high-level API. Rule of thumb: if the function `catalog_apply()` is not directly used it is a high-level API. Processing options can be tuned with functions that start with `opt_` (for option).
 2. **Low-level API** is the function `catalog_apply()` itself. This function is designed to build new high-level applications and is used internally by all the `lidR` functions but can also be used to build a user's own tools. Options can be tuned with the parameter `.options` of `catalog_apply()`.
 
 In the following vignette we will discuss first the high-level API then the low-level API. The variables named `ctg*` will refer to a `LAScatalog` object in subsequent code.
@@ -133,11 +131,11 @@ opt_chunk_buffer(ctg) <- 200 # 200 m buffer
 plot(ctg, chunk = TRUE)
 ```
 
-`lidR` functions always check if an appropriate buffer is set. For example, it is impossible to apply `grid_terrain()` with no buffer.
+`lidR` functions always check if an appropriate buffer is set. For example, it is impossible to apply `rasterize_terrain()` with no buffer.
 
 ```{r dtmnobuffer, error=TRUE}
 opt_chunk_buffer(ctg) <- 0
-grid_terrain(ctg, 1, tin())
+rasterize_terrain(ctg, 1, tin())
 ```
 
 ### Control of the chunk alignment
@@ -176,14 +174,14 @@ This works only when the `readLAS()` function is explicitly called. When using t
 opt_filter(ctg) <- "-keep_first -drop_z_below 2"
 ```
 
-Internally, for each chunk, `readLAS()` will be called with `filter = "-drop_first -drop_z_below 2` in every function that is processing a `LAScatalog` unless the documentation explicitly mentions something else. In the following examples `clip_roi()` is used to extract a plot but only the points classified as ground or water will be read and `grid_metrics()` is used to compute metrics only on first returns above 2 meters. It does not mean other points do not exist, they are simply not read.
+Internally, for each chunk, `readLAS()` will be called with `filter = "-drop_first -drop_z_below 2` in every function that is processing a `LAScatalog` unless the documentation explicitly mentions something else. In the following examples `clip_roi()` is used to extract a plot but only the points classified as ground or water will be read and `pixel_metrics()` is used to compute metrics only on first returns above 2 meters. It does not mean other points do not exist, they are simply not read.
 
 ```r
 opt_filter(ctg) <- "-keep_class 2 9"
 las <- clip_circle(ctg, 273400, 5274500, 20)
 
 opt_filter(ctg) <- "-keep_first -drop_z_below 2"
-m <- grid_metrics(ctg, .stdmetrics, 20)
+m <- pixel_metrics(ctg, .stdmetrics, 20)
 ```
 
 ```{r void, echo = FALSE, rgl=TRUE, dev='png'}
@@ -202,7 +200,7 @@ All filters are not necessarily appropriate everywhere. For example, the followi
 
 ```r
 opt_filter(ctg) <- "-drop_class 2 9"
-grid_terrain(ctg, 1, tin())
+rasterize_terrain(ctg, 1, tin())
 #> Error: No ground points found. Impossible to compute a DTM.
 ```
 
@@ -224,12 +222,12 @@ However, this option is not always respected because many `lidR` functions alrea
 
 ```r
 opt_select(ctg) <- "* -c"
-dtm <- grid_terrain(ctg, 1, tin())
+dtm <- rasterize_terrain(ctg, 1, tin())
 ```
 
 ### Write independent chunks on disk
 
-By default every function returns a continuous output within a single R object stored in memory so it is immediately usable in the working environment in a straightforward way. For example, a `SpatialPointsDataFrame` for `find_trees()`.
+By default every function returns a continuous output within a single R object stored in memory so it is immediately usable in the working environment in a straightforward way. For example, a `sf/sfc_POINT` for `locate_trees()`.
 
 ```{r writeondisk, echo = FALSE, eval = FALSE}
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -240,18 +238,16 @@ opt_chunk_size(ctg2) <- 100
 
 ```r
 # Find the trees
-trees <- find_trees(ctg2, lmf(3))
+trees <- locate_trees(ctg2, lmf(3))
 
 # The trees are immediately usable in subsequent analyses
 trees
-#> class       : SpatialPointsDataFrame 
-#> features    : 177 
-#> extent      : 481260, 481349.9, 3812921, 3813011  (xmin, xmax, ymin, ymax)
-#> crs         : +proj=utm +zone=12 +datum=NAD83 +units=m +no_defs 
-#> variables   : 2
-#> names       : treeID,     Z 
-#> min values  :      1,  2.42 
-#> max values  :    177, 32.07
+#> Simple feature collection with 17865 features and 2 fields
+#> Attribute-geometry relationship: 2 constant, 0 aggregate, 0 identity
+#> Geometry type: POINT
+#> Dimension:     XYZ
+#> Bounding box:  xmin: 481260.8 ymin: 3812980 xmax: 483299.6 ymax: 3816011
+#> Projected CRS: NAD83 / UTM zone 12N
 ```
 
 However in some case this behaviour might not be suitable especially for a large collection of files that cover a broad area. In this case the computer might not be able to handle so much data and/or will run into trouble when merging the different independent chunks into a single object. This is why the engine has the capability to write on disk the output of each independent chunk. The function `opt_output_files()` can be used to set a path on disk where the output of each chunk should be saved on disk. This path is templated so the engine is able to create a different file name for each chunk. The general form is the following:
@@ -265,7 +261,7 @@ The templates can be `XCENTER`, `YCENTER`, `XLEFT`, `YBOTTOM`, `XRIGHT`, `YTOP`,
 ```{r template, eval = FALSE}
 # Force the results to be written on disk
 opt_output_files(ctg2) <- paste0(tempdir(), "/tree_coordinate_{XLEFT}_{YBOTTOM}")
-trees <- find_trees(ctg2, lmf(3))
+trees <- locate_trees(ctg2, lmf(3))
 
 # The output has been modified by these options and it now gives
 # the paths to the written files (here shapefiles)
@@ -281,17 +277,17 @@ In the previous example, several shapefiles were written on disk and there is no
 ```{r writechm, eval = FALSE}
 # Force the results to be written on disk
 opt_output_files(ctg2) <- paste0(tempdir(), "/tree_coordinate_{XLEFT}_{YBOTTOM}")
-chm <- grid_canopy(ctg2, 1, p2r())
+chm <- rasterize_canopy(ctg2, 1, p2r())
 
 # Many rasters have been written on disk
-# but a light RasterLayer has been returned anyway
+# but a light raster has been returned anyway
 chm
 #> class      : RasterLayer 
 #> dimensions : 90, 90, 8100  (nrow, ncol, ncell)
 #> resolution : 1, 1  (x, y)
 #> extent     : 481260, 481350, 3812921, 3813011  (xmin, xmax, ymin, ymax)
 #> crs        : +proj=utm +zone=12 +datum=NAD83 +units=m +no_defs 
-#> source     : /tmp/RtmpZVJ2hy/grid_canopy.vrt 
+#> source     : /tmp/RtmpZVJ2hy/rasterize_canopy.vrt 
 #> names      : tree_coordinate_481260_3812921 
 #> values     : 0, 32.07  (min, max)
 ```
@@ -329,7 +325,7 @@ opt_chunk_size(ctg) <- 0
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:5){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -356,7 +352,7 @@ opt_chunk_size(ctg) <- 0
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:6){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -383,7 +379,7 @@ opt_chunk_size(ctg) <- 0
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:8){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -416,7 +412,7 @@ opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
 opt_restart(ctg) <- 9
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:4){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -427,7 +423,7 @@ The engine is also able to bypass the error. This can be activated with `opt_sto
 
 ```r
 opt_stop_early(ctg) <- FALSE
-dtm <- grid_terrain(ctg, 1, tin())
+dtm <- rasterize_terrain(ctg, 1, tin())
 ```
 
 ```{r, echo=FALSE}
@@ -436,7 +432,7 @@ opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
 opt_restart(ctg) <- 1
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:length(cl)){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -459,7 +455,7 @@ opt_chunk_size(ctg) <- 400
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:50){
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -503,7 +499,7 @@ opt_chunk_size(ctg) <- 0
 opt_output_files(ctg) <- ""
 opt_wall_to_wall(ctg) <- FALSE
 opt_progress(ctg) <- TRUE
-cl <- lidR:::catalog_makecluster(ctg)
+cl <- engine_chunks(ctg)
 for (i in 1:6) {
   bbox <- cl[[i]]@bbox
   graphics::rect(bbox[1], bbox[2], bbox[3], bbox[4], border = "black", col = "green3")
@@ -570,7 +566,7 @@ plot(ctg)
 
 ### Partial output
 
-As mentioned in a previous section, when an error stops the computation the output is never `NULL`, but it contains a valid output computed from the part of the catalog that has been processed. It is a partial but valid output. Hopefully next versions of the package will allow restarting a computation that failed from the failing points.
+As mentioned in a previous section, when an error stops the computation the output is never `NULL`, but it contains a valid output computed from the part of the catalog that has been processed. It is a partial but valid output. Computation can be restarted from the failling chunk.
 
 ## Low-level API
 
@@ -625,7 +621,7 @@ test = readLAScatalog(LASfile)
 opt_chunk_size(test) <- 150
 opt_chunk_alignment(test) <- c(50,10)
 opt_progress(ctg) <- FALSE
-chunks = lidR:::catalog_makecluster(test)
+chunks = engine_chunks(test)
 chunk = chunks[[5]]
 ```
 
@@ -646,7 +642,7 @@ print(chunk)
 #> crs         : +proj=utm +zone=17 +datum=NAD83 +units=m +no_defs
 ```
 
-It inherits from `sp::Spatial` so `raster::extent()` and `sp::bbox()` are valid functions that return the bounding box of the chunk. The bounding box of the chunk is the bounding box without the buffer.
+`raster::extent()` and `sp::bbox()` and `sf::st_bbox()` are valid functions that return the bounding box of the chunk. The bounding box of the chunk is the bounding box without the buffer.
  
 ```{r, warning = FALSE, eval = FALSE}
 raster::extent(chunk)
@@ -668,11 +664,11 @@ Being able to retrieve the true bounding box allows for removal of the buffer. I
 
 ### Control the options provided by the catalog
 
-Sometime we need to control processing options carried by the `LAScatalog` to ensure that users do not use invalid options. For example `grid_terrain()` ensures that the buffer is not 0.
+Sometime we need to control processing options carried by the `LAScatalog` to ensure that users do not use invalid options. For example `rasterize_terrain()` ensures that the buffer is not 0.
 
 ```{r bufferror, error = TRUE}
 opt_chunk_buffer(ctg) <- 0
-grid_terrain(ctg, 1, tin())
+rasterize_terrain(ctg, 1, tin())
 ```
 
 This can be reproduced with the option `need_buffer = TRUE`
@@ -707,8 +703,8 @@ opt_progress(ctg) <- FALSE
 routine <- function(chunk){ 
    las <- readLAS(chunk)               # read the chunk
    if (is.empty(las)) return(NULL)     # exit if empty
-   ttop <- find_trees(las, lmf(3))     # make any computation
-   ttop <- raster::crop(ttop, extent(chunk))   # remove the buffer
+   ttop <- locate_trees(las, lmf(3))     # make any computation
+   ttop <- sf::st_crop(ttop, st_bbox(chunk))   # remove the buffer
    return(ttop)
 }
 
@@ -716,52 +712,46 @@ out <- catalog_apply(ctg, routine)
 class(out)
 #> [1] "list"
 print(out[[1]])
-#> class       : SpatialPointsDataFrame 
-#> features    : 94 
-#> extent      : 481260.1, 481349.8, 3812921, 3812950  (xmin, xmax, ymin, ymax)
-#> crs         : +proj=utm +zone=12 +datum=NAD83 +units=m +no_defs 
-#> variables   : 2
-#> names       : treeID,     Z 
-#> min values  :      1,  2.16 
-#> max values  :    132, 32.07
+#> Simple feature collection with 178 features and 2 fields
+#> Attribute-geometry relationship: 2 constant, 0 aggregate, 0 identity
+#> Geometry type: POINT
+#> Dimension:     XYZ
+#> Bounding box:  xmin: 481260.8 ymin: 3812980 xmax: 483299.6 ymax: 3816011
+#> Projected CRS: NAD83 / UTM zone 12N
 ```
 
-This `list` must be reduced after `catalog_apply()`. The way to merge depends on the contents of the `list`. Here the list contains `SpatialPointsDataFrame` so we can `rbind` the list.
+This `list` must be reduced after `catalog_apply()`. The way to merge depends on the contents of the `list`. Here the list contains `sf` so we can `rbind` the list.
 
 ```{r, eval = FALSE}
 out <- do.call(rbind, out)
 print(out)
-#> class       : SpatialPointsDataFrame 
-#> features    : 297 
-#> extent      : 481260, 481349.9, 3812921, 3813011  (xmin, xmax, ymin, ymax)
-#> crs         : +proj=utm +zone=12 +datum=NAD83 +units=m +no_defs 
-#> variables   : 2
-#> names       : treeID,     Z 
-#> min values  :      1,  2.16 
-#> max values  :    247, 32.07
+#> Simple feature collection with 17865 features and 2 fields
+#> Attribute-geometry relationship: 2 constant, 0 aggregate, 0 identity
+#> Geometry type: POINT
+#> Dimension:     XYZ
+#> Bounding box:  xmin: 481260.8 ymin: 3812980 xmax: 483299.6 ymax: 3816011
+#> Projected CRS: NAD83 / UTM zone 12N
 ```
 
-But in practice a safe merging is not always trivial and it is annoying to do it manually. The engine supports automerging of `Spatial*`, `sf`, `Raster*`, `data.frame` and `LAS` objects.
+But in practice a safe merging is not always trivial and it is annoying to do it manually. The engine supports automerging of `Spatial*`, `sf`, `Raster*`, `stars`, `SpatRaster`, `data.frame` and `LAS` objects.
 
 ```{r automerge, eval = FALSE}
 options <- list(automerge = TRUE)
 out <- catalog_apply(ctg, routine, .options = options)
 print(out)
-#> class       : SpatialPointsDataFrame 
-#> features    : 297 
-#> extent      : 481260, 481349.9, 3812921, 3813011  (xmin, xmax, ymin, ymax)
-#> crs         : +proj=utm +zone=12 +datum=NAD83 +units=m +no_defs 
-#> variables   : 2
-#> names       : treeID,     Z 
-#> min values  :      1,  2.16 
-#> max values  :    247, 32.07
+#> Simple feature collection with 17865 features and 2 fields
+#> Attribute-geometry relationship: 2 constant, 0 aggregate, 0 identity
+#> Geometry type: POINT
+#> Dimension:     XYZ
+#> Bounding box:  xmin: 481260.8 ymin: 3812980 xmax: 483299.6 ymax: 3816011
+#> Projected CRS: NAD83 / UTM zone 12N
 ```
 
 In the worst case the type is not supported and a list is returned anyway without failure.
 
 ### Make a high-level function
 
- `catalog_apply()` is not really intended to be used directly. It is intended to be used and hidden within more user-friendly functions referred to as high-level API. High-level API are functions intended to be used by third-party users. Let's assume we have designed a new application to identify dead trees. Let's call this function `find_deadtrees()`. This function takes a point cloud as input and returns a `SpatialPointsDataFrame` with the positioning of the dead trees + some attributes.
+ `catalog_apply()` is not really intended to be used directly. It is intended to be used and hidden within more user-friendly functions referred to as high-level API. High-level API are functions intended to be used by third-party users. Let's assume we have designed a new application to identify dead trees. Let's call this function `find_deadtrees()`. This function takes a point cloud as input and returns a `sf` with the positioning of the dead trees + some attributes.
 
 ```r
 find_deadtree <- function(las, param1, param2)
@@ -782,10 +772,11 @@ find_deadtrees <- function(las, param1, param2)
       return(dead_trees)
    }
    else if (is(las, "LAScluster")) {
-      bbox <- extent(las)
+      bbox <- st_bbox(las)
       las <- readLAS(las)
+      if (is.empty(las)) return(NULL) 
       dead_trees <- find_deadtrees(las, param1, param2)
-      dead_trees <- raster::crop(dead_trees, bbox)
+      dead_trees <- sf::st_crop(dead_trees, bbox)
       return(dead_trees)
    }
    else if (is(las, "LAS")) {
@@ -814,15 +805,13 @@ plan(multissesion, workers = 4L)
 deads <- find_deadtrees(ctg, 0.5, 3)
 ```
 
-In practice there is, in our opinion, a more elegant way to achieve the same task. This way is presented in [this vignette](lidR-catalog-apply-examples.html) an relies on S3 dispatch.
-
 ## Advanced usages of the engine
 
 The following sections concern both high-level and low-level APIs and present some advanced use cases.
 
 ### Modify the drivers
 
-Using the processing option `opt_output_files()` users can tell the engine to sequentially write the outputs on a drive with custom filenames. In the default settings `Rasters*` are written in GeoTiff files, `Spatial*`, either in `sp` or `sf` formats, are written in ESRI shapefiles, point clouds are written in las files and `data.frame` are written in csv files. This can be modified at any time. This is documented in `help("lidR-LAScatalog-drivers")`. If somehow the output of the function mapped by `catalog_apply()` is not a `Raster*` a `Spatial*`, a `data.frame`, or a `sf`, the function will fail when writing the output.
+Using the processing option `opt_output_files()` users can tell the engine to sequentially write the outputs on a drive with custom filenames. In the default settings raster are written in GeoTiff files, vectors, either in `sp` or `sf` formats, are written in ESRI shapefiles, point clouds are written in las files and `data.frame` are written in csv files. This can be modified at any time. This is documented in `help("lidR-LAScatalog-drivers")`. If somehow the output of the function mapped by `catalog_apply()` is not a raster, a vector, a `data.frame`, the function will fail when writing the output.
 
 ```r
 routine <- function(chunk){ 

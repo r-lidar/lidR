@@ -7,60 +7,54 @@ opt_chunk_alignment(ctg) <- c(50,180)
 opt_chunk_buffer(ctg) <- 40
 opt_progress(ctg) <- FALSE
 
-test_that("track_sensor works", {
-
-  flightlines <- track_sensor(las, Roussel2020(pmin = 10))
-
-  expect_is(flightlines, "SpatialPointsDataFrame")
-  expect_equal(dim(flightlines), c(8,4))
-  expect_equal(names(flightlines), c("Z", "gpstime", "PointSourceID", "SCORE"))
-  expect_equal(mean(flightlines$Z), 3100, tol = 3)
-  expect_equal(flightlines@proj4string, crs(las))
-})
-
 test_that("track_sensor works with Roussel2020", {
 
   flightlines <- track_sensor(las, Roussel2020(pmin = 10))
 
-  expect_is(flightlines, "SpatialPointsDataFrame")
+  expect_is(flightlines, "sf")
+  expect_is(sf::st_geometry(flightlines), "sfc_POINT")
   expect_equal(dim(flightlines), c(8,4))
-  expect_equal(names(flightlines), c("Z", "gpstime", "PointSourceID", "SCORE"))
-  expect_equal(mean(flightlines$Z), 3100, tol = 3)
-  expect_equal(flightlines@proj4string, crs(las))
+  expect_equal(names(flightlines)[1:3], c("gpstime", "PointSourceID", "SCORE"))
+  expect_equal(mean(sf::st_coordinates(flightlines)[,3]), 3100, tol = 3)
+  expect_equal(sf::st_crs(flightlines), st_crs(las))
 })
 
 test_that("track_sensor works with Gatziolis2019", {
 
   flightlines <- track_sensor(las, Gatziolis2019(deltaT = 0.5))
 
-  expect_is(flightlines, "SpatialPointsDataFrame")
+  expect_is(flightlines, "sf")
+  expect_is(sf::st_geometry(flightlines), "sfc_POINT")
   expect_equal(dim(flightlines), c(9,4))
-  expect_equal(names(flightlines), c("Z", "gpstime", "PointSourceID", "SCORE"))
-  expect_equal(mean(flightlines$Z), 3100, tol = 3)
-  expect_equal(flightlines@proj4string, crs(las))
+  expect_equal(names(flightlines)[1:3], c("gpstime", "PointSourceID", "SCORE"))
+  expect_equal(mean(sf::st_coordinates(flightlines)[,3]), 3100, tol = 3)
+  expect_equal(sf::st_crs(flightlines), st_crs(las))
 })
 
-test_that("track_sensor returns an empty SpatialPointsDataFrame", {
+test_that("track_sensor returns an empty sf", {
 
   flightlines <- track_sensor(las, Roussel2020(pmin = 50))
 
-  expect_is(flightlines, "SpatialPointsDataFrame")
+  expect_is(flightlines, "sf")
   expect_equal(dim(flightlines), c(0,4))
-  expect_equal(names(flightlines), c("Z", "gpstime", "PointSourceID", "SCORE"))
+  expect_equal(names(flightlines)[1:3], c("gpstime", "PointSourceID", "SCORE"))
 })
 
 test_that("track_sensor works with a LAScatalog", {
 
+  skip_on_cran()
+
   flightlines <- track_sensor(ctg, Roussel2020(pmin = 10))
 
-  expect_is(flightlines, "SpatialPointsDataFrame")
+  expect_is(flightlines, "sf")
+  expect_is(sf::st_geometry(flightlines), "sfc_POINT")
   expect_equal(dim(flightlines), c(8,4))
-  expect_equal(names(flightlines), c("Z", "gpstime", "PointSourceID", "SCORE"))
-  expect_equal(mean(flightlines$Z), 3100, tol = 3)
-  expect_equal(flightlines@proj4string, crs(ctg))
+  expect_equal(names(flightlines)[1:3], c("gpstime", "PointSourceID", "SCORE"))
+  expect_equal(mean(sf::st_coordinates(flightlines)[,3]), 3100, tol = 3)
+  expect_equal(sf::st_crs(flightlines), st_crs(las))
 })
 
-test_that("track_sensor hangle errors", {
+test_that("track_sensor handle errors", {
 
   las2 = las
   las2@data = las@data[, !"PointSourceID"]
@@ -79,15 +73,16 @@ test_that("track_sensor hangle errors", {
 
 test_that("track_sensor filter duplicates", {
 
-  las@data = rbind(las@data, las@data[1:25,])
+  las = rbind(las, las[1:25])
 
   expect_warning(flightlines <- track_sensor(las, Roussel2020(pmin = 10)), "duplicated")
 
-  expect_is(flightlines, "SpatialPointsDataFrame")
+  expect_is(flightlines, "sf")
+  expect_is(sf::st_geometry(flightlines), "sfc_POINT")
   expect_equal(dim(flightlines), c(8,4))
-  expect_equal(names(flightlines), c("Z", "gpstime", "PointSourceID", "SCORE"))
-  expect_equal(mean(flightlines$Z), 3100, tol = 3)
-  expect_equal(flightlines@proj4string, crs(las))
+  expect_equal(names(flightlines)[1:3], c("gpstime", "PointSourceID", "SCORE"))
+  expect_equal(mean(sf::st_coordinates(flightlines)[,3]), 3100, tol = 3)
+  expect_equal(sf::st_crs(flightlines), st_crs(las))
 })
 
 

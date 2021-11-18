@@ -193,12 +193,9 @@ setThreads <- set_lidr_threads
 
 must_disable_openmp = function()
 {
-  # Backward compatibility
-  if (isTRUE(getOption("lidR.threads.manual")))
-    return(FALSE)
-
-  if (isFALSE(getOption("lidR.check.nested.parallelism")))
-    return(FALSE)
+  if (!engine_use_future()) return(FALSE)
+  if (isTRUE(getOption("lidR.threads.manual"))) return(FALSE) # Backward compatibility
+  if (isFALSE(getOption("lidR.check.nested.parallelism"))) return(FALSE)
 
   workers    <- getWorkers()
   threads    <- getThreads()

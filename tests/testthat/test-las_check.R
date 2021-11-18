@@ -14,7 +14,7 @@ las1@data[1, Synthetic_flag := TRUE]
 las1@data[1, Keypoint_flag := TRUE]
 las1@data[25, Z := 1234567890.1]
 las1@data$gpstime <- 0
-las1@proj4string <- sp::CRS("+init=epsg:26917")
+las1@crs <- sf::st_crs(26917)
 las1@header@PHB[["X scale factor"]] <- 0.123
 las1@header@PHB[["Y scale factor"]] <- 0.123
 las1@header@PHB[["Z scale factor"]] <- 0.123
@@ -22,19 +22,19 @@ las1@header@PHB[["Point Data Format ID"]] <- 25
 
 
 LASfile <- system.file("extdata", "extra_byte.laz", package = "rlas")
-las2     <- readLAS(LASfile, select = "xyz")
+las2    <- readLAS(LASfile, select = "xyz")
 las2@header@PHB$`Global Encoding`$WKT = TRUE
 
 wkt(las2) <- "PROJCS[\"unknown\",GEOGCS[\"unknown\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6269\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-81],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]"
 
-las2@proj4string <- sp::CRS()
+las2@crs <- sf::NA_crs_
 
 las3 <- las1
 epsg(las3) <- 2008
-las3@proj4string <- sp::CRS("+init=epsg:26917")
+las3@crs <- sf::st_crs(26917)
 
 las4 = las2
-las4@proj4string <- sp::CRS("+init=epsg:2008")
+las4@crs <- sf::st_crs(2008)
 
 ctg0 <- example_ctg
 
@@ -52,9 +52,6 @@ test_that("las_check works without error with LAS", {
   sink(tempfile())
   expect_error(las_check(las0), NA)
   expect_error(las_check(las1), NA)
-
-  skip_on_cran()
-
   expect_error(las_check(las2), NA)
   expect_error(las_check(las3), NA)
   expect_error(las_check(las4), NA)
@@ -88,7 +85,7 @@ test_that("las_check CRS specific test", {
   expect_error(las_check(las2), NA)
 
   epsg(las0) <- 2008
-  las0@proj4string <- sp::CRS()
+  las0@crs <- sf::NA_crs_
 
   expect_error(las_check(las0), NA)
 

@@ -1,35 +1,8 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2019 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 # ===== LMF ======
 
 #' Individual Tree Detection Algorithm
 #'
-#' This function is made to be used in \link{find_trees}. It implements an algorithm for tree
+#' This function is made to be used in \link{locate_trees}. It implements an algorithm for tree
 #' detection based on a local maximum filter. The windows size can be fixed or variable and its
 #' shape can be square or circular. The internal algorithm works either with a raster or a point cloud.
 #' It is deeply inspired by Popescu & Wynne (2004) (see references).
@@ -57,37 +30,38 @@
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyz", filter = "-inside 481250 3812980 481300 3813050")
 #'
+#' # =================
 #' # point-cloud-based
 #' # =================
 #'
 #' # 5x5 m fixed window size
-#' ttops <- find_trees(las, lmf(5))
+#' ttops <- locate_trees(las, lmf(5))
 #'
-#' #x <- plot(las)
-#' #add_treetops3d(x, ttops)
+#' #plot(las) |> add_treetops3d(ttops)
 #'
 #' # variable windows size
 #' f <- function(x) { x * 0.07 + 3}
-#' ttops <- find_trees(las, lmf(f))
+#' ttops <- locate_trees(las, lmf(f))
 #'
-#' #x <- plot(las)
-#' #add_treetops3d(x, ttops)
+#' #plot(las) |> add_treetops3d(ttops)
 #'
+#' # ============
 #' # raster-based
 #' # ============
 #'
-#' chm <- grid_canopy(las, res = 1, p2r(0.15))
-#' ttops <- find_trees(chm, lmf(5))
+#' chm <- rasterize_canopy(las, res = 1, p2r(0.15), pkg = "terra")
+#' ttops <- locate_trees(chm, lmf(5))
 #'
 #' plot(chm, col = height.colors(30))
-#' plot(ttops, add = TRUE)
+#' plot(sf::st_geometry(ttops), add = TRUE, col = "black", cex = 0.5, pch = 3)
 #'
 #' # variable window size
 #' f <- function(x) { x * 0.07 + 3 }
-#' ttops <- find_trees(chm, lmf(f))
+#' ttops <- locate_trees(chm, lmf(f))
 #'
 #' plot(chm, col = height.colors(30))
-#' plot(ttops, add = TRUE)
+#' plot(sf::st_geometry(ttops), add = TRUE, col = "black", cex = 0.5, pch = 3)
+#' @name itd_lmf
 lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 {
   shape <- match.arg(shape)
@@ -128,7 +102,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 
 #' Individual Tree Detection Algorithm
 #'
-#' This function is made to be used in \link{find_trees}. It implements an algorithm for manual
+#' This function is made to be used in \link{locate_trees}. It implements an algorithm for manual
 #' tree detection. Users can pinpoint the tree top positions manually and interactively using the mouse.
 #' This is only suitable for small-sized plots. First the point cloud is displayed, then the user is
 #' invited to select a rectangular region of interest in the scene using the mouse button.
@@ -136,7 +110,8 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' are labelled the user can exit the tool by selecting an empty region. Points can also be unflagged.
 #' The goal of this tool is mainly for minor correction of automatically-detected tree outputs.
 #'
-#' @param detected \code{SpatialPointsDataFrame} of already found tree tops that need manual correction.
+#' @param detected `SpatialPoints* or `sf/sfc_POINT` with  2 or 3D points of already found tree tops
+#' that need manual correction. Can be NULL
 #' @param radius numeric. Radius of the spheres displayed on the point cloud (aesthetic purposes only).
 #' @param color character. Colour of the spheres displayed on the point cloud (aesthetic purposes only).
 #' @param button Which button to use for selection. One of "left", "middle", "right". lidR using left
@@ -146,18 +121,20 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 #' @family individual tree detection algorithms
 #'
 #' @export
+#' @md
 #' @examples
 #' \dontrun{
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' las = readLAS(LASfile)
 #'
 #' # Full manual tree detection
-#' ttops = find_trees(las, manual())
+#' ttops = locate_trees(las, manual())
 #'
 #' # Automatic detection with manual correction
-#' ttops = find_trees(las, lmf(5))
-#' ttops = find_trees(las, manual(ttops))
+#' ttops = locate_trees(las, lmf(5))
+#' ttops = locate_trees(las, manual(ttops))
 #' }
+#' @name itd_manual
 manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle", ...) # nocov start
 {
   f = function(las)
@@ -167,7 +144,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
     . <- X <- Y <- Z <- treeID <- NULL
 
     stopifnotlas(las)
-    crs = sp::CRS()
+    crs = sf::NA_crs_
 
     if (!interactive())
       stop("R is not being used interactively", call. = FALSE)
@@ -176,16 +153,24 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
     {
       apice <- data.table::data.table(X = numeric(0), Y = numeric(0), Z = numeric(0))
     }
-    else if (is(detected, "SpatialPointsDataFrame"))
-    {
-      crs          <- detected@proj4string
-      apice        <- data.table::data.table(detected@coords)
-      apice$Z      <- detected@data[["Z"]]
-      names(apice) <- c("X","Y","Z")
-    }
     else
     {
-      stop("Input is not of the correct type.")
+      if (inherits(detected, "SpatialPoints"))
+        detected <- sf::st_as_sf(detected)
+
+      if (!is(detected, "sf") & !is(detected, "sfc"))
+        stop("'apice' is not a SpatialPointsDataFrame or sf")
+
+      coords   <- sf::st_coordinates(detected)
+      u   <- coords[,1]
+      v   <- coords[,2]
+
+      if (ncol(coords) == 3)
+        w <- coords[,3]
+      else
+        w <- detected[["Z"]]
+
+      apice <- data.table::data.table(X = u, Y = v, Z = w)
     }
 
     minx <- min(las$X)
@@ -194,13 +179,12 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
     las@data <- las@data[, .(X, Y, Z)]
     las@data[, X := X - minx]
     las@data[, Y := Y - miny]
-    apice[, X := X - minx]
-    apice[, Y := Y - miny]
+    apice$X = apice$X - minx
+    apice$Y = apice$Y - miny
 
     plot.LAS(las, ..., clear_artifacts = FALSE)
 
     id = numeric(nrow(apice))
-
     for (i in 1:nrow(apice))
       id[i] = rgl::spheres3d(apice$X[i], apice$Y[i], apice$Z[i], radius = radius, color = color)
 
@@ -244,7 +228,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
     apice[, treeID := 1:.N]
     apice[, X := X + minx]
     apice[, Y := Y + miny]
-    output <- sp::SpatialPointsDataFrame(apice[, .(X,Y)], apice[, .(treeID, Z)], proj4string = crs)
+    output <- sf::st_as_sf(apice, coords = c("X", "Y", "Z"), crs = crs)
     return(output)
   }
 

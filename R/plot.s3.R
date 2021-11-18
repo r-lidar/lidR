@@ -1,35 +1,8 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 #' Plot voxelized LiDAR data
 #'
 #' This function implements a 3D plot method for 'lasmetrics3d' objects
 #'
-#' @param x An object of the class \code{'lasmetrics3d'}
+#' @param x An object of the class `lasmetrics3d`
 #' @param y Unused (inherited from R base)
 #' @param \dots Supplementary parameters for \link[lidR:plot]{plot}. The function internally uses the
 #' same plot function than LAS objects.
@@ -43,6 +16,7 @@
 #' }
 #' @export
 #' @method plot lasmetrics3d
+#' @md
 plot.lasmetrics3d = function(x, y, ...)
 {
   cl <- class(x)
@@ -55,25 +29,26 @@ plot.lasmetrics3d = function(x, y, ...)
 
 #' Add a spatial object to a point cloud scene
 #'
-#' Add a \code{RasterLayer} object that represents a digital terrain model or a
-#' \code{SpatialPointsDataFrame} that represents tree tops to a point cloud scene. To add elements
-#' to a scene with a point cloud plotted with the function plot from lidR, the functions \code{add_*}
+#' Add a raster (`raster`, `stars` `terra`) object that represents a digital terrain model or a
+#' `SpatialPointsDataFrame` or `sf` that represents tree tops to a point cloud scene. To add elements
+#' to a scene with a point cloud plotted with the function plot from lidR, the functions `add_*`
 #' take as first argument the output of the plot function (see examples), because the plot function
-#' does not plot the actual coordinates of the point cloud, but offsetted values. See function
-#' \link[=plot]{plot} and its argument \code{clear_artifacts} for more details. It works only
-#' with \code{rgl} i.e. \code{backend = "rgl"} which is the default.
+#' does not plot the actual coordinates of the point cloud, but offset values. See function
+#' \link[=plot]{plot} and its argument `clear_artifacts` for more details. It works only
+#' with `rgl` i.e. `backend = "rgl"` which is the default.
 #'
-#' @param dtm An object of the class \code{RasterLayer}
+#' @param dtm An object of the class `RasterLayer` or `stars` or `SpatRaster`
 #' @param bg The color for the background. Default is black.
 #' @param \dots Supplementary parameters for \link[rgl]{surface3d} or
 #' \link[rgl:spheres]{spheres3d}.
 #' @param x The output of the function plot used with a LAS object.
-#' @param ttops A SpatialPointsDataFrame that contains tree tops coordinates.
-#' @param flightlines A SpatialPointsDataFrame that contains flightlines coordinates.
-#' @param z character. The name of the attribute that contains the height of the tree tops or of the flightlines.
+#' @param ttops A `SpatialPointsDataFrame` or `sf/sfc` that contains tree tops coordinates.
+#' @param flightlines A `SpatialPointsDataFrame` or `sf` that contains flightlines coordinates.
+#' @param z character. The name of the attribute that contains the height of the tree tops or of the
+#' flightlines. Only for XY geometries Ignored if the input have XYZ geometries
 #' @param clear_artifacts logical. It is a known and documented issue that 3D visualisation with
 #' \code{rgl} displays artifacts. The points and lines are inaccurately positioned in the space and thus
-#' the rendering may look false or weird. This is because \code{rgl} computes with single precision \code{float}.
+#' the rendering may look false or weird. This is because `rgl` computes with single precision `float`.
 #' To fix this, the objects are shifted to (0,0) to reduce the number of digits needed to represent
 #' their coordinates. The drawback is that the objects are not plotted at their actual coordinates.
 #'
@@ -81,24 +56,24 @@ plot.lasmetrics3d = function(x, y, ...)
 #' @examples
 #' \dontrun{
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las = readLAS(LASfile, filter = "-keep_xy 273450 273600 5274450 5274600")
+#' las <- readLAS(LASfile)
 #'
-#' dtm = grid_terrain(las, algorithm = tin())
-#' ttops <- find_trees(las, lmf(ws = 5))
+#' dtm <- rasterize_terrain(las, algorithm = tin())
+#' ttops <- locate_trees(las, lmf(ws = 5))
 #'
 #' plot_dtm3d(dtm)
 #'
-#' x = plot(las)
+#' x <- plot(las)
 #' add_dtm3d(x, dtm)
 #' add_treetops3d(x, ttops)
 #'
-#' library(magrittr)
-#' plot(las) %>% add_dtm3d(dtm) %>% add_treetops3d(ttops)
+#' plot(las) |> add_dtm3d(dtm) |> add_treetops3d(ttops)
 #' }
 NULL
 
 #' @rdname plot_3d
 #' @export
+#' @md
 plot_dtm3d = function(dtm, bg = "black", clear_artifacts = TRUE, ...)
 {
   rgl::open3d()
@@ -107,8 +82,8 @@ plot_dtm3d = function(dtm, bg = "black", clear_artifacts = TRUE, ...)
 
   if (clear_artifacts)
   {
-    bbox  <- raster::extent(dtm)
-    shift <- c(bbox@xmin, bbox@ymin)
+    bbox  <- raster_bbox(dtm)
+    shift <- c(bbox$xmin, bbox$ymin)
   }
 
   add_dtm3d(shift, dtm, ...)
@@ -130,8 +105,10 @@ add_dtm3d = function(x, dtm, ...)
   assert_is_numeric(x)
   assert_is_of_length(x, 2)
 
-  if (!is(dtm, "RasterLayer"))
-    stop("'dtm' is not RasterLayer.")
+  if (!is_raster(dtm))
+    stop("'dtm' is not a raster")
+
+  res <- raster_as_matrix(dtm, downsample = TRUE)
 
   if (is.null(args$front))
     args$front <- "lines"
@@ -139,13 +116,9 @@ add_dtm3d = function(x, dtm, ...)
   if (is.null(args$col))
     args$col <- "white"
 
-  mx <-  t(apply(raster::as.matrix(dtm), 2, rev))
-  x_ <- sort(raster::xFromCol(dtm, 1:raster::ncol(dtm))) - x[1]
-  y_ <- sort(raster::yFromRow(dtm, 1:raster::nrow(dtm))) - x[2]
-
-  args$x <- x_
-  args$y <- y_
-  args$z <- mx
+  args$x <- res$x - x[1]
+  args$y <- res$y - x[2]
+  args$z <- res$z
 
   do.call(rgl::surface3d, args)
   return(invisible(x))
@@ -160,8 +133,11 @@ add_treetops3d = function(x, ttops, z = "Z", ...)
   assert_is_numeric(x)
   assert_is_of_length(x, 2)
 
-  if (!is(ttops, "SpatialPointsDataFrame"))
-    stop("'ttops' is not a SpatialPointsDataFrame")
+  if (is(ttops, "SpatialPointsDataFrame"))
+    ttops <- sf::st_as_sf(ttops)
+
+  if (!is(ttops, "sf"))
+    stop("'ttops' is not a SpatialPointsDataFrame or sf")
 
   if (is.null(args$size))
     args$size <- 5
@@ -170,9 +146,14 @@ add_treetops3d = function(x, ttops, z = "Z", ...)
     args$col <- "red"
 
   args$add <- TRUE
-  args$x   <- ttops@coords[,1] - x[1]
-  args$y   <- ttops@coords[,2] - x[2]
-  args$z   <- ttops@data[[z]]
+  coords   <- sf::st_coordinates(ttops)
+  args$x   <- coords[,1] - x[1]
+  args$y   <- coords[,2] - x[2]
+
+  if (ncol(coords) == 3)
+    args$z <- coords[,3]
+  else
+    args$z <- ttops[[z]]
 
   do.call(rgl::spheres3d, args)
   return(invisible(x))

@@ -1,32 +1,3 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016-2018 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
-
-
 #' Retrieve individual pulses, flightlines or scanlines
 #'
 #' Retrieve each individual pulse, individual flightline or individual scanline and assigns a number
@@ -68,7 +39,7 @@ retrieve_pulses = function(las)
 {
   stopifnotlas(las)
 
-  if (!"gpstime" %in% names(las@data))
+  if (!"gpstime" %in% names(las))
     stop("No 'gpstime' attribute found. Pulse IDs cannot be computed from this object", call. = FALSE)
 
   if (all(las@data[["gpstime"]] == 0))
@@ -93,7 +64,7 @@ retrieve_flightlines = function(las, dt = 30)
   assert_is_a_number(dt)
   assert_all_are_non_negative(dt)
 
-  if (!"gpstime" %in% names(las@data))
+  if (!"gpstime" %in% names(las))
     stop("No 'gpstime' attribute found. Flightlines cannot be computed from this object", call. = FALSE)
 
   if (all(las@data[["gpstime"]] == 0))
@@ -116,10 +87,10 @@ retrieve_scanlines = function(las)
 {
   stopifnotlas(las)
 
-  if (!"gpstime" %in% names(las@data))
+  if (!"gpstime" %in% names(las))
     stop("No 'gpstime' attribute found. Scanlines IDs cannot be computed from this object", call. = FALSE)
 
-  if (!"ScanDirectionFlag" %in% names(las@data))
+  if (!"ScanDirectionFlag" %in% names(las))
     stop("No 'ScanDirectionFlag' attribute found. Scanlines cannot be computed from this object", call. = FALSE)
 
   values <- unique(las@data[["ScanDirectionFlag"]])

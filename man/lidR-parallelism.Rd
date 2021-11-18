@@ -4,7 +4,7 @@
 \alias{lidR-parallelism}
 \title{Parallel computation in lidR}
 \description{
-This document explain how to process point clouds taking advantage of parallel processing in the
+This document explains how to process point clouds taking advantage of parallel processing in the
 lidR package. The lidR package has two levels of parallelism, which is why it is difficult to
 understand how it works. This page aims to provide users with a clear overview of how to take advantage
 of multicore processing even if they are not comfortable with the parallelism concept.
@@ -16,14 +16,14 @@ natively parallel. In lidR some algorithms are fully computed in parallel, but s
 not parallelizable, while some are only partially parallelized. It means that some portions of the code
 are computed in parallel and some are not. When an algorithm is natively parallel in lidR it is always
 a C++ based parallelization with OpenMP. The advantage is that the computation is faster without any
-consequence for memory usage because the memory is shared between the processors In short,
+consequence for memory usage because the memory is shared between the processors. In short,
 algorithm-based parallelism provides a significant gain without any cost for your R session and
 your system (but obviously there is a greater workload for the processors). By default lidR uses
 half of your cores but you can control this with \link{set_lidr_threads}. For example, the \link{lmf}
 algorithm is natively parallel. The following code is computed in parallel:
 \preformatted{
 las  <- readLAS("file.las")
-tops <- tree_detection(las, lmf(2))
+tops <- locate_trees(las, lmf(2))
 }
 However, as stated above, not all algorithms are parallelized or even parallelizable. For example,
 \link{li2012} is not parallelized. The following code is computed in serial:
@@ -39,23 +39,23 @@ is.parallelised(li2012()) #> FALSE
 }
 }
 
-\section{chunk-based parallelism}{
+\section{Chunk-based parallelism}{
 
-When processing a LAScatalog, the internal engine splits the dataset into chunks and each chunk is
-read and processed sequentially in a loop. But actually this loop can be parallelized with the
-\code{future} package. By defaut the chunks are processed sequentially, but they can be processed
+When processing a \code{LAScatalog}, the internal engine splits the dataset into chunks and each chunk is
+read and processed sequentially in a loop. This loop can be parallelized with the
+\code{future} package. By default the chunks are processed sequentially, but they can be processed
 in parallel by registering an evaluation strategy. For example, the following code is evaluated
 sequentially:
 \preformatted{
 ctg <- readLAScatalog("folder/")
-out <- grid_metrics(ctg, mean(Z))
+out <- pixel_metrics(ctg, ~mean(Z))
 }
 But this one is evaluated in parallel with two cores:
 \preformatted{
 library(future)
 plan(multisession, workers = 2L)
 ctg <- readLAScatalog("folder/")
-out <- grid_metrics(ctg, mean(Z))
+out <- pixel_metrics(ctg, ~mean(Z))
 }
 With chunk-based parallelism any algorithm can be parallelized by processing several subsets of
 a dataset.  However, there is a strong cost associated with this type of parallelism. When processing several
@@ -78,12 +78,13 @@ library(future)
 plan(multisession, workers = 4L)
 set_lidr_threads(4L)
 ctg <- readLAScatalog("folder/")
-out <- tree_detection(ctg, lmf(2))
+out <- locate_trees(ctg, lmf(2))
 }
 Here the catalog will be split into chunks that will be processed in parallel. And each computation
-itself implies a parallelized task. This is a nested parallelism task and it is dangerous! Hopefully the lidR
-package handles such cases and chooses by default to give precedence to chunk-based parallelism. In this
-case chunks will be processed in parallel and the points will be processed serially by disabling OpenMP.
+itself implies a parallelized task. This is a nested parallelism task and it is dangerous! Hopefully
+the lidR package handles such cases and chooses by default to give precedence to chunk-based
+parallelism. In this case chunks will be processed in parallel and the points will be processed
+serially by disabling OpenMP.
 }
 
 \section{Nested parallelism - part 2}{
@@ -91,18 +92,14 @@ case chunks will be processed in parallel and the points will be processed seria
 We explained rules of precedence. But actually the user can tune the engine more accurately. Let's
 define the following function:
 \preformatted{
-myfun = function(cluster, ...)
+myfun = function(las, ws, ...)
 {
-  las <- readLAS(cluster)
-  if (is.empty(las)) return(NULL)
   las  <- normalize_height(las, tin())
-  tops <- tree_detection(las, lmf(2))
-  bbox <- extent(cluster)
-  tops <- crop(tops, bbox)
+  tops <- locate_tree(las, lmf(ws))
   return(tops)
 }
 
-out <- catalog_apply(ctg, myfun, ws = 5)
+out <- catalog_map(ctg, myfun, ws = 5)
 }
 This function used two algorithms, one is partially parallelized (\code{tin}) and one is fully
 parallelized \code{lmf}. The user can manually use both OpenMP and future. By default the engine
@@ -112,7 +109,7 @@ attributed to OpenMP.
 \preformatted{
 plan(multisession, workers = 2L)
 set_lidr_threads(2L)
-catalog_apply(ctg, myfun, ws = 5)
+catalog_map(ctg, myfun, ws = 5)
 }
 The rule is simple. If the number of workers needed is greater than the number of
 available workers then OpenMP is disabled. Let suppose we have a 4 cores:

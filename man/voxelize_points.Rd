@@ -21,45 +21,10 @@ Reduce the number of points by voxelizing the point cloud. If the Intensity is p
 it is preserved and aggregated as \code{mean(Intensity)}. Other attributes cannot be aggregated and
 are lost.
 }
-\section{Working with a \code{LAScatalog}}{
-
-This section appears in each function that supports a LAScatalog as input.\cr
-
-In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-function uses the LAScatalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful reading of the
-\link[lidR:LAScatalog-class]{engine documentation} is recommended before processing \code{LAScatalogs}. Each
-\code{lidR} function should come with a section that documents the supported engine options.\cr
-
-The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advantage a \code{.lax} files,
-but this is not mandatory.\cr
-}
-
-\section{Supported processing options}{
-
-Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-\link[lidR:LAScatalog-class]{LAScatalog engine documentation}:
-\itemize{
-\item \strong{chunk size}: How much data is loaded at once.
-\item \strong{chunk buffer*}: Mandatory to get a continuous output without edge effects. The buffer
-is always removed once processed and will never be returned either in R or in files.
-\item \strong{chunk alignment}: Align the processed chunks.
-\item \strong{progress}: Displays a progression estimation.
-\item \strong{output files*}: Mandatory because the output is likely to be too big to be returned
-in R and needs to be written in las/laz files. Supported templates are \code{\{XLEFT\}}, \code{\{XRIGHT\}},
-\code{\{YBOTTOM\}}, \code{\{YTOP\}}, \code{\{XCENTER\}}, \code{\{YCENTER\}} \code{\{ID\}} and, if
-chunk size is equal to 0 (processing by file), \code{\{ORIGINALFILENAME\}}.
-\item select: The function will write files equivalent to the original ones. Thus \code{select = "*"}
-and cannot be changed.
-\item \strong{filter}: Read only points of interest.
-}
-}
-
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz")
 
-las2 = voxelize_points(las, 2)
-#plot(las2)
+las2 = voxelize_points(las, 5)
+#plot(las2, voxel = TRUE)
 }

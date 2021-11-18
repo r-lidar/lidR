@@ -1,33 +1,6 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016-2019 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 #' Plot a LAS* object
 #'
-#' Plot displays a 3D interactive windows-based on rgl for \link{LAS} objects\cr\cr
+#' Plot displays a 3D interactive windows based on rgl for \link{LAS} objects\cr\cr
 #' Plot displays an interactive view for \link[=LAScatalog-class]{LAScatalog} objects with pan and
 #' zoom capabilities based on \link[mapview:mapview-package]{mapview}. If the coordinate reference
 #' system (CRS) of the \code{LAScatalog} is non empty, the plot can be displayed on top of base maps
@@ -66,7 +39,7 @@
 #' @param voxel boolean or numeric. Displays voxels instead of points. Useful to render the output
 #' of \link{voxelize_points}, for example. However it is computationally demanding to render and can
 #' easily take 15 seconds for 10000 voxels. It should be reserved for small scenes. If boolean the voxel
-#' resolution is guessed automatically. Otherwise users can provide the size of the voxels. To reduce the rendering time, 
+#' resolution is guessed automatically. Otherwise users can provide the size of the voxels. To reduce the rendering time,
 #' an internal optimization removes voxels that are not visible when surrounded by other voxels.
 #'
 #' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
@@ -120,16 +93,16 @@ setMethod("plot", signature(x = "LAScatalog", y = "missing"), function(x, y, map
 #' @rdname plot
 setMethod("plot", signature(x = "LASheader", y = "missing"), function(x, y, mapview = FALSE, ...)
 {
-  epsg <- epsg(x)
   PHB  <- x@PHB
-  crs  <- epsg2CRS(epsg)
+  crs  <- st_crs(x)
   xmin <- PHB[["Min X"]]
   xmax <- PHB[["Max X"]]
   ymin <- PHB[["Min Y"]]
   ymax <- PHB[["Max Y"]]
   mtx  <- matrix(c(xmin, xmax, ymin, ymax)[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
-  Sr   <- sp::Polygons(list(sp::Polygon(mtx)), "1")
-  Sr   <- sp::SpatialPolygons(list(Sr), proj4string = crs)
+  geom <- sf::st_polygon(list(mtx))
+  geom <- sf::st_sfc(geom)
+  sf::st_crs(geom) <- crs
 
   names(PHB) <- make.names(names(PHB))
 
@@ -144,12 +117,11 @@ setMethod("plot", signature(x = "LASheader", y = "missing"), function(x, y, mapv
     PHB[["Global.Encoding"]] <- NULL
   }
 
+  data <- data.table::as.data.table(PHB)
+  data <- sf::st_set_geometry(data, geom)
+
   res <- new("LAScatalog")
-  res@bbox <- Sr@bbox
-  res@proj4string <- Sr@proj4string
-  res@plotOrder <- Sr@plotOrder
-  res@data <- data.table::as.data.table(PHB)
-  res@polygons <- Sr@polygons
+  res@data <- data
 
   plot.LAScatalog(res, mapview = mapview, ...)
 })
@@ -174,13 +146,12 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
 
   if (mapview)
   {
-    LAScatalog <- x
-    mapview::mapview(LAScatalog, ...)
+    mapview::mapview(x@data, ...)
   }
   else if (chunk_pattern)
   {
     opt_progress(x) <- TRUE
-    catalog_makecluster(x)
+    engine_chunks(x)
     return(invisible())
   }
   else
@@ -307,6 +278,8 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
       colorPalette <- rev(c("#440154FF", "#3B528BFF", "#21908CFF", "#5DC863FF", "#FDE725FF"))
     else if (color == "treeID")
       colorPalette <- pastel.colors(200)
+    else if (color == "Amplitude")
+      colorPalette <- rev(c("#ff0000", "#ff1919", "#ff3333", "#ff4d4d", "#ff6666", "#ff8080", "#ff9999", "#ffb3b3", "#ffcccc", "#ffe6e6"))
     else
       colorPalette <- height.colors(50)
   }
@@ -359,7 +332,7 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
   col[is.na(col)] <- "lightgray"
 
   # Optimize the rendering of the voxels by removing voxels than can't be seen
-  if(!isFALSE(use_voxels) && getOption("lidR.optimize.voxel.rendering"))
+  if(!isFALSE(use_voxels))
   {
     nvoxels1 <- npoints(las)
     res <- as.numeric(use_voxels)

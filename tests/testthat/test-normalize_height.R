@@ -55,14 +55,10 @@ test_that("Absolute elevation is extrabytes(ed)", {
 })
 
 test_that("Error if NAs in DTM", {
-  dtm[2500] <- NA
+  dtm[5458] <- NA
 
-  expect_error(normalize_height(las, dtm), "not normalizable")
-  expect_message(normalize_height(las, dtm, na.rm = TRUE), "2 points were not normalizable and removed")
-
-  las2 = suppressMessages(normalize_height(las, dtm, na.rm = TRUE))
-
-  expect_equal(npoints(las2), npoints(las) - 2 )
+  expect_warning(nlas <- normalize_height(las, dtm), "1 points do not belong in the raster")
+  expect_false(anyNA(nlas$Z))
 })
 
 test_that("normalize_height works with a LAScatalog", {
@@ -72,7 +68,7 @@ test_that("normalize_height works with a LAScatalog", {
 
   expect_error(normalize_height(ctg, tin()), "output file")
 
-  opt_output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}")
+  opt_output_files(ctg) <- paste0(tempdir(), "/file_{XLEFT}_{YBOTTOM}")
 
   ctg2 = normalize_height(ctg, tin())
   las2 = readLAS(ctg2)

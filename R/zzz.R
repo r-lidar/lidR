@@ -6,7 +6,7 @@
   if (!interactive()) return(invisible())
 
   v = utils::packageVersion("lidR") # nocov
-  packageStartupMessage("lidR ", v, " using ", getThreads(), " threads. Help on <gis.stackexchange.com>. Bug report on <github.com/Jean-Romain/lidR>.") # nocov
+  packageStartupMessage("lidR ", v, " using ", getThreads(), " threads. Help on <gis.stackexchange.com>. Bug report on <github.com/r-lidar/lidR>.") # nocov
 }
 
 # nocov start
@@ -17,11 +17,9 @@
     lidR.progress = TRUE,
     lidR.progress.delay = 2,
     lidR.verbose = FALSE,
-    lidR.interactive = TRUE,
     lidR.debug = FALSE,
-    lidR.buildVRT = TRUE,
     lidR.check.nested.parallelism = TRUE,
-    lidR.optimize.voxel.rendering = TRUE)
+    lidR.raster.default = "stars")
 
   max <- R_omp_get_max_threads()
   if (max > 0)

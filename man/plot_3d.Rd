@@ -17,13 +17,13 @@ add_treetops3d(x, ttops, z = "Z", ...)
 add_flightlines3d(x, flightlines, z = "Z", ...)
 }
 \arguments{
-\item{dtm}{An object of the class \code{RasterLayer}}
+\item{dtm}{An object of the class `RasterLayer` or `stars` or `SpatRaster`}
 
 \item{bg}{The color for the background. Default is black.}
 
 \item{clear_artifacts}{logical. It is a known and documented issue that 3D visualisation with
 \code{rgl} displays artifacts. The points and lines are inaccurately positioned in the space and thus
-the rendering may look false or weird. This is because \code{rgl} computes with single precision \code{float}.
+the rendering may look false or weird. This is because `rgl` computes with single precision `float`.
 To fix this, the objects are shifted to (0,0) to reduce the number of digits needed to represent
 their coordinates. The drawback is that the objects are not plotted at their actual coordinates.}
 
@@ -32,36 +32,36 @@ their coordinates. The drawback is that the objects are not plotted at their act
 
 \item{x}{The output of the function plot used with a LAS object.}
 
-\item{ttops}{A SpatialPointsDataFrame that contains tree tops coordinates.}
+\item{ttops}{A `SpatialPointsDataFrame` or `sf/sfc` that contains tree tops coordinates.}
 
-\item{z}{character. The name of the attribute that contains the height of the tree tops or of the flightlines.}
+\item{z}{character. The name of the attribute that contains the height of the tree tops or of the
+flightlines. Only for XY geometries Ignored if the input have XYZ geometries}
 
-\item{flightlines}{A SpatialPointsDataFrame that contains flightlines coordinates.}
+\item{flightlines}{A `SpatialPointsDataFrame` or `sf` that contains flightlines coordinates.}
 }
 \description{
-Add a \code{RasterLayer} object that represents a digital terrain model or a
-\code{SpatialPointsDataFrame} that represents tree tops to a point cloud scene. To add elements
-to a scene with a point cloud plotted with the function plot from lidR, the functions \code{add_*}
+Add a raster (`raster`, `stars` `terra`) object that represents a digital terrain model or a
+`SpatialPointsDataFrame` or `sf` that represents tree tops to a point cloud scene. To add elements
+to a scene with a point cloud plotted with the function plot from lidR, the functions `add_*`
 take as first argument the output of the plot function (see examples), because the plot function
-does not plot the actual coordinates of the point cloud, but offsetted values. See function
-\link[=plot]{plot} and its argument \code{clear_artifacts} for more details. It works only
-with \code{rgl} i.e. \code{backend = "rgl"} which is the default.
+does not plot the actual coordinates of the point cloud, but offset values. See function
+\link[=plot]{plot} and its argument `clear_artifacts` for more details. It works only
+with `rgl` i.e. `backend = "rgl"` which is the default.
 }
 \examples{
 \dontrun{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-las = readLAS(LASfile, filter = "-keep_xy 273450 273600 5274450 5274600")
+las <- readLAS(LASfile)
 
-dtm = grid_terrain(las, algorithm = tin())
-ttops <- find_trees(las, lmf(ws = 5))
+dtm <- rasterize_terrain(las, algorithm = tin())
+ttops <- locate_trees(las, lmf(ws = 5))
 
 plot_dtm3d(dtm)
 
-x = plot(las)
+x <- plot(las)
 add_dtm3d(x, dtm)
 add_treetops3d(x, ttops)
 
-library(magrittr)
-plot(las) \%>\% add_dtm3d(dtm) \%>\% add_treetops3d(ttops)
+plot(las) |> add_dtm3d(dtm) |> add_treetops3d(ttops)
 }
 }

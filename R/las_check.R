@@ -1,30 +1,3 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2018 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 #' Inspect a LAS object
 #'
 #' Performs a deep inspection of a LAS or LAScatalog object and prints a report.\cr\cr
@@ -34,8 +7,10 @@
 #' \item if the header is valid according to las specification
 #' \item if the point cloud is in accordance with the header
 #' \item if the point cloud has duplicated points and degenerated ground points
+#' \item if gpstime and pulses are consistent
 #' \item it the coordinate reference sytem is correctly recorded
 #' \item if some pre-processing, such as normalization or ground filtering, is already done.
+#' \item and much more
 #' }
 #' For a LAScatalog object it checks:
 #' \itemize{
@@ -69,12 +44,12 @@ las_check = function(las, print = TRUE, ...)
 #' @export
 las_check.LASheader = function(las, print = TRUE, ...)
 {
-  xscale  <- las@PHB[["X scale factor"]]
-  xoffset <- las@PHB[["X offset"]]
-  yscale  <- las@PHB[["Y scale factor"]]
-  yoffset <- las@PHB[["Y offset"]]
-  zscale  <- las@PHB[["Z scale factor"]]
-  zoffset <- las@PHB[["Z offset"]]
+  xscale  <- las[["X scale factor"]]
+  xoffset <- las[["X offset"]]
+  yscale  <- las[["Y scale factor"]]
+  yoffset <- las[["Y offset"]]
+  zscale  <- las[["Z scale factor"]]
+  zoffset <- las[["Z offset"]]
 
   head <- as.list(las)
   g    <- glue::glue
@@ -161,20 +136,28 @@ las_check.LAS = function(las, print = TRUE, ...)
 {
   assert_is_a_bool(print)
 
-  data <- las@data
-  head <- as.list(las@header)
-  g    <- glue::glue
-
   warnings <- character(0)
   errors <- character(0)
   infos <- character(0)
+  g <- glue::glue
 
-  xscale <- las@header@PHB[["X scale factor"]]
-  xoffset <- las@header@PHB[["X offset"]]
-  yscale <- las@header@PHB[["Y scale factor"]]
-  yoffset <- las@header@PHB[["Y offset"]]
-  zscale <- las@header@PHB[["Z scale factor"]]
-  zoffset <- las@header@PHB[["Z offset"]]
+  if (is_las_v3(las))
+  {
+    .h1("Checking format")
+    .h2("Checking lidR format version is v4...")
+    .fail("This LAS is in old format from lidR v3")
+    las <- las_v3_repair(las)
+  }
+
+  data <- payload(las)
+  head <- as.list(header(las))
+
+  xscale <- las[["X scale factor"]]
+  xoffset <- las[["X offset"]]
+  yscale <- las[["Y scale factor"]]
+  yoffset <- las[["Y offset"]]
+  zscale <- las[["Z scale factor"]]
+  zoffset <- las[["Z offset"]]
 
   # ==== data =====
 
@@ -435,7 +418,7 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   # ==== header ====
 
-  head_chk <- las_check(las@header, print = print, ...)
+  head_chk <- las_check(header(las), print = print, ...)
   infos <- c(infos, head_chk[["infos"]])
   errors <- c(errors, head_chk[["errors"]])
   warnings <- c(warnings, head_chk[["warnings"]])
@@ -482,26 +465,26 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   code    <- if (use_epsg(las)) epsg(las) else 0
   swkt    <- wkt(las)
-  lasproj <- las@proj4string
+  lasproj <- st_crs(las)
   failure <- FALSE
 
   if (use_epsg(las) && code != 0)
   {
-    codeproj <- epsg2CRS(code)
+    codeproj <- epsg2crs(code, fail = FALSE)
 
-    if (is.na(codeproj@projargs))
+    if (is.na(codeproj))
     { .fail(glue::glue("EPSG code {code} unknown")) ; failure = TRUE }
 
-    if (is.na(codeproj@projargs) && !is.na(lasproj@projargs))
-    { .warn(glue::glue("EPSG code is unknown but a proj4string found")) ; failure = TRUE }
+    if (is.na(codeproj) && !is.na(lasproj))
+    { .warn(glue::glue("EPSG code is unknown but a CRS found")) ; failure = TRUE }
 
-    if (!is.na(codeproj@projargs) && is.na(lasproj@projargs))
-    { .warn("ESPG code is valid but no proj4string found") ; failure = TRUE }
+    if (!is.na(codeproj) && is.na(lasproj))
+    { .warn("ESPG code is valid but no CRS found") ; failure = TRUE }
 
-    if (!is.na(codeproj@projargs) && !is.na(lasproj@projargs))
+    if (!is.na(codeproj) && !is.na(lasproj))
     {
-      if (codeproj@projargs != lasproj@projargs)
-      { .fail("ESPG code and proj4string do not match") ; failure = TRUE }
+      if (codeproj != lasproj)
+      { .fail("ESPG code and CRS do not match") ; failure = TRUE }
     }
 
     if (!failure)
@@ -510,21 +493,21 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (use_wktcs(las) && swkt != "")
   {
-    codeproj = wkt2CRS(swkt)
+    codeproj = wkt2crs(swkt, fail = FALSE)
 
-    if (is.na(codeproj@projargs))
-    { .fail("WKT OGC CS not parsed by sf::st_crs") ; failure = TRUE }
+    if (is.na(codeproj))
+    { .fail("WKT OGC CS not parsed") ; failure = TRUE }
 
-    if (is.na(codeproj@projargs) & !is.na(lasproj@projargs))
-    { .warn("WKT OGC CS not parsed by sf::st_crs but a proj4string found") ; failure = TRUE }
+    if (is.na(codeproj) & !is.na(lasproj))
+    { .warn("WKT OGC CS not parsed but a CRS found") ; failure = TRUE }
 
-    if (!is.na(codeproj@projargs) & is.na(lasproj@projargs))
-    { .warn("WKT OGC CS is valid but no proj4string found") ; failure = TRUE }
+    if (!is.na(codeproj) & is.na(lasproj))
+    { .warn("WKT OGC CS is valid but no CRS found") ; failure = TRUE }
 
-    if (!is.na(codeproj@projargs) & !is.na(lasproj@projargs))
+    if (!is.na(codeproj) & !is.na(lasproj))
     {
-      if (codeproj@projargs != lasproj@projargs)
-      { .fail("WKT OGC CS and proj4string do not match") ; failure = TRUE }
+      if (codeproj != lasproj)
+      { .fail("WKT OGC CS and CRS do not match") ; failure = TRUE }
     }
 
     if (!failure)
@@ -533,8 +516,8 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (code == 0 & swkt == "")
   {
-    if (!is.na(lasproj@projargs))
-    { .warn("A proj4string found but no CRS in the header") ; failure = TRUE }
+    if (!is.na(lasproj))
+    { .warn("A CRS found but no CRS in the header") ; failure = TRUE }
 
     if (!failure)
       .ok()
@@ -569,8 +552,9 @@ las_check.LAS = function(las, print = TRUE, ...)
   }
   else
   {
-    min = grid_metrics(las, ~min(Z), res = 20)
-    mean_min = mean(abs(min[]), na.rm = TRUE)
+    min <- rasterize_fast(las, res = 20, method = "min")
+    val <- raster_values(min)
+    mean_min <- mean(abs(val), na.rm = TRUE)
 
     if (mean_min <= 0.1) {
       .yes()
@@ -674,15 +658,23 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
       return(out)
   }
 
-
-  data <- las@data
-  g    <- glue::glue
-
   warnings <- character(0)
   errors <- character(0)
   infos <- character(0)
+  g <- glue::glue
+
+  if (is_lascatalog_v3(las))
+  {
+    .h1("Checking format")
+    .h2("Checking lidR format version is v4...")
+    .fail("This LAScatalog is in old format from lidR v3")
+    las <- lascatalog_v3_repair(las)
+  }
+
+  data <- las@data
 
   # ==== data =====
+
 
   .h1("Checking headers consistency")
 
@@ -815,7 +807,7 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
 
   if (is.indexed(las)) {
     .yes()
-    infos <- append(infos, "The LAS files are spatially indexed")
+    #infos <- append(infos, "The LAS files are spatially indexed")
   }
   else {
     .no()

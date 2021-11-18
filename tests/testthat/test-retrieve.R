@@ -6,7 +6,7 @@ las@data = las@data[,c(1:4, 6:7)]
 
 test_that("retrieve_pulses works", {
   las = retrieve_pulses(las)
-  n = names(las@data)
+  n = names(las)
   expect_true("pulseID" %in% n)
   expect_is(las$pulseID, "integer")
 })
@@ -29,7 +29,7 @@ test_that("retrieve_pulses warn if gpstime zeroed", {
 test_that("retrieve_flightlines works", {
   las = retrieve_flightlines(las)
 
-  n = names(las@data)
+  n = names(las)
   expect_true("flightlineID" %in% n)
   expect_equal(tabulate(las$flightlineID), c(12565,4496))
 })
@@ -53,7 +53,7 @@ test_that("retrieve_flightlines warn if gpstime zeroed", {
 #test_that("retrieve_scanlines works", {
 #  las = retrieve_scanlines(las)
 #
-#  n = names(las@data)
+#  n = names(las)
 #  expect_true("retrieve_scanlinesID" %in% n)
 #  expect_equal(tabulate(las$flightlineID), c(12565,4496))
 #})

@@ -22,26 +22,17 @@ clip_transect(las, p1, p2, width, xz = FALSE, ...)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{geometry}{a geometric object. Many types are supported, see section 'supported geometries'.}
+\item{geometry}{a geometric object. spatial points, spatial polygons in sp or sf/sfc format, Extent,
+bbox, 2x2 matrix}
 
 \item{...}{in \code{clip_roi}: optional supplementary options (see supported geometries). Unused in
 other functions}
 
-\item{xleft}{numeric. left x coordinates of rectangles.}
+\item{xleft, ybottom, xright, ytop}{numeric. coordinates of one or several rectangles.}
 
-\item{ybottom}{numeric. bottom y coordinates of rectangles.}
+\item{xpoly, ypoly}{numeric. x coordinates of a polygon.}
 
-\item{xright}{numeric. right x coordinates of rectangles.}
-
-\item{ytop}{numeric. top y coordinates of rectangles.}
-
-\item{xpoly}{numeric. x coordinates of a polygon.}
-
-\item{ypoly}{numeric. y coordinates of a polygon.}
-
-\item{xcenter}{numeric. x coordinates of disc centers.}
-
-\item{ycenter}{numeric. y coordinates of disc centers.}
+\item{xcenter, ycenter}{numeric. x coordinates of on or several disc centres.}
 
 \item{radius}{numeric. disc radius or radii.}
 
@@ -53,75 +44,16 @@ transect}
 \item{xz}{bool. If \code{TRUE} the point cloud is reoriented to fit on XZ coordinates}
 }
 \value{
-If the input is a \code{LAS} object: an object of class \code{LAS}, or a \code{list} of \code{LAS} objects if the query implies several regions of interest will be returned.\cr\cr
-If the input is a \code{LAScatalog} object: an object of class \code{LAS}, or a \code{list} of \code{LAS}
-objects if the query implies several regions of interest will be returned, or a \code{LAScatalog} if the
+If the input is a LAS object: an object of class LAS, or a \code{list} of LAS objects if the
+query implies several regions of interest.\cr\cr
+If the input is a LAScatalog object: an object of class LAS, or a \code{list} of LAS
+objects if the query implies several regions of interest, or a LAScatalog if the
 queries are immediately written into files without loading anything in R.
 }
 \description{
-Clip points within a given region of interest (ROI) from a point cloud (\code{LAS} object) or a catalog
-(\code{LAScatalog} object). With a \code{LAS} object, the user first reads and loads a point cloud
-into memory and then can clip it to get a subset within a region of interest. With a \code{LAScatalog}
-object, the user can extract any arbitrary ROI for a set of \code{las/laz} files, loading only the
-points of interest. This is faster, easier and much more memory-efficient for extracting ROIs.
+Clip points within a given region of interest (ROI) from a point cloud (LAS object) or a collection
+of files (LAScatalog object).
 }
-\section{Supported geometries}{
-
-\itemize{
- \item \href{https://en.wikipedia.org/wiki/Well-known_text}{WKT string}: describing a POINT, a POLYGON or
- a MULTIPOLYGON. If points, a parameter 'radius' must be passed in \code{...}
- \item \link[sp:Polygon-class]{Polygon}, \link[sp:SpatialPolygons-class]{SpatialPolygons},
- \link[sp:SpatialPolygonsDataFrame-class]{SpatialPolygonsDataFrame},  \link[sp:SpatialPoints-class]{SpatialPoints}
- or \link[sp:SpatialPointsDataFrame-class]{SpatialPointsDataFrame}
- in that case a parameter 'radius' must be passed in \code{...}
- \item \link[sf:sf]{SimpleFeature} from sf that consistently contains \code{POINT} or \code{POLYGON/MULTIPOLYGON}.
- In case of \code{POINT} a parameter 'radius' must be passed in \code{...}
- \item \link[raster:Extent-class]{Extent} from package \code{raster}
- \item \link[sf:st_bbox]{bbox} from package \code{sf}
- \item \link[base:matrix]{matrix} 2 x 2 describing a bounding box following this order:
- \preformatted{
-  min     max
-x 684816  684943
-y 5017823 5017957}
- }
-}
-
-\section{Working with a \code{LAScatalog}}{
-
-This section appears in each function that supports a LAScatalog as input.\cr
-
-In \code{lidR} when the input of a function is a \link[lidR:LAScatalog-class]{LAScatalog} the
-function uses the LAScatalog processing engine. The user can modify the engine options using
-the \link[lidR:catalog_options_tools]{available options}. A careful reading of the
-\link[lidR:LAScatalog-class]{engine documentation} is recommended before processing \code{LAScatalogs}. Each
-\code{lidR} function should come with a section that documents the supported engine options.\cr
-
-The \code{LAScatalog} engine supports \code{.lax} files that \emph{significantly} improve the computation
-speed of spatial queries using a spatial index. Users should really take advantage a \code{.lax} files,
-but this is not mandatory.\cr
-}
-
-\section{Supported processing options}{
-
-Supported processing options for a \code{LAScatalog} (in bold). For more details see the
-\link[=LAScatalog-class]{LAScatalog engine documentation}:
-\itemize{
-\item chunk_size: Does not make sense here.
-\item buffer: Not supported yet.
-\item alignment: Does not makes sense here.
-\item \strong{progress}: Displays a progress estimation.
-\item \strong{output_files}: If 'output_files' is set in the catalog, the ROIs will not be returned in R.
-They will be written immediately in files. See \link{LAScatalog-class} and examples. The allowed templates in
-\code{clip_*} are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
-{YCENTER}}. In addition \code{clip_roi} supports any names from the table of attributes of a spatial object given as
-input such as \code{{PLOTID}}, \code{{YEAR}}, \code{{SPECIES}}, for examples, if these attributes exist. If empty everything
-is returned into R.
-\item \strong{laz_compression}: write \code{las} or \code{laz} files
-\item select: The function will write files equivalent to the originals. This option is not respected.
-\item \strong{filter}: Read only the points of interest.
-}
-}
-
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 

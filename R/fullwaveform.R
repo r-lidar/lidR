@@ -32,7 +32,7 @@ interpret_waveform <- function(las)
   fwfheader[["X scale factor"]] <- 1e-6
   fwfheader[["Y scale factor"]] <- 1e-6
   fwfheader[["Z scale factor"]] <- 1e-6
-  fwf <- LAS(fwf, fwfheader, proj4string = las@proj4string, check = FALSE)
+  fwf <- LAS(fwf, fwfheader, crs = st_crs(las), check = FALSE)
   las_quantize(fwf, by_reference = TRUE)
   fwf <- las_update(fwf)
   fwf <- add_lasattribute(fwf, name = "Amplitude", desc = "Full waveform amplitude in volts")

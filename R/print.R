@@ -1,178 +1,107 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016-2019 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
-#' Summary and Print for \code{LAS*} objects
-#'
-#' @param object,x A \code{LAS*} object or other lidR related objects.
-#' @param ... Unused
-setGeneric("print", function(x, ...)
-  standardGeneric("print"))
-
-setGeneric("summary", function(object, ...)
-  standardGeneric("summary"))
-
-#' @rdname print
-#' @aliases summary
+#' @rdname tools
 #' @export
-setMethod("summary", "LAS", function(object, ...)
+print.LAS <- function(x, ...)
+{
+  show(x)
+  return(invisible(x))
+}
+
+#' @rdname tools
+#' @export
+print.LAScatalog <- function(x, ...)
+{
+  show(x)
+  return(invisible(x))
+}
+
+#' @export
+#' @rdname tools
+print.lidRAlgorithm = function(x, ...)
+{
+  e <- environment(x)
+  params <- ls(e)
+  params <- Filter(function(i) !is.algorithm(get(i,e)), params)
+  omp <- if (is.parallelised(x)) "yes" else "no"
+
+  if (is(x, LIDRDSM))
+  { use = "digital surface model" ; with = LIDRCONTEXTDSM }
+  else if (is (x, LIDRDEC))
+  { use = "point cloud thinning" ; with = LIDRCONTEXTDEC }
+  else if (is (x, LIDRGND))
+  { use = "ground classification" ; with = LIDRCONTEXTGND }
+  else if (is (x, LIDRITD))
+  { use = "individual tree detection" ; with = LIDRCONTEXTITD }
+  else if (is (x, LIDRITS))
+  { use = "individual tree segmentation" ; with = LIDRCONTEXTITS }
+  else if (is (x, LIDRNIT))
+  { use = "intensity normalisation" ; with = LIDRCONTEXTNIT }
+  else if (is (x, LIDRSNG))
+  { use = "snag segmentation" ; with = LIDRCONTEXTSNG }
+  else if (is (x, LIDRTRK))
+  { use = "sensor tracking" ; with = LIDRCONTEXTTRK }
+  else if (is (x, LIDRSHP))
+  { use = "shape segmentation" ; with = LIDRCONTEXTSHP }
+  else if (is (x, LIDRSPI))
+  { use = "spatial interpolation" ; with = LIDRCONTEXTSPI }
+  else if (is (x, LIDROUT))
+  { use = "noise classification" ; with = LIDRCONTEXTOUT }
+  else
+  { use = "unknown" ; with = "unknown" } # nocov
+
+  with = paste(with, collapse = " or ")
+
+  cat("Object of class lidR algorithm\n")
+  cat("Algorithm for:", use, "\n")
+  cat("Designed to be used with:", with, "\n")
+  cat("Native C++ parallelization:", omp, "\n")
+  cat("Parameters: ")
+
+  if (length(params) == 0L)
+  {
+    cat("none\n")
+    return(invisible(x))
+  }
+  else
+    cat("\n")
+
+  for (param in params)
+  {
+    v = get(param, e)
+    if (is.numeric(v) | is.complex(v) | is.logical(v) | is.character(v))
+      cat(" - ", param, " = " , v, " <", class(v), ">\n", sep = "")
+    else if (is.null(v))
+      cat(" - ", param, " = NULL <NULL>\n", sep = "")
+    else
+      cat(" - ", param, " <", class(v), ">\n", sep = "")
+  }
+
+  return(invisible(x))
+}
+
+#' @export
+#' @rdname tools
+print.raster_template <- function(x, ...)
+{
+  cat("Object of class raster_template\n")
+  cat("extent     : ", x$xmin, ", ", x$xmax, ", ",  x$ymin, ", ", x$ymax, " (xmin, xmax, ymin, ymax)\n", sep = "")
+  cat("resolution :", x$xres, x$yres, "\n")
+  cat("size       :", x$ncol, x$nrow, "\n")
+  cat("crs        :", x$crs$Name, "\n")
+}
+
+#' @rdname tools
+#' @param object A \code{LAS*} object or other lidR related objects.
+#' @export
+summary.LAS <- function(object, ...)
 {
   print(object)
   print(object@header)
   return(invisible(object))
-})
+}
 
-#' @rdname print
+#' @rdname tools
 #' @export
-setMethod("print", "LAS", function(x)
-{
-  show(x)
-  return(invisible(x))
-})
-
-setMethod("show", "LAS", function(object)
-{
-  size      <- format(utils::object.size(object), units = "auto")
-  area      <- area(object)
-  area.h    <- area
-  npoints   <- nrow(object@data)
-  npoints.h <- npoints
-  dpts      <- if (area > 0) npoints/area else 0
-  #attr      <- names(object@data)
-  ext       <- sp::bbox(object)
-  phb       <- object@header@PHB
-  major     <- phb[["Version Major"]]
-  minor     <- phb[["Version Minor"]]
-  version   <- paste(major, minor, sep = ".")
-  format    <- phb[["Point Data Format ID"]]
-
-  coord.ref <- sf::st_crs(object@proj4string)
-  coord.ref <- if (is.null(coord.ref$wkt)) coord.ref$proj4string else coord.ref$input
-
-  units <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
-  units <- if (length(units) == 0) "units" else units
-
-  areaprefix  <- ""
-  pointprefix <- ""
-
-  if (area > 1000*1000/2)
-  {
-    areaprefix <- if (length(units) == 0) "thousand " else "k"
-    area.h     <- round(area/(1000*1000), 2)
-  }
-
-  if (npoints > 1000 & npoints < 1000^2)
-  {
-    pointprefix <- "thousand"
-    npoints.h   <- round(npoints/1000, 1)
-  }
-  else if (npoints >= 1000^2 & npoints < 1000^3)
-  {
-    pointprefix <- "million"
-    npoints.h   <- round(npoints/(1000^2), 2)
-  }
-  else if (npoints >= 1000^3)
-  {
-    pointprefix <- "billion"
-    npoints.h   <- round(npoints/(1000^3), 2)
-  }
-
-  cat("class        : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
-  cat("memory       :", size, "\n")
-  cat("extent       : ", ext[1,1], ", ", ext[1,2], ", ", ext[2,1], ", ", ext[2,2], " (xmin, xmax, ymin, ymax)\n", sep = "")
-  cat("coord. ref.  :", coord.ref, "\n")
-  cat("area         : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
-  cat("points       :", npoints.h, pointprefix, "points\n")
-  cat("density      : ", round(dpts, 2), " points/", units, "\u00B2\n", sep = "")
-  #cat("names        :", attr, "\n")
-
-  return(invisible(object))
-})
-
-setMethod("show", "LAScatalog", function(object)
-{
-  area        <- area(object)
-  area.h      <- area
-  npoints     <- sum(object@data$Number.of.point.records)
-  npoints.h   <- npoints
-  ext         <- object@bbox
-  units      <- regmatches(object@proj4string@projargs, regexpr("(?<=units=).*?(?=\\s)", object@proj4string@projargs, perl = TRUE))
-  units       <- if (length(units) == 0) "units" else units
-  areaprefix  <- ""
-  pointprefix <- ""
-  major       <- sort(unique(object[["Version.Major"]]))
-  minor       <- sort(unique(object[["Version.Minor"]]))
-  version     <- paste(major, minor, sep = ".", collapse = " and ")
-  format      <- paste(sort(unique(object[["Point.Data.Format.ID"]])), collapse = " and ")
-  density     <- round(npoints/area, 1)
-
-  if (is.nan(density)) density <- 0
-
-  coord.ref <- sf::st_crs(object@proj4string)
-  coord.ref <- if (is.null(coord.ref$wkt)) coord.ref$proj4string else coord.ref$input
-
-  if (area > 1000*1000/2)
-  {
-    areaprefix <- if (length(units) == 0) "thousand " else "k"
-    area.h     <- round(area/(1000*1000), 2)
-  }
-
-  if (npoints <= 1000)
-  {
-    pointprefix <- ""
-    npoints.h   <- npoints
-  }
-  else if (npoints > 1000 & npoints < 1000^2)
-  {
-    pointprefix <- "thousand"
-    npoints.h   <- round(npoints/1000, 1)
-  }
-  else if (npoints >= 1000^2 & npoints < 1000^3)
-  {
-    pointprefix <- "million"
-    npoints.h   <- round(npoints/(1000^2), 2)
-  }
-  else if (npoints >= 1000^3)
-  {
-    pointprefix <- "billion"
-    npoints.h   <- round(npoints/(1000^3), 2)
-  }
-
-  cat("class       : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
-  cat("extent      : ", ext[1,1], ", ", ext[1,2], ", ", ext[2,1], ", ", ext[2,2], " (xmin, xmax, ymin, ymax)\n", sep = "")
-  cat("coord. ref. :", coord.ref, "\n")
-  cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
-  cat("points      : ", npoints.h, pointprefix, " points\n", sep = "")
-  cat("density     : ", density, " points/", units, "\u00B2\n", sep = "")
-  cat("num. files  :", dim(object@data)[1], "\n")
-  return(invisible(object))
-})
-
-#' @rdname print
-setMethod("summary", "LAScatalog", function(object, ...)
+summary.LAScatalog <- function(object, ...)
 {
   inmemory <- if (opt_output_files(object) == "") "in memory" else "on disk"
   w2w  <- if (opt_wall_to_wall(object)) "guaranteed" else "not guaranteed"
@@ -204,6 +133,116 @@ setMethod("summary", "LAScatalog", function(object, ...)
     cat("\n")
 
   }
+  return(invisible(object))
+}
+
+setMethod("show", "LAS", function(object)
+{
+  size      <- format(utils::object.size(object), units = "auto")
+  area      <- as.numeric(st_area(object))
+  area.h    <- area
+  npoints   <- nrow(object@data)
+  npoints.h <- npoints
+  dpts      <- if (area > 0) npoints/area else 0
+  ext       <- st_bbox(object)
+  phb       <- object@header@PHB
+  major     <- phb[["Version Major"]]
+  minor     <- phb[["Version Minor"]]
+  version   <- paste(major, minor, sep = ".")
+  format    <- phb[["Point Data Format ID"]]
+  units     <- st_crs(object)$units
+  units     <- if (is.na(units)) "units" else units
+
+  areaprefix  <- ""
+  pointprefix <- ""
+
+  if (area > 1000*1000/2)
+  {
+    areaprefix <- if (length(units) == 0) "thousand " else "k"
+    area.h     <- round(area/(1000*1000), 2)
+  }
+
+  if (npoints > 1000 & npoints < 1000^2)
+  {
+    pointprefix <- "thousand"
+    npoints.h   <- round(npoints/1000, 1)
+  }
+  else if (npoints >= 1000^2 & npoints < 1000^3)
+  {
+    pointprefix <- "million"
+    npoints.h   <- round(npoints/(1000^2), 2)
+  }
+  else if (npoints >= 1000^3)
+  {
+    pointprefix <- "billion"
+    npoints.h   <- round(npoints/(1000^3), 2)
+  }
+
+  cat("class        : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
+  cat("memory       :", size, "\n")
+  cat("extent       : ", ext[1], ", ", ext[3], ", ", ext[2], ", ", ext[4], " (xmin, xmax, ymin, ymax)\n", sep = "")
+  cat("coord. ref.  :", st_crs(object)$Name, "\n")
+  cat("area         : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
+  cat("points       : ", npoints.h, " ", pointprefix, " points\n", sep = "")
+  cat("density      : ", round(dpts, 2), " points/", units, "\u00B2\n", sep = "")
+  #cat("names        :", attr, "\n")
+
+  return(invisible(object))
+})
+
+setMethod("show", "LAScatalog", function(object)
+{
+  area        <- as.numeric(st_area(object))
+  area.h      <- area
+  npoints     <- sum(object@data$Number.of.point.records)
+  npoints.h   <- npoints
+  ext         <- st_bbox(object)
+  units       <- st_crs(object)$units
+  units       <- if (is.na(units)) "units" else units
+  areaprefix  <- ""
+  pointprefix <- ""
+  major       <- sort(unique(object[["Version.Major"]]))
+  minor       <- sort(unique(object[["Version.Minor"]]))
+  version     <- paste(major, minor, sep = ".", collapse = " and ")
+  format      <- paste(sort(unique(object[["Point.Data.Format.ID"]])), collapse = " and ")
+  density     <- round(npoints/area, 1)
+
+  if (is.nan(density)) density <- 0
+
+  if (area > 1000*1000/2)
+  {
+    areaprefix <- if (length(units) == 0) "thousand " else "k"
+    area.h     <- round(area/(1000*1000), 2)
+  }
+
+  if (npoints <= 1000)
+  {
+    pointprefix <- ""
+    npoints.h   <- npoints
+  }
+  else if (npoints > 1000 & npoints < 1000^2)
+  {
+    pointprefix <- "thousand"
+    npoints.h   <- round(npoints/1000, 1)
+  }
+  else if (npoints >= 1000^2 & npoints < 1000^3)
+  {
+    pointprefix <- "million"
+    npoints.h   <- round(npoints/(1000^2), 2)
+  }
+  else if (npoints >= 1000^3)
+  {
+    pointprefix <- "billion"
+    npoints.h   <- round(npoints/(1000^3), 2)
+  }
+
+  cat("class       : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
+  cat("extent      : ", ext[1], ", ", ext[3], ", ", ext[2], ", ", ext[4], " (xmin, xmax, ymin, ymax)\n", sep = "")
+  cat("coord. ref. :", st_crs(object)$Name, "\n")
+  cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
+  cat("points      : ", npoints.h, " ", pointprefix, " points\n", sep = "")
+  cat("density     : ", density, " points/", units, "\u00B2\n", sep = "")
+  cat("num. files  :", dim(object@data)[1], "\n")
   return(invisible(object))
 })
 
@@ -374,69 +413,3 @@ setMethod("show", "LAScluster", function(object)
   cat("filter  :", object@filter, "\n")
   return(invisible(object))
 })
-
-
-#' @export
-#' @method print lidRAlgorithm
-#' @rdname print
-print.lidRAlgorithm = function(x, ...)
-{
-  e <- environment(x)
-  params <- ls(e)
-  params <- Filter(function(i) !is.algorithm(get(i,e)), params)
-  omp <- if (is.parallelised(x)) "yes" else "no"
-
-  if (is(x, LIDRDSM))
-  { use = "digital surface model" ; with = LIDRCONTEXTDSM }
-  else if (is (x, LIDRDEC))
-  { use = "point cloud thinning" ; with = LIDRCONTEXTDEC }
-  else if (is (x, LIDRGND))
-  { use = "ground classification" ; with = LIDRCONTEXTGND }
-  else if (is (x, LIDRITD))
-  { use = "individual tree detection" ; with = LIDRCONTEXTITD }
-  else if (is (x, LIDRITS))
-  { use = "individual tree segmentation" ; with = LIDRCONTEXTITS }
-  else if (is (x, LIDRNIT))
-  { use = "intensity normalisation" ; with = LIDRCONTEXTNIT }
-  else if (is (x, LIDRSNG))
-  { use = "snag segmentation" ; with = LIDRCONTEXTSNG }
-  else if (is (x, LIDRTRK))
-  { use = "sensor tracking" ; with = LIDRCONTEXTTRK }
-  else if (is (x, LIDRSHP))
-  { use = "shape segmentation" ; with = LIDRCONTEXTSHP }
-  else if (is (x, LIDRSPI))
-  { use = "spatial interpolation" ; with = LIDRCONTEXTSPI }
-  else if (is (x, LIDROUT))
-  { use = "noise classification" ; with = LIDRCONTEXTOUT }
-  else
-  { use = "unknown" ; with = "unknown" } # nocov
-
-  with = paste(with, collapse = " or ")
-
-  cat("Object of class lidR algorithm\n")
-  cat("Algorithm for:", use, "\n")
-  cat("Designed to be used with:", with, "\n")
-  cat("Native C++ parallelization:", omp, "\n")
-  cat("Parameters: ")
-
-  if (length(params) == 0L)
-  {
-    cat("none\n")
-    return(invisible(x))
-  }
-  else
-    cat("\n")
-
-  for (param in params)
-  {
-    v = get(param, e)
-    if (is.numeric(v) | is.complex(v) | is.logical(v) | is.character(v))
-      cat(" - ", param, " = " , v, " <", class(v), ">\n", sep = "")
-    else if (is.null(v))
-      cat(" - ", param, " = NULL <NULL>\n", sep = "")
-    else
-      cat(" - ", param, " <", class(v), ">\n", sep = "")
-  }
-
-  return(invisible(x))
-}

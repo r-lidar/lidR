@@ -39,7 +39,7 @@ A LAS object
 Reads .las or .laz files into an object of class \link[=LAS-class]{LAS}. If several files are read at
 once the returned LAS object is considered as one LAS file. The optional parameters enable the user
 to save a substantial amount of memory by choosing to load only the attributes or points of interest.
-LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0 to 10 are supported.\cr\cr
+LAS formats 1.0 to 1.4 are supported. Point Data Record Format 0 to 10 are supported.\cr\cr
 \code{readLAS} is the original function and always works. Using one of the \code{read*LAS} functions
 adds information to the returned object to register a point-cloud type. Registering the correct point
 type \strong{may} improve the performance of some functions by enabling users to select an appropriate spatial index.
@@ -70,11 +70,11 @@ can also be passed via the argument filter.
 }
 \section{Full waveform}{
 
-With most recent versions of the `rlas` package, full waveform (FWF) can be read and `lidR`
+With most recent versions of the \code{rlas} package, full waveform (FWF) can be read and \code{lidR}
 provides some compatible functions. However, the support of FWF is still a work-in-progress
-in the `rlas` package. How it is read, interpreted and represented in R may change. Consequently,
-tools provided by `lidR` may also change until the support of FWF becomes mature and
-stable in `rlas`. See also \link[rlas:read.las]{rlas::read.las}.\cr\cr
+in the \code{rlas} package. How it is read, interpreted and represented in R may change. Consequently,
+tools provided by \code{lidR} may also change until the support of FWF becomes mature and
+stable in \code{rlas}. See also \link[rlas:read.las]{rlas::read.las}.\cr\cr
 Remember that FWF represents an insanely huge amount of data. It terms of memory it is like
 having between 10 to 100 times more points. Consequently, loading FWF data in R should be
 restricted to relatively small point clouds.

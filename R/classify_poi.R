@@ -29,7 +29,7 @@ classify_poi.LAS = function(las, class, poi = NULL, roi = NULL, inverse_roi = FA
 
   bool <- bool1 & bool2
 
-  if (! "Classification" %in% names(las@data))
+  if (! "Classification" %in% names(las))
   {
     if (by_reference)
       las@data[, Classification := 0L]
@@ -50,22 +50,12 @@ classify_poi.LAS = function(las, class, poi = NULL, roi = NULL, inverse_roi = FA
 }
 
 #' @export
-classify_poi.LAScluster = function(las, class, poi = NULL, roi = NULL, inverse_roi = FALSE, by_reference = FALSE)
-{
-  buffer <- NULL
-  x <- readLAS(las)
-  if (is.empty(x)) return(NULL)
-  x <- classify_poi(x, class, poi, roi, inverse_roi, by_reference = TRUE)
-  return(x)
-}
-
-#' @export
 classify_poi.LAScatalog = function(las, class, poi = NULL, roi = NULL, inverse_roi = FALSE, by_reference = FALSE)
 {
   opt_select(las) <- "*"
   opt_chunk_buffer(las) <- 0
 
-  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, classify_poi, class = class, poi = poi, roi = roi, inverse_roi = inverse_roi, .options = options)
+  options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- catalog_map(las, classify_poi, class = class, poi = poi, roi = roi, inverse_roi = inverse_roi, .options = options)
   return(output)
 }

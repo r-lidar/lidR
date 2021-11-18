@@ -132,36 +132,35 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_highest
-LogicalVector C_highest(S4 las, S4 layout);
+LogicalVector C_highest(S4 las, List layout);
 RcppExport SEXP _lidR_C_highest(SEXP lasSEXP, SEXP layoutSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< S4 >::type layout(layoutSEXP);
+    Rcpp::traits::input_parameter< List >::type layout(layoutSEXP);
     rcpp_result_gen = Rcpp::wrap(C_highest(las, layout));
     return rcpp_result_gen;
 END_RCPP
 }
 // C_lowest
-LogicalVector C_lowest(S4 las, S4 layout);
+LogicalVector C_lowest(S4 las, List layout);
 RcppExport SEXP _lidR_C_lowest(SEXP lasSEXP, SEXP layoutSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< S4 >::type layout(layoutSEXP);
+    Rcpp::traits::input_parameter< List >::type layout(layoutSEXP);
     rcpp_result_gen = Rcpp::wrap(C_lowest(las, layout));
     return rcpp_result_gen;
 END_RCPP
 }
 // C_in_polygon
-LogicalVector C_in_polygon(S4 las, std::string wkt, int ncpu);
-RcppExport SEXP _lidR_C_in_polygon(SEXP lasSEXP, SEXP wktSEXP, SEXP ncpuSEXP) {
+IntegerVector C_in_polygon(S4 las, CharacterVector wkts);
+RcppExport SEXP _lidR_C_in_polygon(SEXP lasSEXP, SEXP wktsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< std::string >::type wkt(wktSEXP);
-    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_in_polygon(las, wkt, ncpu));
+    Rcpp::traits::input_parameter< CharacterVector >::type wkts(wktsSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_in_polygon(las, wkts));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -226,12 +225,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_rasterize
-NumericVector C_rasterize(S4 las, S4 layout, double subcircle, int method);
+NumericVector C_rasterize(S4 las, List layout, double subcircle, int method);
 RcppExport SEXP _lidR_C_rasterize(SEXP lasSEXP, SEXP layoutSEXP, SEXP subcircleSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< S4 >::type layout(layoutSEXP);
+    Rcpp::traits::input_parameter< List >::type layout(layoutSEXP);
     Rcpp::traits::input_parameter< double >::type subcircle(subcircleSEXP);
     Rcpp::traits::input_parameter< int >::type method(methodSEXP);
     rcpp_result_gen = Rcpp::wrap(C_rasterize(las, layout, subcircle, method));
@@ -565,7 +564,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_smooth", (DL_FUNC) &_lidR_C_smooth, 6},
     {"_lidR_C_highest", (DL_FUNC) &_lidR_C_highest, 2},
     {"_lidR_C_lowest", (DL_FUNC) &_lidR_C_lowest, 2},
-    {"_lidR_C_in_polygon", (DL_FUNC) &_lidR_C_in_polygon, 3},
+    {"_lidR_C_in_polygon", (DL_FUNC) &_lidR_C_in_polygon, 2},
     {"_lidR_C_lasdetectshape", (DL_FUNC) &_lidR_C_lasdetectshape, 6},
     {"_lidR_C_Wing2015", (DL_FUNC) &_lidR_C_Wing2015, 7},
     {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},

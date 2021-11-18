@@ -28,8 +28,10 @@ For a LAS object it checks:
 \item if the header is valid according to las specification
 \item if the point cloud is in accordance with the header
 \item if the point cloud has duplicated points and degenerated ground points
+\item if gpstime and pulses are consistent
 \item it the coordinate reference sytem is correctly recorded
 \item if some pre-processing, such as normalization or ground filtering, is already done.
+\item and much more
 }
 For a LAScatalog object it checks:
 \itemize{

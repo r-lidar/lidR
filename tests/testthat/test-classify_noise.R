@@ -24,7 +24,7 @@ test_that("classify_noise sor works", {
 
   las <- classify_noise(las, mysor)
 
-  n = names(las@data)
+  n = names(las)
 
   expect_true("Classification" %in% n)
   expect_equal(sort(unique(las@data$Classification)), c(1L, 2L, 9L, 18L))
@@ -36,7 +36,7 @@ test_that("classify_noise sor works", {
 
   expect_error(classify_noise(ctg, mysor), "output file")
 
-  opt_output_files(ctg) <- paste0(tmpDir(), "file_{XLEFT}_{YBOTTOM}")
+  opt_output_files(ctg) <- paste0(tempdir(), "/file_{XLEFT}_{YBOTTOM}")
 
   ctg2 = classify_noise(ctg, mysor)
   las2 = readLAS(ctg2)
@@ -56,7 +56,7 @@ test_that("classify_noise ivf works", {
 
   las <- classify_noise(las, myivf)
 
-  n = names(las@data)
+  n = names(las)
 
   expect_true("Classification" %in% n)
   expect_equal(sort(unique(las@data$Classification)), c(1L, 2L, 9L, 18L))

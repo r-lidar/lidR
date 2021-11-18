@@ -50,7 +50,7 @@ NumericVector C_smooth(S4 las, double size, int method, int shape, double sigma,
 }
 
 // [[Rcpp::export(rng = false)]]
-LogicalVector C_highest(S4 las, S4 layout)
+LogicalVector C_highest(S4 las, List layout)
 {
   LAS pt(las);
   pt.filter_with_grid(layout, true);
@@ -58,7 +58,7 @@ LogicalVector C_highest(S4 las, S4 layout)
 }
 
 // [[Rcpp::export(rng = false)]]
-LogicalVector C_lowest(S4 las, S4 layout)
+LogicalVector C_lowest(S4 las, List layout)
 {
   LAS pt(las);
   pt.filter_with_grid(layout, false);
@@ -66,11 +66,10 @@ LogicalVector C_lowest(S4 las, S4 layout)
 }
 
 // [[Rcpp::export(rng = false)]]
-LogicalVector C_in_polygon(S4 las, std::string wkt, int ncpu)
+IntegerVector C_in_polygon(S4 las, CharacterVector wkts)
 {
-  LAS pt(las, ncpu);
-  pt.filter_in_polygon(wkt);
-  return Rcpp::wrap(pt.filter);
+  LAS pt(las);
+  return pt.find_polygon_ids(wkts);
 }
 
 // [[Rcpp::export(rng = false)]]
@@ -106,7 +105,7 @@ LogicalVector C_pmf(S4 las, NumericVector ws, NumericVector th, LogicalVector fi
 }
 
 // [[Rcpp::export(rng = false)]]
-NumericVector C_rasterize(S4 las, S4 layout, double subcircle = 0, int method = 1)
+NumericVector C_rasterize(S4 las, List layout, double subcircle = 0, int method = 1)
 {
   LAS pt(las);
   return pt.rasterize(layout, subcircle, method);

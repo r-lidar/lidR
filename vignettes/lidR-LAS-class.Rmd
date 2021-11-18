@@ -47,7 +47,7 @@ print(las)
 
 ## Basic structure of a LAS object
 
-A `LAS` object is composed of four slots: `@data`, `@header`, `@proj4string` and `@bbox`, and inherits `Spatial` from package `sp`.
+A `LAS` object is composed of four slots: `@data`, `@header`, `@crs` and `@index`.
 
 ### @data: the point cloud
 
@@ -83,13 +83,13 @@ A `LAS` object contains a slot `@header` that represents the header of the las f
 print(las@header)
 ```
 
-### @proj4string: the CRS
+### @crs: the CRS
 
-The slot `@proj4string` is inherited from the `Spatial` class from the `sp` package. It is a `CRS` object that stores the coordinate reference system (CRS) of the las file. In the official las specifications the CRS is stored in the header. In a LAS object the CRS is stored in the header using the EPSG code of the CRS or a WKT string (depending how it has been recorded in the file), but it is also stored in the slot `@proj4string`. This is to ensure it meets R standards and is in accordance with other spatial data packages in the R ecosystem. Consequently, to get a valid LAS object properly written into a las file it is important to set the CRS using the function `projection()`. This function updates the header of the LAS object **and** the proj4string.
+The slot `@crs` contains a `crs` object from package `sf` and stores the coordinate reference system (CRS) of the las file. In the official las specifications the CRS is stored in the header. In a LAS object the CRS is stored in the header using the EPSG code of the CRS or a WKT string (depending how it has been recorded in the file), but it is also stored in the slot `@crs`. This is to ensure it meets R standards and is in accordance with other spatial data packages in the R ecosystem. Consequently, to get a valid LAS object properly written into a las file it is important to set the CRS using the function `st_crs()`. This function updates the header of the LAS object **and** the `crs`
 
 ```r
-projection(las) <- sp::CRS("EPSG:26917")
-projection(las)
+st_crs(las) <- 26917
+st_crs(las)
 ```
 
 According to LAS specification the CRS system can also be a WKT string when the WKT bit flag is set to `TRUE`.
@@ -101,20 +101,19 @@ las@header@PHB[["Global Encoding"]][["WKT"]] = TRUE
 ```{r, echo=FALSE, eval=FALSE}
 las@header@PHB[["Global Encoding"]][["WKT"]] = TRUE
 
-projection(las) <- sp::CRS("+init=epsg:26917")
-projection(las)
+st_crs(las) <- 26917
 
 # Header has been updated but users do not need to take care of that
 las@header@VLR[["WKT OGC CS"]][["WKT OGC COORDINATE SYSTEM"]]
 ```
 
-### @bbox: the bounding box
+### @index: the spatial indexing mode
 
-The slot `@bbox` is inherited from the `Spatial` class from `sp`. It is a `matrix` object that stores the XY bounding box of the point cloud. In the official las specifications the bounding box is stored in the header. In a `LAS` object the bounding box is stored both in the header and also stored in the slot `@bbox` (to be in compliance with R standards and other spatial data R packages). The user should never change the bounding box manually. However, doing that will have few consequences because this slot is of little practical use.
+Records what kind of spatial index will be used internally to perform computations that require spatial indexing. See `help("lidR-spatial-index")`.
 
 ## Allowed and non-allowed manipulation of a LAS object
 
-R users who are used to manipulating spatial data are likely to be very familiar with the `sp` package and all the classes used to store spatial data, such as `SpatialPointsDataFrame`, `SpatialPolygonsDataFrame`, and so on. The data contained in these classes are freely modifiable by the user because they can be of any type. A `LAS` object is not freely modifiable because it is a strongly standardized representation of a las file.
+R users who are used to manipulating spatial data are likely to be very familiar with the `sp` or `sf` packages and all the classes used to store spatial data, such as `SpatialPointsDataFrame`, `SpatialPolygonsDataFrame`, `sf` and so on. The data contained in these classes are freely modifiable by the user because they can be of any type. A `LAS` object is not freely modifiable because it is a strongly standardized representation of a las file.
 
 For example, users cannot replace the `Classification` attribute with the value `0` because `0` is a decimal number in R and the 'Classification' attribute is an integer. The following throws an error:
 
@@ -140,7 +139,7 @@ This is not allowed because a LAS object should always be valid. By allowing the
 1. `R` is a reserved name of the core attributes and must be an integer. In the example above it is a decimal number.
 2. A LAS file with RGB attributes is of type 3, 7 or 8. As a result the header must be updated, but in the previous example it is not.
 
-In consequence, adding a column must be done via the functions `add_attribute` or `add_lasattribute`. This way users are forced to read the documentation of these two functions. And yet some restrictions are still in place. For example, the following is not allowed for the same reasons as above:
+In consequence, adding a column must be done via the functions `add_attribute`, `add_lasattribute`, `add_lasrgb`. This way users are forced to read the documentation of these two functions. And yet some restrictions are still in place. For example, the following is not allowed for the same reasons as above:
 
 ```{r, error = TRUE, purl = FALSE}
 las <- add_attribute(las, 0, "R")
@@ -175,7 +174,7 @@ But it is important to understand that this attribute is invalid with respect to
 
 ### Extra bytes attributes
 
-The las specifications allow for storing extra attributes that are not part of the core attributes. but the way to do this is more complex. Basically it is called extra bytes attributes and it implies modification of the LAS object header to indicate that the contents of the file contains more than the core attributes. This is abstracted with the function `add_lasattribute`.
+The las specifications allow for storing extra attributes that are not part of the core attributes. The way to do this is more complex. Basically it is called extra bytes attributes and it implies modification of the LAS object header to indicate that the contents of the file contains more than the core attributes. This is abstracted with the function `add_lasattribute`.
 
 ```{r}
 las  <- add_lasattribute(las, 1:30, "ID", "An ID for each point")

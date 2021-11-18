@@ -1,36 +1,9 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016-2018 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 #' Read .las or .laz files
 #'
 #' Reads .las or .laz files into an object of class \link[=LAS-class]{LAS}. If several files are read at
 #' once the returned LAS object is considered as one LAS file. The optional parameters enable the user
 #' to save a substantial amount of memory by choosing to load only the attributes or points of interest.
-#' LAS formats 1.1 to 1.4 are supported. Point Data Record Format 0 to 10 are supported.\cr\cr
+#' LAS formats 1.0 to 1.4 are supported. Point Data Record Format 0 to 10 are supported.\cr\cr
 #' `readLAS` is the original function and always works. Using one of the `read*LAS` functions
 #' adds information to the returned object to register a point-cloud type. Registering the correct point
 #' type **may** improve the performance of some functions by enabling users to select an appropriate spatial index.
@@ -144,18 +117,18 @@ readLAS.LAScluster = function(files, select = NULL, filter = NULL)
   buffer <- X <- Y <- NULL
 
   las <- readLAS(files@files, files@select, files@filter)
-  las@proj4string <- files@proj4string
+  st_crs(las) <- st_crs(files)
   las@index <- files@index
 
   las@data[["buffer"]] <- rep(LIDRNOBUFFER, npoints(las))
 
   if (files@buffer > 0)
   {
-    ext     <- raster::extent(files)
-    ybottom <- ext@ymin
-    ytop    <- ext@ymax
-    xleft   <- ext@xmin
-    xright  <- ext@xmax
+    ext     <- st_bbox(files)
+    ybottom <- ext$ymin
+    ytop    <- ext$ymax
+    xleft   <- ext$xmin
+    xright  <- ext$xmax
     xc      <- files@center$x
     yc      <- files@center$y
     r       <- (files@width - 2*files@buffer)/2

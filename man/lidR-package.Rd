@@ -7,9 +7,9 @@
 \title{lidR: airborne LiDAR for forestry applications}
 \description{
 lidR provides a set of tools to manipulate airborne LiDAR data in forestry contexts. The package
-works essentially with .las or .laz files. The toolbox includes algorithms for DSM, CHM, DTM, ABA,
-normalisation, tree detection, tree segmentation and other tools, as well as an engine to process
-wide LiDAR coverages split into many files.
+works with .las or .laz files. The toolbox includes algorithms for DSM, CHM, DTM, ABA,
+normalisation, tree detection, tree segmentation, tree delineation, colourization, validation and
+other tools, as well as a processing engine to process broad LiDAR coverage split into many files.
 }
 \details{
 To learn more about lidR, start with the vignettes: browseVignettes(package = "lidR"). Users can also
@@ -24,10 +24,9 @@ with the tag \code{lidr}.
 Should lengthy operations show a progress bar? Default: TRUE}
 \item{\code{lidR.progress.delay}}{The progress bar appears only for long operations. After how many seconds
 of computation does the progress bar appear? Default: 2}
-\item{\code{lidR.verbose}}{Make the package verbose. Default: FALSE}
-\item{\code{lidR.buildVRT}}{The functions \code{grid_*} can write the rasters sequentially on the
-disk and load back a virtual raster mosaic (VRT) instead of the list of written files. Should
-a VRT be built? Default: TRUE}
+\item{\code{lidR.raster.default}}{The functions that return a raster are raster agnostic meaning
+that they work either with rasters from packages `raster`, `stars` or `terra`. By default they return
+rasters from `stars`. Can be one of "raster", "stars" or "terra". Default: "stars"}
 \item{\code{lidR.check.nested.parallelism}}{The catalog processing engine (\link{catalog_apply})
 checks the parallel strategy chosen by the user and verify if C++ parallelization with
 OpenMP should be disabled to avoid nested parallel loops. Default: TRUE. If FALSE

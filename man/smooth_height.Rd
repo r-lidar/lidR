@@ -37,14 +37,14 @@ point cloud with \code{unsmooth_height}.
 }
 \details{
 This method does not use raster-based methods to smooth the point cloud. This is a true point cloud
-smoothing. It is not really useful by itself but may be interesting in combination with filters such
-as \link{filter_surfacepoints}, for example to develop new algorithms.
+smoothing. It is not really useful by itself but may be interesting in combination with filters,
+for example to develop new algorithms.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyz")
 
-las <- filter_surfacepoints(las, 1)
+las <- decimate_points(las, highest(1))
 #plot(las)
 
 las <- smooth_height(las, 5, "gaussian", "circle", sigma = 2)

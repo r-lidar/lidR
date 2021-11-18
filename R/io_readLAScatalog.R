@@ -7,7 +7,7 @@
 #' `lidR` can be used seamlessly with a LAScatalog using the internal
 #' `LAScatalog` processing engine. To take advantage of the `LAScatalog`
 #' processing engine the user must first adjust some processing options using the
-#' \link[=catalog_options_tools]{appropriate functions}. Careful reading of the
+#' \link[=engine_options]{appropriate functions}. Careful reading of the
 #' \link[=LAScatalog-class]{LAScatalog class documentation} is required to use the
 #' `LAScatalog` class correctly.\cr\cr
 #' `readLAScatalog` is the original function and always works. Using one of the `read*LAScatalog` functions
@@ -20,9 +20,9 @@
 #' @param folder string. The path of a folder containing a set of las/laz files.
 #' Can also be a vector of file paths.
 #' @param progress,select,filter,chunk_size,chunk_buffer Easily accessible processing
-#' options tuning. See \link{LAScatalog-class} and \link{catalog_options_tools}.
+#' options tuning. See \link{LAScatalog-class} and \link{engine_options}.
 #' @param \dots Extra parameters to \link[base:list.files]{list.files}. Typically
-#' `recursive = TRUE`.
+#' `recursive = TRUE`. Propagates also to `readLAScatalog`
 #'
 #' @return A \code{LAScatalog} object
 #'
@@ -35,7 +35,7 @@
 #' plot(ctg)
 #'
 #' \dontrun{
-#' ctg <- readLAScatalog("/path/to/a/folder/of/las/files")
+#' ctg <- readLAScatalog("</path/to/folder/of/las/>")
 #'
 #' # Internal engine will sequentially process chunks of size 500 x 500 m
 #' opt_chunk_size(ctg) <- 500
@@ -46,12 +46,18 @@
 #' # Internal engine will not display a progress estimation
 #' opt_progress(ctg) <- FALSE
 #'
-#' # Internal engine will not return results into R. Instead it will write results in files.
-#' opt_output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
+#' # Internal engine will not return results into R.
+#' # Instead it will write results in files.
+#' # Files will be named e.g.
+#' # filename_256000_1.ext
+#' # filename_257000_2.ext
+#' # filename_258000_3.ext
+#' # ...
+#' opt_output_files(ctg) <- "/path/filename_{XBOTTOM}_{ID}"
 #'
 #' # More details in the documentation
 #' help("LAScatalog-class", "lidR")
-#' help("catalog_options_tools", "lidR")
+#' help("engine_options", "lidR")
 #' }
 #' @md
 readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
@@ -76,8 +82,8 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   verbose("Reading files...")
 
   header <- LASheader(rlas::read.lasheader(files[1]))
-  crs    <- crs(header)
-  phblab <- make.names(names(header@PHB))
+  crs    <- st_crs(header)
+  phblab <- make.names(names(phb(header)))
   phblab[4] <- "GUID"
 
   # Delayed progress bar
@@ -123,6 +129,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
   headers <- data.table::rbindlist(headers)
   headers$filename <- files
+  data.table::setDF(headers)
 
   xmin <- headers$Min.X
   xmax <- headers$Max.X
@@ -130,22 +137,18 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   ymax <- headers$Max.Y
   ids  <- as.character(seq_along(files))
 
-  pgeom <- lapply(seq_along(ids), function(xi)
-  {
+  geom <- lapply(seq_along(ids), function(xi) {
     mtx <- matrix(c(xmin[xi], xmax[xi], ymin[xi], ymax[xi])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
-    sp::Polygons(list(sp::Polygon(mtx)), ids[xi])
+    sf::st_polygon(list(mtx))
   })
 
-  Sr = sp::SpatialPolygons(pgeom, proj4string = crs)
+  geom <-sf::st_sfc(geom)
+  sf::st_crs(geom) <- crs
+  headers <- sf::st_set_geometry(headers, geom)
 
-  data.table::setDF(headers)
 
   res <- new("LAScatalog")
-  res@bbox <- Sr@bbox
-  res@proj4string <- Sr@proj4string
-  res@plotOrder <- Sr@plotOrder
   res@data <- headers
-  res@polygons <- Sr@polygons
 
   opt_filter(res) <- filter
   opt_select(res) <- select
@@ -164,9 +167,9 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
 #' @export
 #' @rdname readLAScatalog
-readALSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readALSLAScatalog = function(folder, ...)
 {
-  ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
+  ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRALSINDEX
   return(ctg)
 }
@@ -174,27 +177,27 @@ readALSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "",
 
 #' @export
 #' @rdname readLAScatalog
-readTLSLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readTLSLAScatalog = function(folder, ...)
 {
-  ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
+  ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRTLSINDEX
   return(ctg)
 }
 
 #' @export
 #' @rdname readLAScatalog
-readUAVLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readUAVLAScatalog = function(folder, ...)
 {
-  ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
+  ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRUAVINDEX
   return(ctg)
 }
 
 #' @export
 #' @rdname readLAScatalog
-readDAPLAScatalog = function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
+readDAPLAScatalog = function(folder, ...)
 {
-  ctg <- readLAScatalog(folder, progress, select, filter, chunk_size, chunk_buffer, ...)
+  ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRDAPINDEX
   return(ctg)
 }

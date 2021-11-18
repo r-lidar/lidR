@@ -16,5 +16,6 @@
 ^codecov\.yml$
 ^CRAN-RELEASE$
 ^NEWS_v2.md$
+^NEWS_v3.md$
 ^\.github$
 ^README\.Rmd$

@@ -1,30 +1,3 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016-2018 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 #' Create a \code{LASheader} object
 #'
 #' Creates a  \code{LASheader} object either from a raw \code{list} containing all the
@@ -56,13 +29,6 @@
 #' header = LASheader(data)
 #' header
 #'
-#' # XYZ values are given with 3 decimals. This was not inferred by the
-#' # function so we changed it manually
-#' # (Note: from package rlas 1.4.1 this is now inferred properly in most cases)
-#' header@PHB[["X scale factor"]] <- 0.001
-#' header@PHB[["Y scale factor"]] <- 0.001
-#' header@PHB[["Z scale factor"]] <- 0.001
-#'
 #' # Record an EPSG code
 #' epsg(header) <- 32618
 #' header
@@ -92,6 +58,7 @@ LASheader <- function(data = list()) {return(new("LASheader", data))}
 #' @param x A LASheader object
 #' @param ... unused
 #' @method as.list LASheader
+#' @name as
 #' @export
 as.list.LASheader <- function(x, ...)
 {
@@ -100,3 +67,25 @@ as.list.LASheader <- function(x, ...)
   EVLR <- list(`Extended Variable Length Records` = x@EVLR)
   return(c(PHB, VLR, EVLR))
 }
+
+#' @export
+#' @rdname Extract
+setMethod("$", "LASheader", function(x, name) { return(x[[name]]) })
+
+#' @export
+#' @rdname Extract
+setMethod("[[", c("LASheader", "ANY", "missing"), function(x, i, j, ...) {
+
+  assert_is_a_string(i)
+
+  if (i %in% names(x@PHB))
+    return(x@PHB[[i]])
+
+  if (i %in% names(x@VLR))
+    return(x@VLR[[i]])
+
+  if (i %in% names(x@EVLR))
+    return(x@EVLR[[i]])
+
+  return(NULL)
+})

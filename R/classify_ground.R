@@ -13,7 +13,7 @@ classify_ground.LAS = function(las, algorithm, last_returns = TRUE)
 
   filter <- TRUE
   if (last_returns) {
-    if (!all(c("ReturnNumber", "NumberOfReturns") %in% names(las@data))) {
+    if (!all(c("ReturnNumber", "NumberOfReturns") %in% names(las))) {
       warning("'ReturnNumber' and/or 'NumberOfReturns' not found. Cannot use the option 'last_returns', all the points will be used.", call. = FALSE)
     } else {
       filter <- parse_filter(las, ~ReturnNumber == NumberOfReturns)
@@ -27,7 +27,7 @@ classify_ground.LAS = function(las, algorithm, last_returns = TRUE)
   lidR.context <- "classify_ground"
   idx <- algorithm(las, filter)
 
-  if ("Classification" %in% names(las@data))
+  if ("Classification" %in% names(las))
   {
     nground <- fast_countequal(las@data[["Classification"]], 2L)
 
@@ -51,21 +51,10 @@ classify_ground.LAS = function(las, algorithm, last_returns = TRUE)
 }
 
 #' @export
-classify_ground.LAScluster = function(las, algorithm, last_returns = TRUE)
-{
-  buffer <- NULL
-  x <- readLAS(las)
-  if (is.empty(x)) return(NULL)
-  x <- classify_ground(x, algorithm, last_returns)
-  x <- filter_poi(x, buffer == LIDRNOBUFFER)
-  return(x)
-}
-
-#' @export
 classify_ground.LAScatalog = function(las, algorithm, last_returns = TRUE)
 {
   opt_select(las) <- "*"
-  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, classify_ground, algorithm = algorithm,  last_returns = last_returns, .options = options)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- catalog_map(las, classify_ground, algorithm = algorithm,  last_returns = last_returns, .options = options)
   return(output)
 }

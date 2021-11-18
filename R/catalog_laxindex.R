@@ -7,8 +7,7 @@ catalog_laxindex = function(ctg)
   opt_wall_to_wall(ctg) <- FALSE
   opt_output_files(ctg) <- ""
 
-  create_lax_file = function(cluster)
-  {
+  create_lax_file = function(cluster) {
     rlas::writelax(cluster@files)
     return(0)
   }

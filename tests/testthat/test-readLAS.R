@@ -1,15 +1,13 @@
-context("readLAS")
-
 LASfile <- example_las_path
 ctg <- readLAScatalog(example_las_path, chunk_size = 100, select = "xyzrn")
-cls <- lidR:::catalog_makecluster(ctg)
+cls <- engine_chunks(ctg)
 
 test_that("readLAS reads files", {
   las <- readLAS(LASfile, select = "xyzrn")
 
   expect_is(las, "LAS")
   expect_equal(npoints(las), 30L)
-  expect_equal(names(las@data), c("X", "Y", "Z", "ReturnNumber", "NumberOfReturns"))
+  expect_equal(names(las), c("X", "Y", "Z", "ReturnNumber", "NumberOfReturns"))
 })
 
 test_that("readLAS reads LAScatalog", {
@@ -17,7 +15,7 @@ test_that("readLAS reads LAScatalog", {
 
   expect_is(las, "LAS")
   expect_equal(npoints(las), 30L)
-  expect_equal(names(las@data), c("X", "Y", "Z", "ReturnNumber", "NumberOfReturns"))
+  expect_equal(names(las), c("X", "Y", "Z", "ReturnNumber", "NumberOfReturns"))
 })
 
 test_that("readLAS reads LAScluster", {
@@ -25,7 +23,7 @@ test_that("readLAS reads LAScluster", {
 
   expect_is(las, "LAS")
   expect_equal(npoints(las), 30L)
-  expect_equal(names(las@data), c("X", "Y", "Z", "ReturnNumber", "NumberOfReturns", "buffer"))
+  expect_equal(names(las), c("X", "Y", "Z", "ReturnNumber", "NumberOfReturns", "buffer"))
   expect_true((all(las$buffer == 0)))
 })
 
@@ -85,12 +83,12 @@ test_that("readLAS LAScatalog gives precedence to argument select and filter", {
 
   las = readLAS(ctg)
 
-  expect_equal(names(las@data), c("X", "Y", "Z"))
+  expect_equal(names(las), c("X", "Y", "Z"))
   expect_equal(npoints(las), 3)
 
   las = readLAS(ctg, select = "i",  filter = "-drop_z_below 975")
 
-  expect_equal(names(las@data), c("X", "Y", "Z", "Intensity"))
+  expect_equal(names(las), c("X", "Y", "Z", "Intensity"))
   expect_equal(npoints(las), 19)
 })
 
@@ -109,7 +107,7 @@ test_that("readMSLAS reads multispectral data", {
   las = readMSLAS(f1, f2, f3)
 
   expect_equal(dim(las@data), c(30, 16))
-  expect_true("ScannerChannel" %in% names(las@data))
+  expect_true("ScannerChannel" %in% names(las))
   expect_equal(las@header@PHB$`Version Minor`, 4L)
   expect_equal(las@header@PHB$`Point Data Format ID`, 6L)
 })

@@ -1,30 +1,3 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016-2018 Jean-Romain Roussel
-#
-# This file is part of lidRExtra R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http:#www.gnu.org/licenses/>
-#
-# ===============================================================================
-
 #' Ground Segmentation Algorithm
 #'
 #' This function is made to be used in \link{classify_ground}. It implements an algorithm for segmentation
@@ -36,6 +9,26 @@
 #' Here, these parameters are free and specified by the user. The function \link{util_makeZhangParam}
 #' enables computation of the parameters according to the original paper.
 #'
+#' The progressive morphological filter allows for any sequence of parameters. The `util_makeZhangParam`
+#' function enables computation of the sequences using equations (4),
+#'  (5) and (7) from Zhang et al. (see reference and details).
+#' @details
+#' In the original paper the windows size sequence is given by eq. 4 or 5:\cr\cr
+#' \eqn{w_k = 2kb + 1} \cr\cr
+#' or\cr\cr
+#' \eqn{w_k = 2b^k + 1}\cr\cr
+#' In the original paper the threshold sequence is given by eq. 7:\cr\cr
+#' \eqn{th_k = s*(w_k - w_{k-1})*c + th_0}\cr\cr
+#' Because the function \link{classify_ground} applies the morphological operation at the point
+#' cloud level the parameter \eqn{c} is set to 1 and cannot be modified.
+#'
+#' @param b numeric. This is the parameter \eqn{b} in Zhang et al. (2003) (eq. 4 and 5).
+#' @param max_ws numeric. Maximum window size to be used in filtering ground returns. This limits
+#' the number of windows created.
+#' @param dh0 numeric. This is \eqn{dh_0} in Zhang et al. (2003) (eq. 7).
+#' @param dhmax numeric. This is \eqn{dh_{max}} in Zhang et al. (2003) (eq. 7).
+#' @param s numeric. This is \eqn{s} in Zhang et al. (2003) (eq. 7).
+#' @param exp logical. The window size can be increased linearly or exponentially (eq. 4 or 5).
 #' @param ws numeric. Sequence of windows sizes to be used in filtering ground returns.
 #' The values must be positive and in the same units as the point cloud (usually meters, occasionally
 #' feet).
@@ -60,6 +53,7 @@
 #'
 #' las <- classify_ground(las, pmf(ws, th))
 #' #plot(las, color = "Classification")
+#' @name gnd_pmf
 pmf = function(ws, th)
 {
   ws <- lazyeval::uq(ws)
@@ -112,6 +106,7 @@ pmf = function(ws, th)
 #' mycsf <- csf(TRUE, 1, 1, time_step = 1)
 #' las <- classify_ground(las, mycsf)
 #' #plot(las, color = "Classification")
+#' @name gnd_csf
 csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65)
 {
   sloop_smooth     <- lazyeval::uq(sloop_smooth)
@@ -145,38 +140,8 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
   return(f)
 }
 
-#' Parameters for progressive morphological filter
-#'
-#' The function \link{classify_ground} with the progressive morphological filter allows for any
-#' sequence of parameters. This function enables computation of the sequences using equations (4),
-#'  (5) and (7) from Zhang et al. (see reference and details).
-#' @details
-#' In the original paper the windows size sequence is given by eq. 4 or 5:\cr\cr
-#'
-#' \eqn{w_k = 2kb + 1} \cr\cr
-#' or\cr\cr
-#' \eqn{w_k = 2b^k + 1}\cr\cr
-#'
-#' In the original paper the threshold sequence is given by eq. 7:\cr\cr
-#' \eqn{th_k = s*(w_k - w_{k-1})*c + th_0}\cr\cr
-#' Because the function \link{classify_ground} applies the morphological operation at the point
-#' cloud level the parameter \eqn{c} is set to 1 and cannot be modified.
-#' @param b numeric. This is the parameter \eqn{b} in Zhang et al. (2003) (eq. 4 and 5).
-#' @param max_ws numeric. Maximum window size to be used in filtering ground returns. This limits
-#' the number of windows created.
-#' @param dh0 numeric. This is \eqn{dh_0} in Zhang et al. (2003) (eq. 7).
-#' @param dhmax numeric. This is \eqn{dh_{max}} in Zhang et al. (2003) (eq. 7).
-#' @param s numeric. This is \eqn{s} in Zhang et al. (2003) (eq. 7).
-#' @param exp logical. The window size can be increased linearly or exponentially (eq. 4 or 5).
-#' @return A list with two components: the windows size sequence and the threshold sequence.
-#' @references
-#' Zhang, K., Chen, S. C., Whitman, D., Shyu, M. L., Yan, J., & Zhang, C. (2003). A progressive
-#' morphological filter for removing nonground measurements from airborne LIDAR data. IEEE
-#' Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682.
 #' @export
-#'
-#' @examples
-#' p = util_makeZhangParam()
+#' @rdname gnd_pmf
 util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws = 20, exp = FALSE)
 {
   if (exp & b <= 1)

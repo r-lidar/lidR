@@ -1,228 +1,134 @@
-# ===============================================================================
-#
-# PROGRAMMERS:
-#
-# jean-romain.roussel.1@ulaval.ca  -  https://github.com/Jean-Romain/lidR
-#
-# COPYRIGHT:
-#
-# Copyright 2016-2018 Jean-Romain Roussel
-#
-# This file is part of lidR R package.
-#
-# lidR is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>
-#
-# ===============================================================================
-
-
-
-#' Remove the topography from a point cloud
-#'
-#' Subtract digital terrain model (DTM) from LiDAR point cloud to create a dataset normalized with
-#' the ground at 0. The DTM can originate from an external file or can be computed by the user. It can
-#' also be computed on-the-fly. In this case the algorithm does not use rasterized data and each point
-#' is interpolated. There is no inaccuracy due to the discretization of the terrain and the resolution
-#' of the terrain is virtually infinite.\cr\cr
-#' How well the edges of the dataset are interpolated depends on the interpolation method used.
-#' Thus, a buffer around the region of interest is always recommended to avoid edge effects.\cr\cr
-#' The attribute Z of the returned LAS object is the normalized elevation. A new attribute 'Zref'
-#' records the former elevation values, which enables the use of \link{unnormalize_height} to restore
-#' original point elevations.\cr\cr
-#'
-#' @template param-las
-#'
-#' @param algorithm a spatial interpolation function. \code{lidR} have \link{tin},
-#' \link{kriging}, \link{knnidw} or a \link[raster:raster]{RasterLayer} representing a digital terrain
-#' model (can be computed with \link{grid_terrain})
-#' @param na.rm logical. When using a \code{RasterLayer} as DTM, by default the function fails if a point
-#' fall in an empty pixel because a Z elevation cannot be NA. If \code{na.rm = TRUE} points with an
-#' elevation of NA are filtered. Be careful this creates a copy of the point cloud.
-#' @param use_class integer vector. By default the terrain is computed by using ground points
-#' (class 2) and water points (class 9). Relevant only for a normalisation without a raster DTM.
-#' @param ... If \code{algorithm} is a \code{RasterLayer}, \code{...} is propagated to
-#' \link[raster:extract]{extract}. Typically one may use \code{method = "bilinear"}.
-#' @param add_lasattribute logical. By default the above see level elevation is retained in a new attribute.
-#' However this new attribute will be discarded at write time. If \code{TRUE} it is maintained as an
-#' extrabytes attribute. See also \link{add_lasattribute}.
-#' @param Wdegenerated logical. The function always check and remove degenerated ground points
-#' for computing the DTM to avoid unexpected behaviours such as infinite elevation. If
-#' TRUE a warning in thrown to alert about the presence of degenerated ground points.
-#'
-#' @template LAScatalog
-#'
-#' @template section-supported-option-lasupdater
-#'
-#' @template return-lasupdater-las-lascatalog
-#'
-#' @examples
-#' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
-#' las <- readLAS(LASfile, filter = "-inside 273450 5274350 273550 5274450")
-#'
-#' #plot(las)
-#'
-#' # First option: use a RasterLayer as DTM
-#' # =======================================================
-#'
-#' dtm <- grid_terrain(las, 1, knnidw(k = 6L, p = 2))
-#' las <- normalize_height(las, dtm)
-#'
-#' plot(dtm)
-#' #plot(las)
-#'
-#' # restore original elevations
-#' las <- unnormalize_height(las)
-#' #plot(las)
-#'
-#' # operator - can be used. This is equivalent to the previous
-#' las <- las - dtm
-#' #plot(las)
-#'
-#' # restore original elevations
-#' las <- unnormalize_height(las)
-#'
-#' # Second option: interpolate each point (no discretization)
-#' # =========================================================
-#'
-#' las <- normalize_height(las, tin())
-#' #plot(las)
-#'
-#' # operator - can be used. This is equivalent to the previous
-#' las <- unnormalize_height(las)
-#' las <- las - tin()
-#'
-#' \dontrun{
-#' # All the following syntaxes are correct
-#' las <- normalize_height(las, knnidw())
-#' las <- normalize_height(las, knnidw(k = 8, p = 2))
-#' las <- las - knnidw()
-#' las <- las - knnidw(k = 8)
-#' las <- normalize_height(las, kriging())
-#' las <- las - kriging(k = 8)
-#' }
-#'
-#' @seealso
-#' \link[=grid_terrain]{grid_terrain}
-#' @family normalize
 #' @export
-#' @rdname normalize_height
-normalize_height = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
+#' @rdname normalize
+normalize_height = function(las, algorithm, use_class = c(2L,9L), dtm = NULL, ...)
 {
   UseMethod("normalize_height", las)
 }
 
 #' @export
-normalize_height.LAS = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
+normalize_height.LAS = function(las, algorithm, use_class = c(2L,9L), dtm = NULL, ...)
 {
-  assert_is_a_bool(na.rm)
-  assert_is_a_bool(add_lasattribute)
-  assert_is_a_bool(Wdegenerated)
+  # Non standard evaluation (R CMD check)
+  . <- Z <- Zref <- X <- Y <- Classification <- NULL
 
-  if (is(algorithm, "RasterLayer"))
+  lidR.context <- "normalize_height"
+
+  # Ellipsis parsing
+  dots <- list(...)
+  Wdegenerated <- isTRUE(dots$Wdegenerated)
+  add_lasattribute <- isTRUE(dots$add_lasattribute)
+
+  # If algorithm is raster we make a basic substraction
+  if (is_raster(algorithm))
   {
-    Zground <- raster::extract(algorithm, coordinates(las), ...)
-    isna    <- is.na(Zground)
-    nnas    <- sum(isna)
+    dtm <- algorithm
 
-    if (nnas > 0 && na.rm == FALSE)
-      stop(glue::glue("{nnas} points were not normalizable because the DTM contained NA values. Process aborted."))
+    if (raster_nlayer(dtm) > 1)
+      stop("A DTM must be a single layer raster", call. = FALSE)
+
+    Zg <- raster_value_from_xy(dtm, las$X, las$Y)
+    isna <- is.na(Zg)
+    nnas <- n_na_not_in_buffer(las, isna)
+
+    # If it remains NAs (not from the buffer) it means that we have points that are not in the DTM
+    # (the DTM does not cover the point cloud entirely). We will find a value anyway.
+    # Previously the function stopped. It now forces interpolation with NN.
+    if (nnas > 0)
+    {
+      nn <- knnidw(1, rmax = .Machine$double.xmax)
+      znn <- nn(raster_as_las(dtm), las@data[isna, .(X,Y,Z)])
+      Zg[isna] <- znn
+      warning(glue::glue("{nnas} points do not belong in the raster. Nearest neighbor was used to assign a value."), call. = FALSE)
+    }
   }
+  # If algorithm is spatial interpolation function
   else if (is.function(algorithm))
   {
     assert_is_algorithm(algorithm)
     assert_is_algorithm_spi(algorithm)
 
     if (any(as.integer(use_class) != use_class))
-      stop("'add_class' is not a vector of integers'", call. = FALSE)
+      stop("'use_class' is not a vector of integers'", call. = FALSE)
 
     use_class <- as.integer(use_class)
 
-    if (!"Classification" %in% names(las@data))  stop("No field 'Classification' found. This attribute is required to interpolate ground points.", call. = FALSE)
+    if (!"Classification" %in% names(las))
+      stop("No attribute 'Classification' found. This attribute is required to interpolate ground points.", call. = FALSE)
 
-    # Non standard evaluation (R CMD check)
-    . <- Z <- Zref <- X <- Y <- Classification <- NULL
+    # Select the ground points. If dtm is provided, then the ground point are from the DTM
+    if (!is.null(dtm))
+    {
+      if (raster_nlayer(dtm) > 1)
+        stop("A DTM must be a single layer raster", call. = FALSE)
 
-    # Select the ground points
-    ground  <- las@data[Classification %in% c(use_class), .(X,Y,Z)]
-    if (nrow(ground) == 0) stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
-    ground  <- check_degenerated_points(ground, Wdegenerated)
+      dtm <- raster_crop(dtm, st_bbox(las))
+      ground <- raster_as_las(dtm, st_bbox(las))
+    }
+    else
+    {
+      ground  <- las@data[Classification %in% use_class, .(X,Y,Z)]
+      if (nrow(ground) == 0) stop("No ground points found. Impossible to compute a DTM.", call. = FALSE)
+      ground  <- check_degenerated_points(ground, Wdegenerated)
+    }
 
-    # wbuffer = !"buffer" %in% names(las@data)
-    lidR.context <- "normalize_height"
-    ground  <- LAS(ground, las@header, proj4string = las@proj4string, check = FALSE, index = las@index)
-    Zground <- algorithm(ground, las@data)
-    isna    <- is.na(Zground)
-    nnas    <- sum(isna)
+    # Interpolate the terrain providing what to interpolate (ground) and where
+    # to interpolate (the point clouf)
+    ground <- LAS(ground, las@header, crs = st_crs(las), check = FALSE, index = las@index)
+    Zg <- algorithm(ground, las@data)
+    Zg[is.nan(Zg)] <- NA_real_
 
-    if (nnas > 0 & na.rm == FALSE)
-      stop(glue::glue("{nnas} points were not normalizable. Process aborted."), call. = FALSE)
+    # If it remains NAs (not in buffer) it means that we have points very far from ground points
+    # and they cannot be interpolated. But we will interpolate them anyway. Previously
+    # the function stopped. It now forces interpolation with NN.
+    isna <- is.na(Zg)
+    nnas <- n_na_not_in_buffer(las, isna)
+    if (nnas > 0)
+    {
+      nn <- knnidw(1, rmax = .Machine$double.xmax)
+      znn <- nn(ground, las@data[isna, .(X,Y,Z)])
+      Zg[isna] <- znn
+      warning(glue::glue("Interpolation of {nnas} points failed because they are too far from ground points. Nearest neighbor was used but interpolation is weak for those points"), call. = FALSE)
+    }
   }
   else
   {
-    stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'RasterLayer' or 'function'"), call. = FALSE)
+    stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'raster' or 'function'"), call. = FALSE)
   }
 
-  zoffset <- las@header@PHB[["Z offset"]]
-  zscale <- las@header@PHB[["Z scale factor"]]
+  zoffset <- las[["Z offset"]]
+  zscale <- las[["Z scale factor"]]
 
-  if (!"Zref" %in% names(las@data))
-    las@data[["Zref"]] <- las@data[["Z"]]
+  if (!"Zref" %in% names(las))
+    las@data[["Zref"]] <- las[["Z"]]
 
-  las@data[["Z"]] <- las@data[["Z"]] - Zground
+  las@data[["Z"]] <- las[["Z"]] - Zg
 
   if (add_lasattribute && is.null(las@header@VLR$Extra_Bytes[["Extra Bytes Description"]][["Zref"]]))
     las <- add_lasattribute_manual(las, name = "Zref", desc = "Elevation above sea level", type = "int", offset = zoffset, scale = zscale)
 
-  if (nnas > 0 && na.rm == TRUE)
-  {
-    las <- filter_poi(las, !isna)
-    message(glue::glue("{nnas} points were not normalizable and removed."))
-  }
-
   fast_quantization(las@data[["Z"]], zscale, zoffset)
-  las <- lasupdateheader(las)
+  las <- las_update(las)
   las@index$sensor <- las@index$sensor + NLAS
   return(las)
 }
 
 #' @export
-normalize_height.LAScluster = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
-{
-  buffer <- NULL
-  x <- readLAS(las)
-  if (is.empty(x)) return(NULL)
-  x <- normalize_height(x, algorithm, na.rm, use_class, ..., add_lasattribute = add_lasattribute, Wdegenerated = Wdegenerated)
-  x <- filter_poi(x, buffer == 0)
-  return(x)
-}
-
-#' @export
-normalize_height.LAScatalog = function(las, algorithm, na.rm = FALSE, use_class = c(2L,9L), ..., add_lasattribute = FALSE, Wdegenerated = TRUE)
+normalize_height.LAScatalog = function(las, algorithm, use_class = c(2L,9L), dtm = NULL, ...)
 {
   opt_select(las) <- "*"
 
-  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, normalize_height, algorithm = algorithm, na.rm = na.rm, use_class = use_class, ..., add_lasattribute = add_lasattribute, Wdegenerated = Wdegenerated, .options = options)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- catalog_map(las, normalize_height, algorithm = algorithm, use_class = use_class, dtm = dtm, ..., .options = options)
   return(output)
 }
 
-#' @rdname normalize_height
+#' @rdname normalize
 #' @export
 unnormalize_height = function(las)
 {
   stopifnotlas(las)
 
-  if ("Zref" %in% names(las@data))
+  if ("Zref" %in% names(las))
   {
     las@data[["Z"]] <- las@data[["Zref"]]
     las@data[["Zref"]] <- NULL
@@ -236,21 +142,10 @@ unnormalize_height = function(las)
 }
 
 #' @param e1 a LAS object
-#' @param e2 \link[raster:raster]{RasterLayer} representing a digital terrain model (can be
-#' computed with \link{grid_terrain}) or a spatial interpolation function. \code{lidR} has \link{tin},
-#' \link{kriging}, and \link{knnidw}.
+#' @param e2 A raster representing a digital terrain model in format from `raster`, `stars` or `terra`..
 #' @export
-#' @rdname normalize_height
-setMethod("-", c("LAS", "RasterLayer"), function(e1, e2)
-{
-  return(normalize_height(e1,e2))
-})
-
-setOldClass("lidRAlgorithm")
-
-#' @export
-#' @rdname normalize_height
-  setMethod("-", c("LAS", "lidRAlgorithm"), function(e1, e2)
+#' @rdname normalize
+setMethod("-", c("LAS"), function(e1, e2)
 {
   return(normalize_height(e1,e2))
 })
@@ -275,4 +170,16 @@ check_degenerated_points = function(points, Wdegenerated = TRUE)
     points = points[, .(Z = min(Z)), by = .(X,Y)]
 
   return(points)
+}
+
+n_na_not_in_buffer <- function(las, isna)
+{
+  nnas <- sum(isna)
+  if (nnas == 0) return(0)
+
+  if (!"buffer" %in% names(las))
+    return(nnas)
+
+  buffer_na <- las$buffer[isna]
+  return(sum(buffer_na == LIDRNOBUFFER))
 }

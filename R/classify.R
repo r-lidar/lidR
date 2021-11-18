@@ -6,27 +6,27 @@
 #'
 #' \describe{
 #' \item{classify_noise}{Classify points as 'noise' (outliers) with several possible algorithms.
-#' The points classified as 'noise' are assigned a value of 18.}
-#' \item{classify_ground}{Classify points as 'ground' with several possible algorithms. The points
-#' classified as 'ground' are assigned a value of 2 }
+#' lidR has has: \link{sor}, \link{ivf}. The points classified as 'noise' are assigned a value of 18.}
+#' \item{classify_ground}{Classify points as 'ground' with several possible algorithms.
+#' lidR has \link{pmf} and \link{csf}. The points classified as 'ground' are assigned a value of 2 }
 #' \item{classify_poi}{Classify points that meet some logical criterion and/or that belong in a
 #' region of interest with class of choice.}
 #' }
 #'
 #' @template param-las
-#' @param algorithm an algorithm for classification. lidR has has: \link{sor}, \link{ivf} for noise
+#' @param algorithm An algorithm for classification. lidR has has: \link{sor}, \link{ivf} for noise
 #' classification and \link{pmf} and \link{csf} for ground classification (see respective documentation).
 #' The \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins} package has `mcc`.
 #' @param class The ASPRS class to attribute to the points that meet the criterion.
 #' @param poi a formula of logical predicates. The points that are `TRUE` will be classified `class`.
-#' @param roi A `SpatialPolygons`, `SpatialPolygonDataFrame` from `sp` or a `POLYGON` from `sf`.
+#' @param roi A `SpatialPolygons*`, from `sp` or a `sf/sfc_POLYGON` from `sf`.
 #' The points that are in the region of interest delimited by the polygon(s) are classified
 #' `class`.
 #' @param inverse_roi bool. Inverses the `roi`. The points that are outside the polygon(s)
 #' are classified `class`
 #' @param by_reference bool. Updates the classification in place (LAS only).
 #' @param last_returns logical. The algorithm will use only the last returns (including the first returns
-#' in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attribute
+#' in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attributes
 #' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
 #' to \code{FALSE} automatically.
 #'
@@ -34,30 +34,21 @@
 #' @rdname classify
 #' @md
 #' @examples
-#' # === Classify ground ===
+#' # ===============
+#' # Classify ground
+#' # ===============
 #'
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyzrn", filter = "-inside 273450 5274350 273550 5274450")
-#'
-#' # Using the Progressive Morphological Filter
-#' # ------------------------------------------
-#'
-#' # (Parameters chosen mainly for speed)
-#' ws  <- seq(3,12, 4)
-#' th  <- seq(0.1, 1.5, length.out = length(ws))
-#'
-#' las <- classify_ground(las, pmf(ws, th))
-#' #plot(las, color = "Classification")
-#'
-#' # Using the Cloth Simulation Filter
-#' # ---------------------------------
 #'
 #' # (Parameters chosen mainly for speed)
 #' mycsf <- csf(TRUE, 1, 1, time_step = 1)
 #' las <- classify_ground(las, mycsf)
 #' #plot(las, color = "Classification")
 #'
-#' # === Classify noise ===
+#' # ===============
+#' # Classify noise
+#' # ===============
 #'
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile, filter = "-inside 273450 5274350 273550 5274450")
@@ -69,17 +60,16 @@
 #' err = runif(20, -50, 50)
 #' las$Z[id] = las$Z[id] + err
 #'
-#' # Using SOR
-#' las <- classify_noise(las, sor(15,7))
-#' #plot(las, color = "Classification")
-#'
 #' # Using IVF
 #' las <- classify_noise(las, ivf(5,2))
+#' #plot(las, color = "Classification")
 #'
 #' # Remove outliers using filter_poi()
 #' las_denoise <- filter_poi(las, Classification != LASNOISE)
 #'
-#' # === Classify POI ===
+#' # ===============
+#' # Classify POI
+#' # ===============
 #'
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 #' shp <- system.file("extdata", "lake_polygons_UTM17.shp", package = "lidR")

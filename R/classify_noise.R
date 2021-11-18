@@ -14,7 +14,7 @@ classify_noise.LAS = function(las, algorithm)
   lidR.context <- "classify_noise"
   idx <- algorithm(las)
 
-  if ("Classification" %in% names(las@data))
+  if ("Classification" %in% names(las))
   {
     nnoise <- fast_countequal(las@data[["Classification"]], LASNOISE)
 
@@ -38,21 +38,10 @@ classify_noise.LAS = function(las, algorithm)
 }
 
 #' @export
-classify_noise.LAScluster = function(las, algorithm)
-{
-  buffer <- NULL
-  x <- readLAS(las)
-  if (is.empty(x)) return(NULL)
-  x <- classify_noise(x, algorithm)
-  x <- filter_poi(x, buffer == LIDRNOBUFFER)
-  return(x)
-}
-
-#' @export
 classify_noise.LAScatalog = function(las, algorithm)
 {
   opt_select(las) <- "*"
-  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE, automerge = TRUE)
-  output  <- catalog_apply(las, classify_noise, algorithm = algorithm, .options = options)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
+  output  <- catalog_map(las, classify_noise, algorithm = algorithm, .options = options)
   return(output)
 }
