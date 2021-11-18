@@ -807,7 +807,7 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
 
   if (is.indexed(las)) {
     .yes()
-    infos <- append(infos, "The LAS files are spatially indexed")
+    #infos <- append(infos, "The LAS files are spatially indexed")
   }
   else {
     .no()

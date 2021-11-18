@@ -1,5 +1,7 @@
 if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 {
+  gcol = gray(seq(0,1, length.out = 30))
+
   haliburton_bbox <- sf::st_bbox(c(xmin = 685000, xmax = 695000, ymin = 5010000, ymax = 5015000))
   haliburton <- "/media/jr/Seagate Expansion Drive/Ontario/Haliburton/Landscape LiDAR"
   haliburton <- readLAScatalog(haliburton)
@@ -32,6 +34,7 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
   {
     # Small chunk to trigger potential errors with empty chunks
     # Approx 7 minutes
+    options(lidR.raster.default = "stars")
     opt_chunk_size(haliburton) <- 250
     opt_output_files(haliburton) <- "{tempdir()}/haliburton-canopy-{ID}"
     chm <- rasterize_canopy(haliburton, 1, p2r(0.15))
@@ -44,6 +47,7 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
   test_that("rasterize_canopy works with haliburton by files with stars",
   {
     # Approx 40 seconds
+    options(lidR.raster.default = "stars")
     opt_chunk_size(haliburton) <- 0
     opt_output_files(haliburton) <- ""
     chm = rasterize_canopy(haliburton, 2, p2r())
@@ -79,6 +83,8 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
   test_that("rasterize_terrain works with montmorency with small chunks",
   {
+    options(lidR.raster.default = "stars")
+
     # Small chunk to trigger potential errors with empty chunks
     # Approx 10 minutes
     opt_chunk_size(montmorency) <- 250
@@ -98,6 +104,8 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
   test_that("rasterize_terrain works with montmorency with by files", {
 
+    options(lidR.raster.default = "stars")
+
     # Small chunk to trigger potential errors with empty chunks
     # Approx 10 minutes
     opt_chunk_size(montmorency) <- 0
@@ -116,6 +124,8 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
  test_that("rasterize_terrain works with montmorency with in memory and stars",
  {
+   options(lidR.raster.default = "stars")
+
     # Approx ?? minutes
     opt_chunk_size(montmorency) <- 0
     opt_output_files(montmorency) <- ""
@@ -132,17 +142,12 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     options(lidR.raster.default = "raster")
     opt_chunk_size(montmorency) <- 0
     opt_output_files(montmorency) <- ""
-    dtm = rasterize_canopy(montmorency, 2, p2r())
+    dtm = rasterize_terrain(montmorency, 2)
     expect_is(dtm, "RasterLayer")
     expect_false(raster::inMemory(dtm))
 
-    plot(dtm, col = gray.colors(30,0,1))
-
-    ntile33_1 <- normalize_height(montmorency_tile33, dtm) # nawak
-    plot(ntile33_1)
-
-    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm) # nawak
-    expect_true(min(ntile33_2$Z) > -1)
+    plot(dtm, col = gcol)
+    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm)
     plot(ntile33_2)
   })
 
@@ -152,17 +157,16 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     options(lidR.raster.default = "terra")
     opt_chunk_size(montmorency) <- 0
     opt_output_files(montmorency) <- ""
-    dtm = rasterize_canopy(montmorency, 2, p2r()) # terra::mosaic run out of memory
+    dtm = rasterize_terrain(montmorency, 2) # terra::mosaic run out of memory
     expect_is(dtm, "SpatRaster")
     expect_false(raster::inMemory(dtm))
 
-    plot(dtm, col = height.colors(25))
+    plot(dtm, col = gcol)
 
-    ntile33_1 <- normalize_height(montmorency_tile33, dtm) # nawak
-    expect_true(min(ntile33_1$Z) > -1)
+    ntile33_1 <- normalize_height(montmorency_tile33, dtm)
     plot(ntile33_1)
 
-    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm) # nawak
+    ntile33_2 <- normalize_height(montmorency_tile33, tin(), dtm = dtm)
     expect_true(min(ntile33_2$Z) > -1)
     plot(ntile33_2)
   })
