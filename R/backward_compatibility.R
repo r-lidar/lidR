@@ -97,8 +97,7 @@ grid_terrain = function(las, res = 1, algorithm, ..., keep_lowest = FALSE, full_
 #' @rdname old_spatial_packages
 grid_metrics = function(las, func, res = 20, start = c(0,0), filter = NULL, by_echo = "all")
 {
-  res <- raster_layout(las, res, start, format = "raster")
-  res <- pixel_metrics(las, func, res, start, filter = filter, by_echo = by_echo)
+  res <- pixel_metrics(las, func, res, start, filter = filter, by_echo = by_echo, pkg = "raster")
   return(res)
 }
 

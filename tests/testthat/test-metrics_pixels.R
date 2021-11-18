@@ -238,6 +238,7 @@ test_that("grid_metrics is backward compatible", {
   expect_equal(dim(x), c(13,12,1))
   expect_true(sf::st_crs(x) == st_crs(las))
   expect_equal(names(x), "Zmean")
+  expect_equal(mean(x[], na.rm = T), 13.459, tolerance = 0.001)
 
   x <- grid_metrics(las, f2)
 
@@ -246,6 +247,7 @@ test_that("grid_metrics is backward compatible", {
   expect_equal(dim(x), c(13,12,2))
   expect_true(sf::st_crs(x) == st_crs(las))
   expect_equal(names(x), c("meanZ", "maxZ"))
+  expect_equal(mean(x$meanZ[], na.rm = T), 13.459, tolerance = 0.001)
 
   x <- grid_metrics(las, f1, by_echo = c("first", "lastofmany"))
 
@@ -254,6 +256,8 @@ test_that("grid_metrics is backward compatible", {
   expect_equal(dim(x), c(13,12,2))
   expect_true(sf::st_crs(x) == st_crs(las))
   expect_equal(names(x), c("Zmean.first", "Zmean.lastofmany"))
+  expect_equal(mean(x$Zmean.first[], na.rm = T), 13.459, tolerance = 0.001)
+  expect_true(all(is.na(x$Zmean.lastofmany[])))
 
 
   m1 <- grid_metrics(ctg, f1, 20)

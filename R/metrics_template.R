@@ -260,15 +260,16 @@ template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "
     bbox_template <- sf::st_set_crs(bbox_template, sf::st_crs(las)) # Workaround for RasterLayer
     bbox_las      <- sf::st_as_sfc(st_bbox(las))
     i <- sf::st_intersects(bbox_template, bbox_las)
+
+    if (is(template, "raster_template"))
+      template <- raster_materialize(template, pkg = pkg)
+
     if (length(i[[1]]) == 0L)
     {
-      # For backward compatibility we return the template with NAs
-      # It means that pixel_metrics and template_metrics never fails
       if (is_raster(template))
       {
-        if (is(template, "raster_template"))
-          template <- raster_materialize(template)
-
+        # For backward compatibility we return the template with NAs
+        # It means that pixel_metrics and grid_metrics never fails
         warning("No point fall in the raster. Bounding boxes are not intersecting.", call. = FALSE)
         return(template)
       }
