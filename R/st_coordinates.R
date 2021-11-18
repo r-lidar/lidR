@@ -3,7 +3,7 @@
 #' Retrieve coordinates of a LAS* object in matrix form. It creates a copy of the coordinates
 #' because of the coercion from `data.frame` to `matrix`. This function inherits `sf::st_coordinates`
 #'
-#' @template param-las
+#' @param x A LAS* object
 #' @param z bool. Return XY or XYZ matrix
 #' @param ... unused.
 #'

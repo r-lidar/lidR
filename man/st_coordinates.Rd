@@ -11,11 +11,11 @@
 \method{st_coordinates}{LAScatalog}(x, ...)
 }
 \arguments{
+\item{x}{A LAS* object}
+
 \item{z}{bool. Return XY or XYZ matrix}
 
 \item{...}{unused.}
-
-\item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 }
 \value{
 matrix
