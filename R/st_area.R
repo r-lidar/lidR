@@ -17,7 +17,7 @@
 #' @export
 #' @name st_area
 #' @importFrom sf st_area
-#' @importFrom raster area
+#' @importFrom terra area
 #' @md
 NULL
 

@@ -6,6 +6,7 @@
 #' @param ... LAS* objects if it is the sole argurment (e.g. in rbind())
 #'
 #' @name tools
+#' @rdname tools
 NULL
 
 #' @export
@@ -104,14 +105,16 @@ npoints.LAScatalog <- function(x, ...) { return(sum(x[["Number.of.point.records"
 
 #' @rdname tools
 #' @export
-density <- function(x, ...) { UseMethod("density", x) }
+setGeneric("density", function(x, ...) standardGeneric("density"))
 
 #' @export
-#' @importFrom stats density
-density.LAS <- function(x, ...) { return(npoints(x)/area(x)) }
+#' @rdname tools
+setMethod("density", "LAS", function(x, ...) { return(npoints(x)/area(x)) })
 
 #' @export
-density.LASheader <- function(x, ...) { return(npoints(x)/area(x)) }
+#' @rdname tools
+setMethod("density", "LASheader", function(x, ...) { return(npoints(x)/area(x)) })
 
+#' @rdname tools
 #' @export
-density.LAScatalog <- function(x, ...) { return(npoints(x)/area(x)) }
+setMethod("density", "LAScatalog",  function(x, ...) { return(npoints(x)/area(x)) })

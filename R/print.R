@@ -1,27 +1,140 @@
-setGeneric("print", function(x, ...)
-  standardGeneric("print"))
+#' @rdname tools
+#' @export
+print.LAS <- function(x, ...)
+{
+  show(x)
+  return(invisible(x))
+}
 
-setGeneric("summary", function(object, ...)
-  standardGeneric("summary"))
+#' @rdname tools
+#' @export
+print.LAScatalog <- function(x, ...)
+{
+  show(x)
+  return(invisible(x))
+}
+
+#' @export
+#' @rdname tools
+print.lidRAlgorithm = function(x, ...)
+{
+  e <- environment(x)
+  params <- ls(e)
+  params <- Filter(function(i) !is.algorithm(get(i,e)), params)
+  omp <- if (is.parallelised(x)) "yes" else "no"
+
+  if (is(x, LIDRDSM))
+  { use = "digital surface model" ; with = LIDRCONTEXTDSM }
+  else if (is (x, LIDRDEC))
+  { use = "point cloud thinning" ; with = LIDRCONTEXTDEC }
+  else if (is (x, LIDRGND))
+  { use = "ground classification" ; with = LIDRCONTEXTGND }
+  else if (is (x, LIDRITD))
+  { use = "individual tree detection" ; with = LIDRCONTEXTITD }
+  else if (is (x, LIDRITS))
+  { use = "individual tree segmentation" ; with = LIDRCONTEXTITS }
+  else if (is (x, LIDRNIT))
+  { use = "intensity normalisation" ; with = LIDRCONTEXTNIT }
+  else if (is (x, LIDRSNG))
+  { use = "snag segmentation" ; with = LIDRCONTEXTSNG }
+  else if (is (x, LIDRTRK))
+  { use = "sensor tracking" ; with = LIDRCONTEXTTRK }
+  else if (is (x, LIDRSHP))
+  { use = "shape segmentation" ; with = LIDRCONTEXTSHP }
+  else if (is (x, LIDRSPI))
+  { use = "spatial interpolation" ; with = LIDRCONTEXTSPI }
+  else if (is (x, LIDROUT))
+  { use = "noise classification" ; with = LIDRCONTEXTOUT }
+  else
+  { use = "unknown" ; with = "unknown" } # nocov
+
+  with = paste(with, collapse = " or ")
+
+  cat("Object of class lidR algorithm\n")
+  cat("Algorithm for:", use, "\n")
+  cat("Designed to be used with:", with, "\n")
+  cat("Native C++ parallelization:", omp, "\n")
+  cat("Parameters: ")
+
+  if (length(params) == 0L)
+  {
+    cat("none\n")
+    return(invisible(x))
+  }
+  else
+    cat("\n")
+
+  for (param in params)
+  {
+    v = get(param, e)
+    if (is.numeric(v) | is.complex(v) | is.logical(v) | is.character(v))
+      cat(" - ", param, " = " , v, " <", class(v), ">\n", sep = "")
+    else if (is.null(v))
+      cat(" - ", param, " = NULL <NULL>\n", sep = "")
+    else
+      cat(" - ", param, " <", class(v), ">\n", sep = "")
+  }
+
+  return(invisible(x))
+}
+
+#' @export
+#' @rdname tools
+print.raster_template <- function(x, ...)
+{
+  cat("Object of class raster_template\n")
+  cat("extent     : ", x$xmin, ", ", x$xmax, ", ",  x$ymin, ", ", x$ymax, " (xmin, xmax, ymin, ymax)\n", sep = "")
+  cat("resolution :", x$xres, x$yres, "\n")
+  cat("size       :", x$ncol, x$nrow, "\n")
+  cat("crs        :", x$crs$Name, "\n")
+}
 
 #' @rdname tools
 #' @param object A \code{LAS*} object or other lidR related objects.
-#' @aliases summary
 #' @export
-setMethod("summary", "LAS", function(object, ...)
+summary.LAS <- function(object, ...)
 {
   print(object)
   print(object@header)
   return(invisible(object))
-})
+}
 
 #' @rdname tools
 #' @export
-setMethod("print", "LAS", function(x)
+summary.LAScatalog <- function(object, ...)
 {
-  show(x)
-  return(invisible(x))
-})
+  inmemory <- if (opt_output_files(object) == "") "in memory" else "on disk"
+  w2w  <- if (opt_wall_to_wall(object)) "guaranteed" else "not guaranteed"
+  merging <- if (opt_merge(object)) "enabled" else "disable"
+
+  show(object)
+  cat("proc. opt.  : buffer: ", opt_chunk_buffer(object), " | chunk: ", opt_chunk_size(object), "\n", sep = "")
+  cat("input opt.  : select: ", opt_select(object), " | filter: ", opt_filter(object), "\n", sep = "")
+  cat("output opt. : ", inmemory, " | w2w ", w2w, " | merging ", merging, "\n", sep = "")
+  cat("drivers     :\n")
+
+  drivers <- object@output_options$drivers
+  dnames <- names(drivers)
+  for (i in 1:length(drivers))
+  {
+    driver <- drivers[[i]]
+    params <- driver$param
+    pnames <- names(params)
+    cat(" -", dnames[i], ": ")
+    if (length(params) > 0)
+    {
+      for (j in 1:length(params))
+        cat(pnames[j], "=", params[[j]], " ")
+    }
+    else
+    {
+      cat("no parameter")
+    }
+    cat("\n")
+
+  }
+  return(invisible(object))
+}
 
 setMethod("show", "LAS", function(object)
 {
@@ -130,42 +243,6 @@ setMethod("show", "LAScatalog", function(object)
   cat("points      : ", npoints.h, " ", pointprefix, " points\n", sep = "")
   cat("density     : ", density, " points/", units, "\u00B2\n", sep = "")
   cat("num. files  :", dim(object@data)[1], "\n")
-  return(invisible(object))
-})
-
-#' @rdname tools
-setMethod("summary", "LAScatalog", function(object, ...)
-{
-  inmemory <- if (opt_output_files(object) == "") "in memory" else "on disk"
-  w2w  <- if (opt_wall_to_wall(object)) "guaranteed" else "not guaranteed"
-  merging <- if (opt_merge(object)) "enabled" else "disable"
-
-  show(object)
-  cat("proc. opt.  : buffer: ", opt_chunk_buffer(object), " | chunk: ", opt_chunk_size(object), "\n", sep = "")
-  cat("input opt.  : select: ", opt_select(object), " | filter: ", opt_filter(object), "\n", sep = "")
-  cat("output opt. : ", inmemory, " | w2w ", w2w, " | merging ", merging, "\n", sep = "")
-  cat("drivers     :\n")
-
-  drivers <- object@output_options$drivers
-  dnames <- names(drivers)
-  for (i in 1:length(drivers))
-  {
-    driver <- drivers[[i]]
-    params <- driver$param
-    pnames <- names(params)
-    cat(" -", dnames[i], ": ")
-    if (length(params) > 0)
-    {
-      for (j in 1:length(params))
-        cat(pnames[j], "=", params[[j]], " ")
-    }
-    else
-    {
-      cat("no parameter")
-    }
-    cat("\n")
-
-  }
   return(invisible(object))
 })
 
@@ -336,78 +413,3 @@ setMethod("show", "LAScluster", function(object)
   cat("filter  :", object@filter, "\n")
   return(invisible(object))
 })
-
-
-#' @export
-#' @method print lidRAlgorithm
-#' @rdname tools
-print.lidRAlgorithm = function(x, ...)
-{
-  e <- environment(x)
-  params <- ls(e)
-  params <- Filter(function(i) !is.algorithm(get(i,e)), params)
-  omp <- if (is.parallelised(x)) "yes" else "no"
-
-  if (is(x, LIDRDSM))
-  { use = "digital surface model" ; with = LIDRCONTEXTDSM }
-  else if (is (x, LIDRDEC))
-  { use = "point cloud thinning" ; with = LIDRCONTEXTDEC }
-  else if (is (x, LIDRGND))
-  { use = "ground classification" ; with = LIDRCONTEXTGND }
-  else if (is (x, LIDRITD))
-  { use = "individual tree detection" ; with = LIDRCONTEXTITD }
-  else if (is (x, LIDRITS))
-  { use = "individual tree segmentation" ; with = LIDRCONTEXTITS }
-  else if (is (x, LIDRNIT))
-  { use = "intensity normalisation" ; with = LIDRCONTEXTNIT }
-  else if (is (x, LIDRSNG))
-  { use = "snag segmentation" ; with = LIDRCONTEXTSNG }
-  else if (is (x, LIDRTRK))
-  { use = "sensor tracking" ; with = LIDRCONTEXTTRK }
-  else if (is (x, LIDRSHP))
-  { use = "shape segmentation" ; with = LIDRCONTEXTSHP }
-  else if (is (x, LIDRSPI))
-  { use = "spatial interpolation" ; with = LIDRCONTEXTSPI }
-  else if (is (x, LIDROUT))
-  { use = "noise classification" ; with = LIDRCONTEXTOUT }
-  else
-  { use = "unknown" ; with = "unknown" } # nocov
-
-  with = paste(with, collapse = " or ")
-
-  cat("Object of class lidR algorithm\n")
-  cat("Algorithm for:", use, "\n")
-  cat("Designed to be used with:", with, "\n")
-  cat("Native C++ parallelization:", omp, "\n")
-  cat("Parameters: ")
-
-  if (length(params) == 0L)
-  {
-    cat("none\n")
-    return(invisible(x))
-  }
-  else
-    cat("\n")
-
-  for (param in params)
-  {
-    v = get(param, e)
-    if (is.numeric(v) | is.complex(v) | is.logical(v) | is.character(v))
-      cat(" - ", param, " = " , v, " <", class(v), ">\n", sep = "")
-    else if (is.null(v))
-      cat(" - ", param, " = NULL <NULL>\n", sep = "")
-    else
-      cat(" - ", param, " <", class(v), ">\n", sep = "")
-  }
-
-  return(invisible(x))
-}
-
-print.raster_template <- function(x, ...)
-{
-  cat("Object of class raster_template\n")
-  cat("extent     : ", x$xmin, ", ", x$xmax, ", ",  x$ymin, ", ", x$ymax, " (xmin, xmax, ymin, ymax)\n", sep = "")
-  cat("resolution :", x$xres, x$yres, "\n")
-  cat("size       :", x$ncol, x$nrow, "\n")
-  cat("crs        :", x$crs$Name, "\n")
-}
