@@ -88,7 +88,7 @@ test_that("rasterize_terrain option keep_lowest works", {
   expect_equal(lidR:::raster_res(dtm), c(1,1))
   expect_equal(dim(dtm), dim(tdtm))
   expect_equivalent(sf::st_bbox(dtm), sf::st_bbox(tdtm))
-  expect_equal(lidR::raster_names(dtm), "Z")
+  expect_equal(lidR:::raster_names(dtm), "Z")
   expect_equal(sum(is.na(lidR:::raster_values(dtm))), 1L)
 
   error <- abs(dtm - tdtm)
