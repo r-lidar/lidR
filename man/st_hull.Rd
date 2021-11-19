@@ -7,7 +7,7 @@
 \alias{concaveman}
 \title{Concave and convex hulls for LAS objects}
 \usage{
-st_concave_hull(x, concavity = 2, length_threshold = 5)
+st_concave_hull(x, method = "concaveman", ...)
 
 \method{st_convex_hull}{LAS}(x)
 
@@ -16,6 +16,10 @@ concaveman(x, y = NULL, concavity = 2, length_threshold = 0)
 \arguments{
 \item{x, y}{An object of class LAS or XY coordinates of points in case of \code{concaveman}. This can be
 specified as two vectors x and y, a 2-column matrix x, a list with two components, etc.}
+
+\item{method}{string. currently support "concaveman"}
+
+\item{...}{Propagate to the method}
 
 \item{concavity}{numeric a relative measure of concavity. 1 results in a relatively detailed shape,
 Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy

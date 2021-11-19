@@ -38,8 +38,8 @@ and will respect the settings of \link{set_lidr_threads}.}
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/Jean-Romain/lidR}
-  \item Report bugs at \url{https://github.com/Jean-Romain/lidR/issues}
+  \item \url{https://github.com/r-lidar/lidR}
+  \item Report bugs at \url{https://github.com/r-lidar/lidR/issues}
 }
 
 }

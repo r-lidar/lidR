@@ -4,25 +4,25 @@
 \alias{catalog_boundaries}
 \title{Computes the polygon that encloses the points}
 \usage{
-catalog_boundaries(ctg, concavity = 5, length_threshold = 5)
+catalog_boundaries(ctg, ...)
 }
 \arguments{
 \item{ctg}{A LAScatalog}
 
-\item{concavity, length_threshold}{see \link{concaveman}}
+\item{...}{propagated to \link{st_concave_hull}}
 }
 \value{
 A LAScatalog with true boundaries
 }
 \description{
 Computes the polygon that encloses the points. It reads all the files one by one and computes a
-concave hull using the \link{concaveman} function. When all the hulls are computed it updates the
+concave hull using the \link{st_concave_hull} function. When all the hulls are computed it updates the
 LAScatalog to set the true polygons instead of the bounding boxes.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg <- readLAScatalog(LASfile, filter = "-drop_z_below 0.5")
-ctg2 <- catalog_boundaries(ctg, 1, 15)
+ctg2 <- catalog_boundaries(ctg, concavity = 1, length_threshold = 15)
 plot(ctg)
 plot(ctg2, add = TRUE)
 }
