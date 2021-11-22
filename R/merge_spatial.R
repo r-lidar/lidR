@@ -77,7 +77,7 @@ merge_spatial.LAS = function(las, source, attribute = NULL)
   else if (is_raster(source) && !rgb)
     values <- raster_value_from_xy(source, las$X, las$Y)
   else if (is_raster(source) && rgb)
-    return(colorize(las, source))
+    return(colorize_points(las, source))
   else
     stop("No method for this source format.")
 
@@ -88,7 +88,7 @@ merge_spatial.LAS = function(las, source, attribute = NULL)
   return(las)
 }
 
-colorize = function(las, source)
+colorize_points = function(las, source)
 {
   cells <- raster_cell_from_xy(source, las$X, las$Y)
 
