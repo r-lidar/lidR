@@ -246,6 +246,15 @@ template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "
   func   <- lazyeval::f_interp(func)
   call   <- lazyeval::as_call(func)
 
+  # The way the user's expression is evaluated makes the scoping rule counter intuitive and
+  # somehow buggy. It gives precedence to lidR in all cases. For example it will call an internal
+  # function of lidR instead of its globalenv version if they have the same name. The following
+  # tries to parse the expression and evaluates if ambiguous definition are existing.
+  call_names <- all.names(call)
+  las_names  <- names(las)
+  call_names <- call_names[!call_names %in% las_names]
+  lapply(call_names, stop_if_ambiguous_definition)
+
   if (is.null(template)) template <- st_bbox(las)
 
   # Pre-computation of the groups
@@ -326,19 +335,24 @@ metrics_classic = function(las, call, cells, filter)
   las@data[["cells"]] <- cells
   las@data[["echo"]] <- LASALLECHOS
 
+  verbose("Computing metrics for all echos...")
+
   if (is.null(filter))
   {
+    ls(parent.frame())
+    verbose("Argument filter is NULL...")
     metrics <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
   }
   else
   {
     filter  <- lasfilter_(las, list(filter))
+    verbose(glue::glue("Argument filter retained {sum(filter)} points..."))
     metrics <- las@data[filter, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
   }
 
   # This may append because new versions of data.table are more flexible than before
   if (any(duplicated(metrics[[1]])))
-    stop("Duplicated pixels found. At least one of the metrics was not a number. Each metric should be a single number.", call. = FALSE)
+    stop("Duplicated elements found. At least one of the metrics was not a number. Each metric should be a single number.", call. = FALSE)
 
   return(metrics)
 }
@@ -384,19 +398,25 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
 
   las@data[["cells"]] <- cells
 
+  verbose("Computing metrics for selected echos...")
+
   if (is.null(filter))
   {
+    verbose("Argument filter is NULL...")
+
     metrics1 <- NULL
     metrics2 <- NULL
 
     if (compute_type1)
     {
+      verbose("Computing metrics for first intermediate and last...")
       las@data[["echo"]] <- echo_class1
       metrics1 <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
     }
 
     if (compute_type2)
     {
+      verbose("Computing metrics for single and multiple...")
       las@data[["echo"]] <- echo_class2
       metrics2 <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
     }
@@ -407,6 +427,8 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
   else
   {
     filter <- lasfilter_(las, list(filter))
+
+    verbose(glue::glue("Argument filter retained {sum(filter)} points..."))
 
     metrics1 <- NULL
     metrics2 <- NULL
@@ -425,7 +447,7 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
 
   # This may append because new versions of data.table are more flexible than before
   if (any(duplicated(metrics12[LASFIRST][[1]])))
-    stop("Duplicated pixels found. At least one of the metrics was not a number. Each metric should be a single number.", call. = FALSE)
+    stop("Duplicated elements found. At least one of the metrics was not a number. Each metric should be a single number.", call. = FALSE)
 
   return(metrics12)
 }
@@ -704,3 +726,44 @@ merge_list.numeric <- function(template, list)
   return(output[])
 
 }
+
+stop_if_ambiguous_definition <- function(name)
+{
+  # Check if this name exists in lidR (internal or not)
+  u <- tryCatch(getFromNamespace(name, 'lidR'), error = function(e) FALSE)
+  u <- is.function(u)
+
+  # If FALSE, no ambiguity
+  if (!u) return(invisible(NULL))
+
+  # Check in the parent frame if the name has been defined
+  e <- parent.frame(1)
+  u <- tryCatch(mget(name, envir = e), error = function(e) FALSE)
+  u <- !isFALSE(u)
+  n <- environmentName(e)
+  if (n == "") n <- "parent.frame(1)"
+
+  # If TRUE, there is an ambiguity, to object have the same name, lidR object will take
+  # the precedence. We don't want that
+  if (u) stop(glue::glue("The function '{name}' exists in the package lidR but is also defined in {n}. The scoping rules give precedence to lidR and the result may not be the one expected. Please rename your function."), call. = FALSE)
+
+  # We do that while we did not reached R_GlobalEnv
+  i <- 2
+  while(!identical(parent.frame(i-1), globalenv()) & isFALSE(u))
+  {
+    e <- parent.frame(i)
+    u <- tryCatch(mget(name, envir = e), error = function(e) FALSE)
+    u <- !isFALSE(u)
+    n <- environmentName(e)
+    i <- i+1
+  }
+
+  # u is FALSE, we did not find ambiguous definition
+  if (!u) return(invisible(NULL))
+
+  if (n == "") n <- glue::glue("parent.frame({i-1})")
+
+  # u is TRUE, we found ambiguous definition
+  stop(glue::glue("The function '{name}' exists in the package lidR but is also defined in {n}. The scoping rules give precedence to lidR and the result may not be the one expected. Please rename your function."), call. = FALSE)
+}
+
