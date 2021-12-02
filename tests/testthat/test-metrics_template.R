@@ -1,7 +1,7 @@
 las = random_10_points
 
 VCI = function() { 0 }
-colorize = function() { 0 }
+colorize_points = function() { 0 }
 f = function()
 {
   entropy <- function(x) x
@@ -12,6 +12,6 @@ f = function()
 test_that("Ambiguous definitions are handled", {
 
   expect_error(cloud_metrics(las, ~VCI()), "exists in the package lidR but is also defined in")
-  expect_error(cloud_metrics(las, ~colorize()), "exists in the package lidR but is also defined in")
+  expect_error(cloud_metrics(las, ~colorize_points()), "exists in the package lidR but is also defined in")
   expect_error(f(), "exists in the package lidR but is also defined in")
 })
