@@ -210,9 +210,9 @@ raster_as_dataframe <- function(raster,  xy = TRUE, na.rm = TRUE)
     stop("stars_proxy not supported in 'raster_as_dataframe()'", call. = FALSE) # nocov
 
   m <- raster_as_matrix(raster)
-  z <- as.numeric(m$z)
+  z <- as.numeric(t(apply(m$z, 1, rev)))
   x <- rep(m$x, length(m$y))
-  y <- rep(m$y, each = length(m$x))
+  y <- rep(rev(m$y), each = length(m$x))
   d <- data.frame(X = x, Y = y)
 
   if (!xy) d$Z = z
