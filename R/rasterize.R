@@ -28,9 +28,9 @@
 #' or `stars`. Default is `getOption("lidR.raster.default")`.
 #' @param res numeric. The size of a grid cell in point-cloud coordinates units. Can also be
 #'  `RasterLayer` or a `stars` or a `SpatRaster` used as layout.
-#' @param shape logical. By default the interpolation is made only within the convex hull of
+#' @param shape By default the interpolation is made only within the `"convex"` hull of
 #' the point cloud to get a DTM with the shape of the point cloud. This prevents meaningless
-#' interpolations where there is no data. It can also be "concave" or "bbox". It can also be an `sfc`
+#' interpolations where there is no data. It can also be `"concave"` or `"bbox"`. It can also be an `sfc`
 #' to define a polygon where to perform the interpolation.
 #' @param use_class integer vector. By default the terrain is computed by using ground points
 #' (class 2) and water points (class 9).

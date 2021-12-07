@@ -38,9 +38,9 @@ or \code{stars}. Default is \code{getOption("lidR.raster.default")}.}
 \item{use_class}{integer vector. By default the terrain is computed by using ground points
 (class 2) and water points (class 9).}
 
-\item{shape}{logical. By default the interpolation is made only within the convex hull of
+\item{shape}{By default the interpolation is made only within the \code{"convex"} hull of
 the point cloud to get a DTM with the shape of the point cloud. This prevents meaningless
-interpolations where there is no data. It can also be "concave" or "bbox". It can also be an \code{sfc}
+interpolations where there is no data. It can also be \code{"concave"} or \code{"bbox"}. It can also be an \code{sfc}
 to define a polygon where to perform the interpolation.}
 }
 \value{

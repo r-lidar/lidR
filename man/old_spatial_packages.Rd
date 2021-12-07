@@ -80,6 +80,8 @@ delineate_crowns(
 \item{concavity, length_threshold}{see \link{concaveman}}
 }
 \description{
+lidR 4.0.0 no longer uses \code{sp} and \code{raster}. New functions are based on \code{sf}, \code{terra} and \code{stars}.
+However to maintain backward compatibility the old functions from v<4.0.0 were preserved.\cr\cr
 \code{rgdal} and \code{rgeos} will be retired on Jan 1st 2024. The \code{raster} and \code{sp} packages are based on
 \code{rgdal} and \code{rgeos}. \code{lidR} was based on \code{raster} and \code{sp} because it was created before \code{sf}, \code{terra}
 and \code{stars} packages. This means that sooner or later users and packages that are still based on
@@ -88,12 +90,9 @@ old R spatial packages will run into trouble. According to Edzer Pebesma, Roger 
 developed, may be more familiar with older packages like \code{maptools}, \code{sp}, \code{rgeos}, and \code{rgdal}. A fair
 question is whether they should migrate existing code and/or existing R packages depending on these
 packages. The answer is: yes (see reference).}\cr\cr
-lidR 4.0.0 no longer uses \code{sp} and \code{raster}. New functions are based on \code{sf} and \code{stars}.
-However to maintain backward compatibility the old functions from v<4.0.0 were preserved. The old
-functions are using the new functions and automatically cast the output to the old format. The old
-functions are not formally deprecated but users should definitively move their workflow to modern
-spatial package. lidR will maintain the old functions as long as it does not generate troubles
-on CRAN. So, it might be until Jan 1st 2024 or later who knows...
+The following functions are not formally deprecated but users should definitively move their workflow to modern
+spatial packages. lidR will maintain the old functions as long as it does not generate troubles
+on CRAN. So, it might be until Jan 1st 2024 or later who knows...#'
 }
 \references{
 Edzer Pebesma, Roger Bivand Spatial Data Science with applications in R

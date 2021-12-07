@@ -1,5 +1,7 @@
 #' Older R Spatial Packages
 #'
+#' lidR 4.0.0 no longer uses `sp` and `raster`. New functions are based on `sf`, `terra` and `stars`.
+#' However to maintain backward compatibility the old functions from v<4.0.0 were preserved.\cr\cr
 #' `rgdal` and `rgeos` will be retired on Jan 1st 2024. The `raster` and `sp` packages are based on
 #' `rgdal` and `rgeos`. `lidR` was based on `raster` and `sp` because it was created before `sf`, `terra`
 #' and `stars` packages. This means that sooner or later users and packages that are still based on
@@ -8,13 +10,9 @@
 #' developed, may be more familiar with older packages like `maptools`, `sp`, `rgeos`, and `rgdal`. A fair
 #' question is whether they should migrate existing code and/or existing R packages depending on these
 #' packages. The answer is: yes (see reference).*\cr\cr
-#' lidR 4.0.0 no longer uses `sp` and `raster`. New functions are based on `sf` and `stars`.
-#' However to maintain backward compatibility the old functions from v<4.0.0 were preserved. The old
-#' functions are using the new functions and automatically cast the output to the old format. The old
-#' functions are not formally deprecated but users should definitively move their workflow to modern
-#' spatial package. lidR will maintain the old functions as long as it does not generate troubles
-#' on CRAN. So, it might be until Jan 1st 2024 or later who knows...
-#'
+#' The following functions are not formally deprecated but users should definitively move their workflow to modern
+#' spatial packages. lidR will maintain the old functions as long as it does not generate troubles
+#' on CRAN. So, it might be until Jan 1st 2024 or later who knows...#'
 #' @param x,las an object of class LAS*
 #' @param res,start see \link{pixel_metrics}
 #' @param func see \link{template_metrics}
