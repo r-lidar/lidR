@@ -2,7 +2,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v3.2.4 (Release date: ...)
 
-- Remove the metric `itot` from `stdmetrics_i` which generates troubles (see [#463](https://github.com/Jean-Romain/lidR/issues/463) [#514](https://github.com/Jean-Romain/lidR/issues/514)) and that is useless.
+- The metric `itot` from `stdmetrics_i` which generates troubles (see [#463](https://github.com/Jean-Romain/lidR/issues/463) [#514](https://github.com/Jean-Romain/lidR/issues/514)) is now `double` instead of `int`
 
 ## lidR v3.2.3 (Release date: 2021-11-13)
 
