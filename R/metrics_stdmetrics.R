@@ -171,11 +171,9 @@ stdmetrics_i = function(i, z = NULL, class = NULL, rn = NULL)
 {
   itot <- imax <- imean <- isd <- icv <- iskew <- ikurt <- NULL
   icumzq10 <- icumzq30 <- icumzq50 <- icumzq70 <- icumzq90 <- NULL
-  itot1st <- itot2sd <- itot3rd <- itot4th  <- itot5th <- NULL
 
   n <- length(i)
-  itot <- sum(i)
-  if (is.double(itot)) stop("Metric 'itot' is greater than 2147483647 and cannot be stored as integer.", call. = FALSE)
+  itot <- as.double(sum(i))
   imean <- mean(i)
 
   probs <- seq(0.05, 0.95, 0.05)
