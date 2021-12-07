@@ -1,6 +1,10 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v3.2.3 (Release date: ...)
+## lidR v3.2.4 (Release date: ...)
+
+- Remove the metric `itot` from `stdmetrics_i` which generates troubles (see [#463](https://github.com/Jean-Romain/lidR/issues/463) [#514](https://github.com/Jean-Romain/lidR/issues/514)) and that is useless.
+
+## lidR v3.2.3 (Release date: 2021-11-13)
 
 - Fix: bitmerge strategy was bugged and may return NaN and also probably duplicated IDs ([#492](https://github.com/Jean-Romain/lidR/issues/492))
 - Fix: Maybe fix error in `sp::SpatialPolygons(pgeom, proj4string = crs) : is(proj4string, "CRS") is not TRUE` with `readLAScatalog()`. But this error is very weird and non systematically reproducible.
