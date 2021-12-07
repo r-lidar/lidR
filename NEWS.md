@@ -15,7 +15,7 @@ In version 4 `lidR` now no longer uses `sp`, it uses `sf` and it no longer uses 
   library(raster)
   ```
 
-2. The formal class `LAS` no longer inherits the class `Spatial` from `sp`. It means, among others, that a `LAS` object no longer have a slot `@proj4string` with a `CRS` from `sp` nor a slot `@bbox`. The CRS is now stored in the slot `@crs` in a `crs` object from `sf`. Former functions `crs()` and `projection()` inherited from `raster` are backward compatible and return a `CRS` or a `proj4string` from `sp`. However codes that access these slots manually are no longer valid (but nobody was supposed to do that because ìt was the purpose of the function `projection()`):
+2. The formal class `LAS` no longer inherits the class `Spatial` from `sp`. It means, among others, that a `LAS` object no longer have a slot `@proj4string` with a `CRS` from `sp` nor a slot `@bbox`. The CRS is now stored in the slot `@crs` in a `crs` object from `sf`. Former functions `crs()` and `projection()` inherited from `raster` are backward compatible and return a `CRS` or a `proj4string` from `sp`. However codes that access these slots manually are no longer valid (but nobody was supposed to do that because it was the purpose of the function `projection()`):
   ```r
   las@proj4string # No longer works
   las@bbox        # No longer works
@@ -35,7 +35,7 @@ In version 4 `lidR` now no longer uses `sp`, it uses `sf` and it no longer uses 
   plot(ctg["Max.Z"])
   ```
   
-5. Serialized `LAS/LAscatalog` objects (i.e. stored in `.rds` or `.Rdata` files) saved with `lidR v3.x.y` are no longer compatible with `lidR v4.x.y`. Indeed the structure of a `LAS/LAScatalog` object is now different mainly because the slot `@crs` replaces the slot `@proj4string`. Users may get errors when using e.g. `readRDS(las.rds)` to load back an R object. However we put safeguards so, in practice, it should be backward compatible transparently and even repaired automatically in some circumstances. Consequently we are not sure it is a backward incompatibility because we handled and fixed all warnings and error we found. In the worst case it is possible to repair a `LAS` object v3 with:
+5. Serialized `LAS/LAScatalog` objects (i.e. stored in `.rds` or `.Rdata` files) saved with `lidR v3.x.y` are no longer compatible with `lidR v4.x.y`. Indeed the structure of a `LAS/LAScatalog` object is now different mainly because the slot `@crs` replaces the slot `@proj4string`. Users may get errors when using e.g. `readRDS(las.rds)` to load back an R object. However we put safeguards so, in practice, it should be backward compatible transparently and even repaired automatically in some circumstances. Consequently we are not sure it is a backward incompatibility because we handled and fixed all warnings and error we found. In the worst case it is possible to repair a `LAS` object v3 with:
   ```r
   las <-  LAS(las)
   ```
@@ -44,7 +44,7 @@ In version 4 `lidR` now no longer uses `sp`, it uses `sf` and it no longer uses 
 
 ### New modern functions
 
-Former functions that return `Spatial*` objects from package `sp` should no longer be used. It is time for everybody to embrace `sf`. These functions are still in `lidR` for backward compatibility though. They won't be removed except if package `sp` is removed from CRAN. It might happen on Jan 1st 2024, it might happen later. We do not know. New functions return `sf` or `sfc` objects. Old function are not documented so new users won't be able to use them.
+Former functions that return `Spatial*` objects from package `sp` should no longer be used. It is time for everybody to embrace `sf`. These functions are still in `lidR` for backward compatibility though. They won't be removed except if package `sp` is removed from CRAN. It might happen on Jan 1st 2024, it might happen later. We do not know. New functions return `sf` or `sfc` objects. Old functions are not documented so new users won't be able to use them.
 
 - `tree_metrics()` and `delineate_crowns()` are replaced by a single function `crown_metrics()` that do the same and more.
 - `find_trees()` is replaced by `locate_trees()`.
@@ -56,7 +56,7 @@ Former functions that return `Raster*` objects from package `raster` should no l
 
 ### New features
 
-New functions are mostly convenient features that simplify some workflow without introducing a lot of brand new functionality that would not already exist in `lidR` v3.
+New functions are mostly convenient features that simplify some workflow without introducing a lot of brand new functionality that did not already exist in `lidR` v3.
 
 1. New geometry functions `st_convex_hull()` and `st_concave_hull()` that return `sfc`
 
@@ -70,13 +70,13 @@ New functions are mostly convenient features that simplify some workflow without
   header[["Z scale factor"]]
   ```
 
-5. Operators `$` and `[[` on `LAS` can now access the `LAsheader` data. The following are now valid statements:
+5. Operators `$` and `[[` on `LAS` can now access the `LASheader` data. The following are now valid statements:
   ```r
   las[["Version Major"]]
   las[["Z scale factor"]]
   ```
 
-6. RStudio now supports auto completion for operator `$` in `LAS` object. Yay!
+6. RStudio now supports auto completion for operator `$` in `LAS` objects. Yay!
 
 7. New functions `template_metrics()`, `hexagon_metrics()`, `polygon_metrics()` that extend the concept of metrics further to any kind of template.
 
@@ -112,6 +112,6 @@ New functions are mostly convenient features that simplify some workflow without
 ### Documentation
 
 - Man pages of `classify_*`, `rasterize_*`, `*_metrics`, `segment_*` and `normalize_*` were grouped.
-- The pdf version of the manual contains more documentation (more function) but is 20 pages shorter meaning that we tidy and cleanup the documentation
+- The pdf version of the manual contains more documentation (more functions) but is 20 pages shorter meaning that we tidy and cleanup the documentation
 
 
