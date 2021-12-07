@@ -124,7 +124,7 @@
 #' # ================
 #'
 #' m <- pixel_metrics(las, fun1, 20)
-#' plot(m, col = col, breaks = "equal")
+#' plot(m, col = col)
 #'
 #' m = pixel_metrics(las, ~myMetrics(Z, Intensity))
 #' plot(m, col = col)

@@ -84,9 +84,9 @@ New functions are mostly convenient features that simplify some workflow without
 
 9. Every function that support a raster as input now accept an "on-disk" raster from `raster`, `terra` and `stars`  i.e. a raster not loaded in memory. This include rasterization functions, individual tree segmentation functions, `merge_spatial` and others in particular `plot_dtm3d()` and `add_dtm3d()` that now downsample on-disk rasters on-the-fly to display very large DTMs. This was already the case in previous versions but not every function was properly optimized to handle such objects.
 
-10. All the functions that return a raster (`pixel_metrics()` and `rasterize_*()`) are raster agnostic and can return rasters from `raster`, `terra` or `stars`. They have an argument `pkg = "raster|terra|stars"` to choose. The default is `stars` but this can be changed globally using:
+10. All the functions that return a raster (`pixel_metrics()` and `rasterize_*()`) are raster agnostic and can return rasters from `raster`, `terra` or `stars`. They have an argument `pkg = "raster|terra|stars"` to choose. The default is `terra` but this can be changed globally using:
   ```r
-  options(lidR.raster.default = "terra")
+  options(lidR.raster.default = "stars")
   ```
 
 11. New function `catalog_map()` that simplifies a lot `catalog_apply()`. Yet it is not as versatile as `catalog_apply()` but suits well in 80% of use cases. Applying a user-defined function to a collection of LAS files is now as simple as:

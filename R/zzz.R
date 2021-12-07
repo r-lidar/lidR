@@ -19,7 +19,7 @@
     lidR.verbose = FALSE,
     lidR.debug = FALSE,
     lidR.check.nested.parallelism = TRUE,
-    lidR.raster.default = "stars")
+    lidR.raster.default = "terra")
 
   max <- R_omp_get_max_threads()
   if (max > 0)
