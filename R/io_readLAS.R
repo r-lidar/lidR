@@ -240,7 +240,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
       temp.header <- rlas::read.lasheader(file)
 
       if (temp.header[["Point Data Format ID"]] != header[["Point Data Format ID"]] )
-        stop("Different files have different Point Data Format ID and are incompatible.", call. = FALSE)
+        warning("Different files have different Point Data Format ID and are incompatible. Some attribute may have been discarded or zeroed", call. = FALSE)
 
       if (temp.header[["X scale factor"]] != header[["X scale factor"]] )
         warning("Different files have different X scale factors and are incompatible. The first file has precedence and data were rescaled.", call. = FALSE)
