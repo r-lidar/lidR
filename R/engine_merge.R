@@ -50,10 +50,12 @@ engine_merge = function(ctg, any_list, ...)
     } else if (inherits(x, "stars")) {
       any_type <- "stars"
     } else if (inherits(x, "SpatRaster")) {
-      any_type <- "terra"
+      any_type <- "rterra"
+    } else if (inherits(x, "SpatVector")) {
+      any_type <- "vterra"
     } else if (inherits(x, "LAS")) {
       any_type <- "las"
-    } else if (inherits(x, "SpatialPolygons") | inherits(x, "SpatialPoints")) {
+    } else if (inherits(x, "SpatialPolygons") | inherits(x, "SpatialPoints") | inherits(x, "SpatialLines")) {
       any_type <- "sp"
     } else if (inherits(x, "sf")) {
       any_type <- "sf"
@@ -109,7 +111,7 @@ engine_merge = function(ctg, any_list, ...)
         return(raster)
       }
     }
-    if (any_type == "terra")
+    if (any_type == "rterra")
     {
       if (object_are_in_files)
       {
@@ -125,6 +127,18 @@ engine_merge = function(ctg, any_list, ...)
         raster <- do.call(terra::mosaic, any_list)
         raster_names(raster) <- names
         return(raster)
+      }
+    }
+    else if (any_type == "vterra")
+    {
+      if (object_are_in_files)
+      {
+        return(unlist(any_list))
+      }
+      else
+      {
+        output <- do.call(rbind, any_list)
+        return(output)
       }
     }
     else if (any_type == "las")

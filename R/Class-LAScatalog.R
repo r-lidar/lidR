@@ -198,7 +198,15 @@ setMethod("initialize", "LAScatalog", function(.Object)
       extension = ".tif",
       object = "x",
       path = "filename",
-      param = list(NAflag = -999999)
+      param = list(overwrite=FALSE,
+                   NAflag = -999999)
+    ),
+    SpatVector = list(
+      write = terra::writeVector,
+      extension = ".shp",
+      object = "x",
+      path = "filename",
+      param = list(overwrite=FALSE)
     ),
     LAS = list(
       write = lidR::writeLAS,
@@ -216,7 +224,7 @@ setMethod("initialize", "LAScatalog", function(.Object)
     ),
     sf = list(
       write = sf::st_write,
-      extension = ".gpkg",
+      extension = ".shp",
       object = "obj",
       path = "dsn",
       param = list(quiet = TRUE)

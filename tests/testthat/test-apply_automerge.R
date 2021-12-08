@@ -65,6 +65,14 @@ dftest <- function(cluster) {
   head(lidR:::coordinates3D(las))
 }
 
+terratest <- function(cluster, DataFrame = FALSE) {
+  x <- sftest(cluster, DataFrame)
+  if (is.null(x)) return(NULL)
+  v <- terra::vect(x)
+  terra::crs(v) <- sf::st_crs(x)$wkt
+  return(v)
+}
+
 expected_bbox <- sf::st_bbox(c(xmin = 0,xmax = 100, ymin =  0, ymax = 200))
 
 test_that("catalog_apply automerge works with in memory RasterLayer", {
@@ -179,6 +187,27 @@ test_that("catalog_apply automerge works with on disk SpatialPoints*", {
   expect_true(all(tools::file_ext(req3) == "shp"))
 })
 
+test_that("catalog_apply automerge works with on disk SpatVector", {
+
+  skip_on_cran()
+
+  opt_output_files(ctg) <- ""
+
+  option <- list(automerge = T)
+  req3 <- catalog_apply(ctg, terratest, .options = option)
+
+  expect_is(req3, "SpatVector")
+  expect_false(terra::crs(req3) == "")
+
+  opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}_{lidR:::uuid()}")
+
+  option <- list(automerge = TRUE)
+  req3 <- catalog_apply(ctg, terratest, .options = option)
+
+  expect_true(is.character(req3))
+  expect_true(all(tools::file_ext(req3) == "shp"))
+})
+
 test_that("catalog_apply automerge works with in memory POINTS", {
 
   skip_on_cran()
@@ -201,7 +230,7 @@ test_that("catalog_apply automerge works with on disk POINTS*", {
   req3 <- catalog_apply(ctg, sftest, .options = option)
 
   expect_true(is.character(unlist(req3)))
-  expect_true(all(tools::file_ext(req3) == "gpkg"))
+  expect_true(all(tools::file_ext(req3) == "shp"))
 })
 
 test_that("catalog_apply automerge works with in memory LAS", {
