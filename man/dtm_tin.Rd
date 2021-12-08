@@ -29,7 +29,7 @@ las = readLAS(LASfile, filter = "-inside 273450 5274350 273550 5274450")
 
 dtm = rasterize_terrain(las, algorithm = tin())
 
-#plot(dtm, breaks = "equal", nbreaks = 50)
+#plot(dtm)
 #plot_dtm3d(dtm)
 }
 \seealso{

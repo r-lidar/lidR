@@ -278,7 +278,7 @@ clip_transect = function(las, p1, p2, width, xz = FALSE, ...)
     {
       dsm <- rasterize_canopy(las, 2, p2r())
       plot(las@header)
-      plot(dsm, col = height.colors(15), breaks = "equal")
+      plot(dsm, col = height.colors(15))
     }
     tr <- graphics::locator(2L, type = "o")
     p1 <- c(tr$x[1L], tr$y[1L])

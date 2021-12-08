@@ -83,9 +83,9 @@ dtm2 = rasterize_terrain(las, algorithm = tin())
 \dontrun{
 dtm3 = rasterize_terrain(las, algorithm = kriging(k = 10L))
 
-plot(dtm1)
-plot(dtm2)
-plot(dtm3)
+plot(dtm1, col = gray(0:25/25))
+plot(dtm2, col = gray(0:25/25))
+plot(dtm3, col = gray(0:25/25))
 plot_dtm3d(dtm1)
 plot_dtm3d(dtm2)
 plot_dtm3d(dtm3)
@@ -101,12 +101,12 @@ col <- height.colors(15)
 
 # Points-to-raster algorithm with a resolution of 1 meter
 chm <- rasterize_canopy(las, res = 1, p2r())
-plot(chm, col = col, breaks = "equal")
+plot(chm, col = col)
 
 # Points-to-raster algorithm with a resolution of 0.5 meters replacing each
 # point by a 20-cm radius circle of 8 points
 chm <- rasterize_canopy(las, res = 0.5, p2r(0.2))
-plot(chm, col = col, breaks = "equal")
+plot(chm, col = col)
 
 # Basic triangulation and rasterization of first returns
 chm <- rasterize_canopy(las, res = 0.5, dsmtin())

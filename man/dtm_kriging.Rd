@@ -30,7 +30,7 @@ plot(las)
 
 dtm = rasterize_terrain(las, algorithm = kriging())
 
-plot(dtm, breaks = "equal", nbreaks = 50)
+plot(dtm)
 plot_dtm3d(dtm)
 }
 }

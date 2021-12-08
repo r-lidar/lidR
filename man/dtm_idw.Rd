@@ -27,7 +27,7 @@ las = readLAS(LASfile)
 
 dtm = rasterize_terrain(las, algorithm = knnidw(k = 6L, p = 2))
 
-#plot(dtm, breaks = "equal", nbreaks = 50)
+#plot(dtm)
 #plot_dtm3d(dtm)
 }
 \seealso{

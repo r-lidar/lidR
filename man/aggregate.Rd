@@ -159,7 +159,7 @@ plot(m, col = col)
 sfc <- sf::st_as_sfc(st_bbox(las))
 template <- sf::st_make_grid(sfc, cellsize = 20, square = FALSE)
 m <- template_metrics(las, fun1, template)
-plot(m, nbreaks = 15)
+plot(m)
 
 # a bbox as template
 template <- st_bbox(las) + c(50,30,-50,-70)
@@ -186,7 +186,7 @@ myMetrics = function(z, i) {
 # example with a stars template
 template <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10)
 m <- template_metrics(las, ~myMetrics(Z, Intensity), template)
-plot(m, col = col, breaks = "equal", join_zlim = FALSE)
+plot(m, col = col)
 
 # ================
 # CLOUD METRICS
@@ -199,7 +199,7 @@ cloud_metrics(las, .stdmetrics_z)
 # ================
 
 m <- pixel_metrics(las, fun1, 20)
-plot(m, col = col, breaks = "equal")
+plot(m, col = col)
 
 m = pixel_metrics(las, ~myMetrics(Z, Intensity))
 plot(m, col = col)

@@ -23,7 +23,7 @@
 #'
 #' dtm = rasterize_terrain(las, algorithm = tin())
 #'
-#' #plot(dtm, breaks = "equal", nbreaks = 50)
+#' #plot(dtm)
 #' #plot_dtm3d(dtm)
 #' @name dtm_tin
 tin = function(..., extrapolate = knnidw(3,1,50))
@@ -76,7 +76,7 @@ tin = function(..., extrapolate = knnidw(3,1,50))
 #'
 #' dtm = rasterize_terrain(las, algorithm = knnidw(k = 6L, p = 2))
 #'
-#' #plot(dtm, breaks = "equal", nbreaks = 50)
+#' #plot(dtm)
 #' #plot_dtm3d(dtm)
 #' @name dtm_idw
 knnidw = function(k = 10, p = 2, rmax = 50)
@@ -121,7 +121,7 @@ knnidw = function(k = 10, p = 2, rmax = 50)
 #'
 #' dtm = rasterize_terrain(las, algorithm = kriging())
 #'
-#' plot(dtm, breaks = "equal", nbreaks = 50)
+#' plot(dtm)
 #' plot_dtm3d(dtm)
 #' }
 #' @name dtm_kriging

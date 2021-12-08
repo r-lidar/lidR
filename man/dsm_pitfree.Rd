@@ -36,11 +36,11 @@ col <- height.colors(50)
 
 # Basic triangulation and rasterization of first returns
 chm <- rasterize_canopy(las, res = 0.5, dsmtin())
-plot(chm, col = col, breaks = "equal")
+plot(chm, col = col)
 
 # Khosravipour et al. pitfree algorithm
 chm <- rasterize_canopy(las, res = 0.5, pitfree(c(0,2,5,10,15), c(0, 1.5)))
-plot(chm, col = col, breaks = "equal")
+plot(chm, col = col)
 
 \dontrun{
 # Potentially complex concave subset of point cloud
@@ -53,10 +53,10 @@ plot(las2)
 # dummy pixels are interpolated that are correct according to the interpolation
 # method used, but meaningless in our CHM
 chm <- rasterize_canopy(las2, res = 0.5, pitfree(max_edge = c(0, 1.5)))
-plot(chm, col = col, breaks = "equal")
+plot(chm, col = col)
 
 chm = rasterize_canopy(las2, res = 0.5, pitfree(max_edge = c(3, 1.5)))
-plot(chm, col = col, breaks = "equal")
+plot(chm, col = col)
 }
 }
 \references{

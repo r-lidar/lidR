@@ -250,6 +250,6 @@ opt_select(ctg)       <- "xyz"   # read only the coordinates.
 opt    <- list(raster_alignment = 20) # catalog_apply will adjust the chunks if required
 output <- catalog_map(ctg, rumple_index_surface, res = 20, .options = opt)
 
-plot(output, col = height.colors(15), breaks = "equal")
+plot(output, col = height.colors(25))
 }
 }

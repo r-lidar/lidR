@@ -84,7 +84,7 @@
 #' sfc <- sf::st_as_sfc(st_bbox(las))
 #' template <- sf::st_make_grid(sfc, cellsize = 20, square = FALSE)
 #' m <- template_metrics(las, fun1, template)
-#' plot(m, nbreaks = 15)
+#' plot(m)
 #'
 #' # a bbox as template
 #' template <- st_bbox(las) + c(50,30,-50,-70)
@@ -111,7 +111,7 @@
 #' # example with a stars template
 #' template <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10)
 #' m <- template_metrics(las, ~myMetrics(Z, Intensity), template)
-#' plot(m, col = col, breaks = "equal", join_zlim = FALSE)
+#' plot(m, col = col)
 #'
 #' # ================
 #' # CLOUD METRICS
@@ -730,7 +730,7 @@ merge_list.numeric <- function(template, list)
 stop_if_ambiguous_definition <- function(name)
 {
   # Check if this name exists in lidR (internal or not)
-  u <- tryCatch(getFromNamespace(name, 'lidR'), error = function(e) FALSE)
+  u <- tryCatch(utils::getFromNamespace(name, 'lidR'), error = function(e) FALSE)
   u <- is.function(u)
 
   # If FALSE, no ambiguity
