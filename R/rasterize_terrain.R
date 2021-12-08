@@ -35,6 +35,7 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), use_class = c(
   dots <- list(...)
   Wdegenerated <- isTRUE(dots$Wdegenerated)
   keep_lowest <- isTRUE(dots$keep_lowest)
+  force_crs <- isTRUE(dots$force_crs)
   pkg <- if (is.null(dots$pkg)) getOption("lidR.raster.default") else dots$pkg
 
   # Non standard evaluation (R CMD check)
@@ -50,6 +51,7 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), use_class = c(
   # a Raster, a stars or a SpatRaster
   layout <- if (!is_a_number(res)) raster_template(res) else raster_layout(las, res, format = "template")
   layout <- raster_materialize(layout, values = 0, pkg = "stars")
+  sf::st_crs(layout) <- st_crs(las) # Fix #517 because if res is a RasterLayer the crs is proj4 and it mess up everything
 
   if (is.character(shape) && shape %in% c("convex", "concave"))
   {
@@ -58,8 +60,7 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), use_class = c(
     else
       hull <- st_convex_hull(las)
 
-    hull <- sf::st_buffer(hull, dist = raster_res(layout)[1])
-    layout <- layout[hull]
+    shape <- sf::st_buffer(hull, dist = raster_res(layout)[1])
   }
 
   if (is(shape, "sfc"))
