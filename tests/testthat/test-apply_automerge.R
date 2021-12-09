@@ -139,7 +139,7 @@ test_that("catalog_apply automerge works with on disk rasters as stars (VRT)", {
   option <- list(automerge = TRUE)
 
   req1 <- catalog_apply(ctg, starstest, .options = option)
-  res <- stars::read_stars(req1)
+  res <- stars::read_stars(req1[[1]])
 
   expect_is(req1, "stars_proxy")
   expect_equivalent(sf::st_bbox(req1), expected_bbox)
@@ -147,7 +147,7 @@ test_that("catalog_apply automerge works with on disk rasters as stars (VRT)", {
   expect_equal(lidR:::raster_names(req1), "layername1")
 
   req1 <- catalog_apply(ctg, starstest, layers = 2, .options = option)
-  res  <- stars::read_stars(req1)
+  res  <- stars::read_stars(req1[[1]])
 
   expect_is(req1, "stars_proxy")
   expect_equivalent(sf::st_bbox(req1), expected_bbox)
