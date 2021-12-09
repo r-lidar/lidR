@@ -109,6 +109,10 @@ New functions are mostly convenient features that simplify some workflow without
 
 15. New functions `header()`, `payload()`, `phb()`, `vlr()`, `evlr()` to get the corresponding data from a `LAS` object.
 
+### Enhancement
+
+1. The bounding box of the CHM not longer depends on the `subcircle` tweak. See [#518](https://github.com/r-lidar/lidR/issues/518).
+
 ### Documentation
 
 - Man pages of `classify_*`, `rasterize_*`, `*_metrics`, `segment_*` and `normalize_*` were grouped.

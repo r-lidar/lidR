@@ -16,13 +16,8 @@ rasterize_canopy.LAS = function(las, res = 1, algorithm = p2r(), ...)
   dots <- list(...)
   pkg <- if (is.null(dots$pkg)) getOption("lidR.raster.default") else dots$pkg
 
-  # Some algorithm have an extra option 'subscircle' that need to buffer the layout
-  # Must be rewritten because it is a hack !
-  subcircle <- as.list(environment(algorithm))$subcircle
-  subcircle <- if (is.null(subcircle)) 0 else subcircle
-
   # Compute the raster that encompass the point cloud
-  layout <- if (!is_a_number(res)) raster_template(res) else raster_layout(las, res, buffer = subcircle, format = "template")
+  layout <- if (!is_a_number(res)) raster_template(res) else raster_layout(las, res, format = "template")
   layout <- raster_materialize(layout, pkg = "stars")
 
   # Compute the elevation for each cells
@@ -32,7 +27,7 @@ rasterize_canopy.LAS = function(las, res = 1, algorithm = p2r(), ...)
   # Quantize
   z <- round(z, 3)
 
-  layout <- raster_layout(las, res, buffer = subcircle)
+  layout <- raster_layout(las, res)
   layout <- raster_materialize(layout, pkg = pkg)
   layout <- raster_set_values(layout, z)
   raster_names(layout) <- "Z"
