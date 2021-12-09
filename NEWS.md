@@ -111,7 +111,7 @@ New functions are mostly convenient features that simplify some workflow without
 
 ### Enhancement
 
-1. The bounding box of the CHM not longer depends on the `subcircle` tweak. See [#518](https://github.com/r-lidar/lidR/issues/518).
+1. The bounding box of the CHM computed with `rastertize_canopy()` or `grid_canopy()` is no longer affected by the `subcircle` tweak. See [#518](https://github.com/r-lidar/lidR/issues/518).
 
 ### Documentation
 
