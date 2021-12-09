@@ -67,6 +67,14 @@ height model (CHM).}
 attribute is found, also returns a map of the pulse density.}
 }
 }
+\section{Non-supported LAScatalog options}{
+
+The option \code{select} is not supported and not respected in\verb{rasterize_*} because it is internally
+known what is the best to select.\cr
+The option \code{chunk_buffer} is not supported and not respected in \code{rasterize_canopy} and
+\code{rasterize_density} because it is not necessary.
+}
+
 \examples{
 
 # =====================

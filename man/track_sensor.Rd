@@ -42,6 +42,14 @@ properly populated, otherwise the output may be incorrect or weird. For LAScatal
 it is recommended to use large chunks and large buffers (e.g. a swath width). The point cloud must
 not be normalized.
 }
+\section{Non-supported LAScatalog options}{
+
+The option `select` is not supported and not respected  because it is internally known what is the
+best to select\cr
+The option `output_files` is not supported and not respected because the output must be post-processed
+as a whole
+}
+
 \section{Test of data integrity}{
 
 In theory, sensor tracking is a simple problem to solve as long as each pulse is properly

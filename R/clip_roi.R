@@ -15,6 +15,10 @@
 #' @param ... in `clip_roi`: optional supplementary options (see supported geometries). Unused in
 #' other functions
 #'
+#' @section Non-supported LAScatalog options:
+#' The option `chunk size`, `buffer`, `chunk alignment` and `select` are not supported by `clip_*`
+#' because they are meaningless in this context.
+#'
 #' @return If the input is a LAS object: an object of class LAS, or a `list` of LAS objects if the
 #' query implies several regions of interest.\cr\cr
 #' If the input is a LAScatalog object: an object of class LAS, or a `list` of LAS

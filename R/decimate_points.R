@@ -6,6 +6,11 @@
 #' @param algorithm function. An algorithm of point decimation. \code{lidR} have: \link{random},
 #' \link{homogenize}, \link{highest}, \link{lowest} and \link{random_per_voxel}.
 #'
+#' @section Non-supported LAScatalog options:
+#' The option `select` is not supported and not respected because it always preserves the file format
+#' and all the attributes. `select = "*"` is imposed internally.\cr
+#' The options `chunk buffer` is not supported and not respected because it is not needed.
+#'
 #' @template return-lasfilter-las-lascatalog
 #'
 #' @export

@@ -13,6 +13,10 @@
 #' (clipping, processing, buffering, ...) internally using the proper options. Thus, retiling may be
 #' useful for working in other software, for example, but not in `lidR`
 #'
+#' @section Non-supported LAScatalog options:
+#' The option `select` is not supported and not respected because it always preserves the file
+#' format and all the attributes. `select = "*"` is imposed internally.
+#'
 #' @param ctg A \link[=LAScatalog-class]{LAScatalog} object
 #'
 #' @return A new \code{LAScatalog} object

@@ -13,6 +13,10 @@
 #' region of interest with class of choice.}
 #' }
 #'
+#' @section Non-supported LAScatalog options:
+#' The option `select` is not supported and not respected  because it always preserves the file format
+#' and all the attributes. `select = "*"` is imposed internally.
+#'
 #' @template param-las
 #' @param algorithm An algorithm for classification. lidR has has: \link{sor}, \link{ivf} for noise
 #' classification and \link{pmf} and \link{csf} for ground classification (see respective documentation).

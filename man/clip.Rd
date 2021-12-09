@@ -54,6 +54,12 @@ queries are immediately written into files without loading anything in R.
 Clip points within a given region of interest (ROI) from a point cloud (LAS object) or a collection
 of files (LAScatalog object).
 }
+\section{Non-supported LAScatalog options}{
+
+The option \verb{chunk size}, \code{buffer}, \verb{chunk alignment} and \code{select} are not supported by \verb{clip_*}
+because they are meaningless in this context.
+}
+
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 

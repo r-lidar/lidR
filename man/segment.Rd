@@ -53,6 +53,12 @@ implemented, which uses LiDAR intensity thresholds and specified neighbourhoods 
 bole and branch from foliage points.}
 }
 }
+\section{Non-supported LAScatalog options}{
+
+The option \code{select} is not supported and not respected because it always preserves the file format
+and all the attributes. \code{select = "*"} is imposed internally.
+}
+
 \section{Uniqueness}{
 
 

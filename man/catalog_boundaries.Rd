@@ -19,6 +19,13 @@ Computes the polygon that encloses the points. It reads all the files one by one
 concave hull using the \link{st_concave_hull} function. When all the hulls are computed it updates the
 LAScatalog to set the true polygons instead of the bounding boxes.
 }
+\section{Non-supported LAScatalog options}{
+
+The options `select`, `output files`, `chunk size`, `chunk buffer`, `chunk alignment` are not
+supported and not respected in  `catalog_boundaries*` because the function must always process by
+file, without buffer and knows which attributes to load.
+}
+
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 ctg <- readLAScatalog(LASfile, filter = "-drop_z_below 0.5")

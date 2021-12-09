@@ -63,6 +63,12 @@ Filter points of interest (POI) from a LAS object where conditions are true.
 \item{\code{filter_duplicates} \strong{Removes} the duplicated points (duplicated by XYZ)}
 }
 }
+\section{Non-supported LAScatalog options}{
+
+The option \code{select} is not supported and not respected because it always preserves the file format
+and all the attributes. \code{select = "*"} is imposed internally.
+}
+
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 lidar = readLAS(LASfile)

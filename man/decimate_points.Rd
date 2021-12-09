@@ -19,6 +19,13 @@ If the input is a \code{LAS} object, returns a \code{LAS} object. If the input i
 \description{
 Reduce the number of points using several possible algorithms.
 }
+\section{Non-supported LAScatalog options}{
+
+The option `select` is not supported and not respected because it always preserves the file format
+and all the attributes. `select = "*"` is imposed internally.\cr
+The options `chunk buffer` is not supported and not respected because it is not needed.
+}
+
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyz")

@@ -14,6 +14,10 @@
 #' \item{`filter_duplicates` **Removes** the duplicated points (duplicated by XYZ)}
 #' }
 #'
+#' @section Non-supported LAScatalog options:
+#' The option `select` is not supported and not respected because it always preserves the file format
+#' and all the attributes. `select = "*"` is imposed internally.
+#'
 #' @param las An object of class \link[=LAS-class]{LAS}
 #' @param n integer  ReturnNumber == n
 #' @param \dots Logical predicates. Multiple conditions are combined with '&' or ','

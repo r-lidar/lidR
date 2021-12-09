@@ -61,6 +61,12 @@ lidR has \link{pmf} and \link{csf}. The points classified as 'ground' are assign
 region of interest with class of choice.}
 }
 }
+\section{Non-supported LAScatalog options}{
+
+The option \code{select} is not supported and not respected  because it always preserves the file format
+and all the attributes. \code{select = "*"} is imposed internally.
+}
+
 \examples{
 # ===============
 # Classify ground

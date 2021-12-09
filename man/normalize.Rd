@@ -54,6 +54,12 @@ records the normalized intensity. An extra attribute named 'RawIntensity' record
 intensities.}
 }
 }
+\section{Non-supported LAScatalog options}{
+
+The option \code{select} is not supported and not respected because it always preserves the file format
+and all the attributes. \code{select = "*"} is imposed internally.
+}
+
 \examples{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile)

@@ -19,6 +19,12 @@
 #' attribute is found, also returns a map of the pulse density.}
 #' }
 #'
+#' @section Non-supported LAScatalog options:
+#' The option `select` is not supported and not respected in`rasterize_*` because it is internally
+#' known what is the best to select.\cr
+#' The option `chunk_buffer` is not supported and not respected in `rasterize_canopy` and
+#' `rasterize_density` because it is not necessary.
+#'
 #' @template param-las
 #' @param algorithm function. A function that implements an algorithm to compute a digital surface model
 #' or a digital terrain model. \code{lidR} implements \link{p2r}, \link{dsmtin}, \link{pitfree}

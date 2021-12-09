@@ -14,6 +14,10 @@
 #' intensities.}
 #' }
 #'
+#' @section Non-supported LAScatalog options:
+#' The option `select` is not supported and not respected because it always preserves the file format
+#' and all the attributes. `select = "*"` is imposed internally.
+#'
 #' @template param-las
 #' @param algorithm (1) An algorithm for spatial interpolation. \code{lidR} has \link{tin},
 #' \link{kriging}, \link{knnidw} or a raster representing a digital terrain

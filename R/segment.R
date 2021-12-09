@@ -19,6 +19,10 @@
 #' bole and branch from foliage points.}
 #' }
 #'
+#' @section Non-supported LAScatalog options:
+#' The option `select` is not supported and not respected because it always preserves the file format
+#' and all the attributes. `select = "*"` is imposed internally.
+#'
 #' @template param-las
 #' @param algorithm function. An algorithm of for segmentation. For individual tree segmenation, lidR
 #' has \link{dalponte2016}, \link{watershed}, \link{li2012} and \link{silva2016}. More experimental
