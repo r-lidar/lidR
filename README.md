@@ -1,15 +1,15 @@
 
-lidR <img src="https://raw.githubusercontent.com/Jean-Romain/lidR/master/man/figures/logo200x231.png" align="right"/>
+lidR <img src="https://raw.githubusercontent.com/r-lidar/lidR/master/man/figures/logo200x231.png" align="right"/>
 ======================================================================================================
 ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
-[![R build status](https://github.com/Jean-Romain/lidR/workflows/R-CMD-check/badge.svg)](https://github.com/Jean-Romain/lidR/actions)
-[![Codecov test coverage](https://codecov.io/gh/Jean-Romain/lidR/branch/master/graph/badge.svg)](https://app.codecov.io/gh/Jean-Romain/lidR?branch=master)
+[![R build status](https://github.com/r-lidar/lidR/workflows/R-CMD-check/badge.svg)](https://github.com/r-lidar/lidR/actions)
+[![Codecov test coverage](https://codecov.io/gh/r-lidar/lidR/branch/master/graph/badge.svg)](https://app.codecov.io/gh/r-lidar/lidR?branch=master)
 
 R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
 
 The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin LiDAR data, manage a collection of LAS/LAZ files, automatically extract ground inventories, process a collection of tiles using multicore processing, segment individual trees, classify points from geographic data, and provides other tools to manipulate LiDAR data in a research and development context.
 
-:book: Read [the book](https://jean-romain.github.io/lidRbook/index.html) to get started with the lidR package. See changelogs on [NEW.md](https://github.com/Jean-Romain/lidR/blob/master/NEWS.md)
+:book: Read [the book](https://jean-romain.github.io/lidRbook/index.html) to get started with the lidR package. See changelogs on [NEW.md](https://github.com/r-lidar/lidR/blob/master/NEWS.md)
 
 To cite the package use `citation()` from within R:
 
