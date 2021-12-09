@@ -51,18 +51,10 @@ test_that("rasterize_canopy with p2r() returns the good bounding box", {
 
 test_that("rasterize_canopy with p2r() works with subcircle option", {
 
-  dt  <- data.table::data.table(X = 0, Y = 0, Z = 0)
-  las <- LAS(dt, crs = sf::st_crs(26917))
-  x   <- rasterize_canopy(las, 0.5, p2r(10))
-  expected_bbox <- sf::st_bbox(c(xmin = -10.5, xmax = 10.5, ymin = -10.5,ymax = 10.5), crs = st_crs(las))
-
-  expect_true(is(x, slr))
-  expect_equivalent(sf::st_bbox(x), expected_bbox)
-
   dt  <- data.table::data.table(X = c(0,10), Y = c(0,20), Z = c(0, 5))
   las <- suppressWarnings(LAS(dt, crs = sf::st_crs(26917)))
   x   <- rasterize_canopy(las, 0.5, p2r(10))
-  expected_bbox <- sf::st_bbox(c(xmin = -10.5, xmax = 20.5, ymin = -10.5,ymax = 30.5), crs = st_crs(las))
+  expected_bbox <- sf::st_bbox(c(xmin = -0.5, xmax = 10.5, ymin = -0.5,ymax = 20.5), crs = st_crs(las))
 
   expect_true(is(x, slr))
   expect_equivalent(sf::st_bbox(x), expected_bbox)

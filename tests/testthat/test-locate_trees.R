@@ -52,7 +52,7 @@ test_that("locate_trees LMF works with a RasterLayer ", {
   ttops = locate_trees(chm, lmf(5))
 
   expect_is(ttops, "sf")
-  expect_equal(dim(ttops), c(171,3))
+  expect_equal(dim(ttops), c(167,3))
   expect_true(sf::st_crs(ttops) == sf::st_crs(chm))
 
   # variable windows size
@@ -61,18 +61,18 @@ test_that("locate_trees LMF works with a RasterLayer ", {
 
   expect_is(ttops, "sf")
   expect_true(is.integer(ttops$treeID))
-  expect_equal(dim(ttops), c(207,3))
+  expect_equal(dim(ttops), c(204,3))
   expect_true(sf::st_crs(ttops) == sf::st_crs(chm))
 })
 
 test_that("locate_trees LMF works with a stars ", {
 
-  chm = rasterize_canopy(las, 1, p2r(0.15))
+  chm = rasterize_canopy(las, 1, p2r(0.15), pkg = "stars")
 
   ttops = locate_trees(chm, lmf(5))
 
   expect_is(ttops, "sf")
-  expect_equal(dim(ttops), c(171,3))
+  expect_equal(dim(ttops), c(167,3))
   expect_true(sf::st_crs(ttops) == sf::st_crs(chm))
 
   # variable windows size
@@ -81,7 +81,7 @@ test_that("locate_trees LMF works with a stars ", {
 
   expect_is(ttops, "sf")
   expect_true(is.integer(ttops$treeID))
-  expect_equal(dim(ttops), c(207,3))
+  expect_equal(dim(ttops), c(204,3))
   expect_true(sf::st_crs(ttops) == sf::st_crs(chm))
 })
 
