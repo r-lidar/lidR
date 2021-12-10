@@ -37,7 +37,10 @@ engine_merge = function(ctg, any_list, ...)
     if (ext %in% c("las", "laz"))
       any_type = "las"
     else if (ext %in% c("grd", "asc", "sdat", "rst", "nc", "tif", "tiff", "envi", "bil", "img"))
+    {
       any_type <- attr(elmtone, "rasterpkg")
+      if (any_type == "terra") any_type = "rterra"
+    }
     else
       return(unlist(any_list))
   }

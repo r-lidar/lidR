@@ -140,6 +140,16 @@ test_that("rasterize_terrain returns the same both with LAScatalog and LAS", {
   expect_true(!anyNA(z))
 })
 
+test_that("rasterize_terrain with LAScatalog and file", {
+
+  skip_on_cran()
+
+  opt_output_files(ctg) <- "{tempdir()}/{ID}"
+  dtm <- rasterize_terrain(ctg, 1, tin())
+
+  expect_is(dtm, "SpatRaster")
+})
+
 test_that("rasterize_terrain fails in some specific case", {
 
   skip_if_not_installed("geometry")
