@@ -104,10 +104,22 @@ grid_metrics = function(las, func, res = 20, start = c(0,0), filter = NULL, by_e
 find_trees = function(las, algorithm, uniqueness = 'incremental')
 {
   res <- locate_trees(las, algorithm, uniqueness)
-  if (is(res, "sf")) {
-    res <- sf::st_zm(res)
-    res <- sf::as_Spatial(res)
+  if (is(res, "sf"))
+  {
+    if (nrow(res) == 0L)
+    {
+      coords <- matrix(0, ncol = 2)
+      data   <- data.frame(treeID = integer(1), Z = numeric(1))
+      res    <- sp::SpatialPointsDataFrame(coords, data, proj4string = as(st_crs(las), "CRS"))
+      res    <- res[0,]
+    }
+    else
+    {
+      res <- sf::st_zm(res)
+      res <- sf::as_Spatial(res)
+    }
   }
+
   return(res)
 }
 
