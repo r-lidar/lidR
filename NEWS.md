@@ -19,6 +19,7 @@ In version 4 `lidR` now no longer uses `sp`, it uses `sf` and it no longer uses 
   ```r
   las@proj4string # No longer works
   las@bbox        # No longer works
+  inherits(las, "Spatial") # Now returns FALSE
   ```
 
 3. The formal class `LAScatalog` no longer inherits the class `SpatialPolygonDataFrame` from `sp`. It means, among others, that a `LAScatalog` object no longer have a slot `@proj4string` nor `@bbox` nor `@polygons`. The slot `@data` is preserved and contains an `sf,data.frame` instead of a `data.frame` allowing to maintain backward compatibility of data access. The syntax `ctg$attribute` is the way to access data, but statement like `ctg@data$attribute` are backward compatible. However code that accesses others slots manually are no longer valid like for the `LAS` class:
@@ -26,9 +27,10 @@ In version 4 `lidR` now no longer uses `sp`, it uses `sf` and it no longer uses 
   ctg@proj4string # No longer works
   ctg@bbox        # No longer works
   ctg@polygons    # No longer works
+  inherits(ctg, "Spatial") # Now returns FALSE
   ```
 
-4. `sp::spplot()` no longer works on a `LAScatalog` because a `LAscatalog` is no longer a `SpatialPolygonDataFrame`
+4. `sp::spplot()` no longer works on a `LAScatalog` because a `LAScatalog` is no longer a `SpatialPolygonDataFrame`
   ```r
   spplot(ctg, "Max.Z")
   # becomes
@@ -37,7 +39,7 @@ In version 4 `lidR` now no longer uses `sp`, it uses `sf` and it no longer uses 
   
 5. Serialized `LAS/LAScatalog` objects (i.e. stored in `.rds` or `.Rdata` files) saved with `lidR v3.x.y` are no longer compatible with `lidR v4.x.y`. Indeed the structure of a `LAS/LAScatalog` object is now different mainly because the slot `@crs` replaces the slot `@proj4string`. Users may get errors when using e.g. `readRDS(las.rds)` to load back an R object. However we put safeguards so, in practice, it should be backward compatible transparently and even repaired automatically in some circumstances. Consequently we are not sure it is a backward incompatibility because we handled and fixed all warnings and error we found. In the worst case it is possible to repair a `LAS` object v3 with:
   ```r
-  las <-  LAS(las)
+  las <- LAS(las)
   ```
 
 6. `track_sensor()` is not backward compatible because it is a very specific function used by probably like 10 peoples in the world. We chose to do not rename it. It now returns an `sf` object instead of a `SpatialPointsDataFrame`.

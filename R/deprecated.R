@@ -339,12 +339,14 @@ filter_surfacepoints = function(las, res)
 }
 
 #' @rdname deprecated
+#' @export
 filter_surfacepoints.LAS = function(las, res)
 {
   return(decimate_points(las, highest(res)))
 }
 
 #' @rdname deprecated
+#' @export
 filter_surfacepoints.LAScatalog = function(las, res)
 {
   opt_select(las)       <- "*"
