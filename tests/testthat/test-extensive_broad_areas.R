@@ -297,4 +297,18 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     chm
     plot(chm-dtm)
   })
+
+  test_that("Spat* object are serialized",
+  {
+    LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
+    ctg <- readLAScatalog(LASfile, select = "xyz", chunk_size = 140, chunk_buffer = 0, progress = FALSE)
+    opt_chunk_alignment(ctg) <- c(0,20)
+
+    library(future)
+    plan(multisession, workers = 2)
+    res <- pixel_metrics(ctg, ~max(Z), 20)
+
+    expect_is(res, "SpatRaster")
+  })
+
 }
