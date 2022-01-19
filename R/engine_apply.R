@@ -107,6 +107,10 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
 
       if (is.null(y)) y <- NULL
       if (!is.null(y) && writemode) y <- engine_write(y, save, drivers)
+
+      # Fix #523
+      if (is(y, "SpatRaster") | is(y, "SpatVector")) y <- terra::wrap(y)
+
       y
     }, substitute = TRUE, globals = structure(TRUE, add = .GLOBALS), seed = TRUE)
 
@@ -156,7 +160,15 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
       if (states[j] == CHUNK_NULL) next
 
       # The state is OK or WARNING: get the value
-      output[[j]] <- value(futures[[j]])
+      res <- value(futures[[j]])
+
+      # Fix #523
+      if (is(res, "PackedSpatRaster"))
+        res <- terra::rast(res)
+      if (is(res, "PackedSpatVector"))
+        res <- terra::vect(res)
+
+      output[[j]] <- res
     }
   }
 
@@ -205,7 +217,15 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
 
       if (states[j] == CHUNK_NULL) next
 
-      output[[j]] <- value(futures[[j]])
+      res <- value(futures[[j]])
+
+      # Fix #523
+      if (is(res, "PackedSpatRaster"))
+        res <- terra::rast(res)
+      if (is(res, "PackedSpatVector"))
+        res <- terra::vect(res)
+
+      output[[j]] <- res
       attr(output[[j]], "state") <- NULL ;
     }
 
