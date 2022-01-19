@@ -569,9 +569,9 @@ assign_to_template.SpatRaster <- function(template, cells, metrics, ...)
 
   if (nmetrics == 1L)
   {
-    template[cells] <- metrics[[1]]
-    raster_names(template) <- names(metrics)
-    return(template)
+    output[cells] <- metrics[[1]]
+    raster_names(output) <- names(metrics)
+    return(output)
   }
 
   ncells <- raster_ncell(template)
