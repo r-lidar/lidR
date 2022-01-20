@@ -27,7 +27,7 @@ It allows the application of a user-defined routine over a collection of LAS/LAZ
 LAScatalog processing engine is explained in the \link[=LAScatalog-class]{LAScatalog class}\cr\cr
 \code{catalog_apply()} is the core of the lidR package. It drives every single function that can process a
 \code{LAScatalog}. It is flexible and powerful but also complex. \code{catalog_map()} is a simplified version
-of \code{catalog_apply()} that suits for 90\% of use cases.\cr\\cr
+of \code{catalog_apply()} that suits for 90\% of use cases.\cr\cr
 \code{catalog_sapply()} is a previous attempt to provide simplified version of \code{catalog_apply()}. Use
 \code{catalog_map()} instead.
 }

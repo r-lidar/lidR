@@ -114,11 +114,12 @@ wkt(obj) <- value
 \item{asText}{logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned.}
 }
 \value{
-A sf::crs or a sp::CRS
+A \code{st_crs()} return a \code{sf::crs}. \code{projection()} and \code{crs()} return a \code{sp::CRS} and should
+no longer be used.
 }
 \description{
 Get or set the projection of a LAS* object.  \code{st_crs()} extends \code{sf:st_crs()}, \code{projection()} and
-\code{crs()} extend \code{raster:projection()} and \code{raster:crs()}.  \code{projection()} and \code{crs()} are provided
+\code{crs()} extend \code{raster:projection()} and \code{raster:crs()}. \code{projection()} and \code{crs()} are provided
 for backward compatibility. For \code{epsg()} and \code{wkt()} see details.
 }
 \details{

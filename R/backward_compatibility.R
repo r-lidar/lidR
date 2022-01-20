@@ -12,7 +12,8 @@
 #' packages. The answer is: yes (see reference).*\cr\cr
 #' The following functions are not formally deprecated but users should definitively move their workflow to modern
 #' spatial packages. lidR will maintain the old functions as long as it does not generate troubles
-#' on CRAN. So, it might be until Jan 1st 2024 or later who knows...#'
+#' on CRAN. So, it might be until Jan 1st 2024 or later who knows...
+#'
 #' @param x,las an object of class LAS*
 #' @param res,start see \link{pixel_metrics}
 #' @param func see \link{template_metrics}

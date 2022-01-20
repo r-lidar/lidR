@@ -4,6 +4,7 @@
 #' radius or a vector of radii for variable plot sizes.
 #' @rdname aggregate
 #' @export
+#' @md
 plot_metrics <- function(las, func, geometry, ..., radius)
 {
   if (missing(radius))

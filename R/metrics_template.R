@@ -4,7 +4,7 @@
 #' within each element of a template. Depending on the template it can be for each pixel of a raster
 #' (area-based approach) or each polygon, or each segmented tree or on the whole point cloud. Other
 #' functions are convenient and simplified wrappers around `template_metrics()` and are expected to be
-#' the main functions used. See Details and Examples.
+#' the actual functions used. See Details and Examples.
 #'
 #' \describe{
 #' \item{`pixel_metrics`}{Area-based approach. Computes metrics in a square tessellation. The output is a
@@ -138,7 +138,8 @@
 #' inventory # contains an ID and a Value Of Interest (VOI) per plot
 #'
 #' m <- plot_metrics(las, fun2, inventory, radius = 11.28)
-#' plot(m["q85"], pch = 19, cex = 3)
+#' plot(header(las))
+#' plot(m["q85"], pch = 19, cex = 3, add = TRUE)
 #'
 #' \donttest{
 #' # Works with polygons as well

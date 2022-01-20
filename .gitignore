@@ -10,3 +10,5 @@ doc
 *Rplots.pdf
 revdep
 CRAN-RELEASE
+/doc/
+/Meta/

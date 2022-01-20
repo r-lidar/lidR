@@ -27,7 +27,7 @@ a \verb{Raster*} a \code{stars} or a \code{SpatRaster}.\cr
 the parameter \code{attribute} is the name of an attribute in the table of attributes it assigns
 to the points the values of that attribute. Otherwise it classifies the points as boolean.
 TRUE if the points are in a polygon, FALSE otherwise.}
-\item{\code{RasterLayer}, single band \code{stars} ot single layer \code{SparRaster}: it attributes to each point
+\item{\code{RasterLayer}, single band \code{stars} or single layer \code{SpaTRaster}: it attributes to each point
 the value found in each pixel of the raster}.
 \item{\code{RasterStack}, \code{RasterBrick}, multibands \code{stars} or multilayer \code{SpatRaster} must have 3
 layers for RGB colors. It colourizes the point cloud with RGB values.}

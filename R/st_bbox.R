@@ -20,6 +20,14 @@ NULL
 
 #' @export
 #' @rdname st_bbox
+#' @examples
+#' f <- system.file("extdata", "example.las", package="rlas")
+#' las <- readLAS(f)
+#'
+#' st_bbox(las)
+#' bbox(las)
+#' extent(las)
+#' ext(las)
 st_bbox.LAS = function(obj, ...)
 {
   xr <- range(obj$X)

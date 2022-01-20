@@ -92,7 +92,7 @@ question is whether they should migrate existing code and/or existing R packages
 packages. The answer is: yes (see reference).}\cr\cr
 The following functions are not formally deprecated but users should definitively move their workflow to modern
 spatial packages. lidR will maintain the old functions as long as it does not generate troubles
-on CRAN. So, it might be until Jan 1st 2024 or later who knows...#'
+on CRAN. So, it might be until Jan 1st 2024 or later who knows...
 }
 \references{
 Edzer Pebesma, Roger Bivand Spatial Data Science with applications in R

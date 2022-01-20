@@ -144,6 +144,7 @@ unnormalize_height = function(las)
 #' @param e1 a LAS object
 #' @param e2 A raster representing a digital terrain model in format from `raster`, `stars` or `terra`..
 #' @export
+#' @md
 #' @rdname normalize
 setMethod("-", c("LAS"), function(e1, e2)
 {

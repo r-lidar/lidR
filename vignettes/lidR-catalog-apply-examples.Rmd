@@ -38,7 +38,7 @@ writeLAS(las, "denoised-file.las")
 
 ## Extend the `filter_noise` function to a `LAScatalog`
 
-Users can access the catalog processing engine with the function `catalog_apply` i.e. the engine used internally. It can be applied to any function over an entire collection. This function is complex and we created a simplified (but less versatile) version names `catalog_map` that suit for most cases. Here we will apply our custom `filter_noise` function with `ctaalog_map`. To use our function `filter_noise` on a `LAScatalog` we must create a compatible function (see documentation of `catalog_apply`):
+Users can access the catalog processing engine with the function `catalog_apply` i.e. the engine used internally. It can be applied to any function over an entire collection. This function is complex and we created a simplified (but less versatile) version names `catalog_map` that suit for most cases. Here we will apply our custom `filter_noise` function with `catalog_map`. To use our function `filter_noise` on a `LAScatalog` we must create a compatible function (see documentation of `catalog_apply`):
 
 ```r
 filter_noise = function(las, sensitivity)
@@ -63,12 +63,11 @@ filter_noise = function(las, sensitivity)
 And it just works. This function `filter_noise` is now fully compatible with the catalog processing engine and supports all the options of the engine.
 
 ```r
-myproject <- catalog("folder/to/lidar/data/")
+myproject <- readLAScatalog("folder/to/lidar/data/")
 
 opt_filter(myproject)       <- "-drop_z_below 0"
 opt_chunk_buffer(myproject) <- 10
 opt_chunk_size(myproject)   <- 0
-opt_cores(myproject)        <- 2
 opt_output_files(myproject) <- "folder/to/lidar/data/denoised/{ORIGINALFILENAME}_denoised"
 
 output <- filter_noise(myproject, tolerance = 1.2)

@@ -1,7 +1,7 @@
 #' Get or set the projection of a LAS* object
 #'
 #' Get or set the projection of a LAS* object.  `st_crs()` extends `sf:st_crs()`, `projection()` and
-#' `crs()` extend `raster:projection()` and `raster:crs()`.  `projection()` and `crs()` are provided
+#' `crs()` extend `raster:projection()` and `raster:crs()`. `projection()` and `crs()` are provided
 #' for backward compatibility. For `epsg()` and `wkt()` see details.
 #'
 #' There are two ways to store the CRS of a point cloud in a LAS file:
@@ -25,7 +25,8 @@
 #' @param asText logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned.
 #' @param value A `CRS` or a `crs` or a `proj4string` string or WKT string or an EPSG code.
 #'
-#' @return A sf::crs or a sp::CRS
+#' @return A `st_crs()` return a `sf::crs`. `projection()` and `crs()` return a `sp::CRS` and should
+#' no longer be used.
 #'
 #' @export
 #' @examples

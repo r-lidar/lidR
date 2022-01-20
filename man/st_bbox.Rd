@@ -65,3 +65,12 @@ Bounding box of a LAS* object. \code{st_bbox()} extends \code{sf}, \code{extent(
 \code{raster}, \code{bbox()} extends \code{sp} and \code{ext()} extend \code{terra}. The value returned are similar to their
 parent functions.
 }
+\examples{
+f <- system.file("extdata", "example.las", package="rlas")
+las <- readLAS(f)
+
+st_bbox(las)
+bbox(las)
+extent(las)
+ext(las)
+}

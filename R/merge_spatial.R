@@ -8,7 +8,7 @@
 #' the parameter `attribute` is the name of an attribute in the table of attributes it assigns
 #' to the points the values of that attribute. Otherwise it classifies the points as boolean.
 #' TRUE if the points are in a polygon, FALSE otherwise.}
-#' \item{`RasterLayer`, single band `stars` ot single layer `SparRaster`: it attributes to each point
+#' \item{`RasterLayer`, single band `stars` or single layer `SpaTRaster`: it attributes to each point
 #' the value found in each pixel of the raster}.
 #' \item{`RasterStack`, `RasterBrick`, multibands `stars` or multilayer `SpatRaster` must have 3
 #' layers for RGB colors. It colourizes the point cloud with RGB values.}

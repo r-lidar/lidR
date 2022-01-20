@@ -5,7 +5,7 @@
 #' LAScatalog processing engine is explained in the \link[=LAScatalog-class]{LAScatalog class}\cr\cr
 #' `catalog_apply()` is the core of the lidR package. It drives every single function that can process a
 #' \code{LAScatalog}. It is flexible and powerful but also complex. `catalog_map()` is a simplified version
-#' of `catalog_apply()` that suits for 90% of use cases.\cr\\cr
+#' of `catalog_apply()` that suits for 90% of use cases.\cr\cr
 #' `catalog_sapply()` is a previous attempt to provide simplified version of `catalog_apply()`. Use
 #' `catalog_map()` instead.
 #'

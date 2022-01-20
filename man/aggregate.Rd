@@ -57,14 +57,14 @@ function \link{concaveman}.}
 
 \item{area}{numeric. Area of the hexagons}
 
-\item{res}{numeric. The resolution of the output. Can optionally be a `RasterLayer` or a `stars` or
-a `SpatRaster`.' In that case the raster is used as the template.}
+\item{res}{numeric. The resolution of the output. Can optionally be a \code{RasterLayer} or a \code{stars} or
+a \code{SpatRaster}. In that case the raster is used as the template.}
 
 \item{start}{vector of x and y coordinates for the reference raster. Default is (0,0) meaning that the
-grid aligns on (0,0). Not consiered if `res` is a raster}
+grid aligns on (0,0). Not consiered if \code{res} is a raster}
 
-\item{geometry}{A spatial vector object. `sp` and `sf`' objects are supported. `plot_metrics()`
-supports point and polygons but `polygon_metrics()` supports only polygons.}
+\item{geometry}{A spatial vector object. \code{sp} and \code{sf}' objects are supported. \code{plot_metrics()}
+supports point and polygons but \code{polygon_metrics()} supports only polygons.}
 
 \item{radius}{numeric. If the geometry is spatial points a radius must be defined. Support one
 radius or a vector of radii for variable plot sizes.}
@@ -96,7 +96,7 @@ of regularization asked.
 within each element of a template. Depending on the template it can be for each pixel of a raster
 (area-based approach) or each polygon, or each segmented tree or on the whole point cloud. Other
 functions are convenient and simplified wrappers around \code{template_metrics()} and are expected to be
-the main functions used. See Details and Examples.
+the actual functions used. See Details and Examples.
 }
 \details{
 \describe{
@@ -213,7 +213,8 @@ inventory <- sf::st_read(shpfile, quiet = TRUE)
 inventory # contains an ID and a Value Of Interest (VOI) per plot
 
 m <- plot_metrics(las, fun2, inventory, radius = 11.28)
-plot(m["q85"], pch = 19, cex = 3)
+plot(header(las))
+plot(m["q85"], pch = 19, cex = 3, add = TRUE)
 
 \donttest{
 # Works with polygons as well

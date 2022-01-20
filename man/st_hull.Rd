@@ -33,7 +33,7 @@ A \code{sfc_POLYGON} from \code{sf} or a \code{data.frame} in case of \code{conc
 }
 \description{
 Concave and convex hulls for LAS objects. \code{st_convex_hull} extends \code{sf::st_convex_hull} for LAS
-objects, Both functions return a \code{sfc_POLYGON} \code{concaveman} is very a fast 2D concave hull algorithm
+objects, Both functions return a \code{sfc_POLYGON}.\code{concaveman} is very a fast 2D concave hull algorithm
 for a set of points
 }
 \details{
@@ -57,7 +57,7 @@ lines(hull, lwd = 3, col = "red")
 
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, filter = "-drop_z_below 1")
-hull = st_concave_hull(las)
+hull = st_concave_hull(las, length_threshold = 10)
 plot(hull)
 }
 \references{

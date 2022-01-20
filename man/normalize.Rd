@@ -36,7 +36,7 @@ interpolated as if it were made of regularly spaced ground points.}
 
 \item{e1}{a LAS object}
 
-\item{e2}{A raster representing a digital terrain model in format from `raster`, `stars` or `terra`..}
+\item{e2}{A raster representing a digital terrain model in format from \code{raster}, \code{stars} or \code{terra}..}
 }
 \description{
 Normalize elevation or intensity values using multiple methods.
