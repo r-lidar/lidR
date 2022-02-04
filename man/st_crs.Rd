@@ -10,13 +10,8 @@
 \alias{st_crs<-.LAS}
 \alias{st_crs<-.LASheader}
 \alias{st_crs<-.LAScatalog}
-\alias{projection,LAS-method}
-\alias{projection,LASheader-method}
-\alias{projection,LAScatalog-method}
-\alias{projection,LAScluster-method}
-\alias{projection<-,LAS-method}
-\alias{projection<-,LAScatalog-method}
-\alias{projection<-,LASheader-method}
+\alias{projection}
+\alias{projection<-}
 \alias{crs,LASheader-method}
 \alias{crs,LAS-method}
 \alias{crs<-,LAS-method}
@@ -52,19 +47,9 @@
 
 \method{st_crs}{LAScatalog}(x) <- value
 
-\S4method{projection}{LAS}(x, asText = TRUE)
+projection(x, asText = TRUE)
 
-\S4method{projection}{LASheader}(x, asText = TRUE)
-
-\S4method{projection}{LAScatalog}(x, asText = TRUE)
-
-\S4method{projection}{LAScluster}(x, asText = TRUE)
-
-\S4method{projection}{LAS}(x) <- value
-
-\S4method{projection}{LAScatalog}(x) <- value
-
-\S4method{projection}{LASheader}(x) <- value
+projection(x) <- value
 
 \S4method{crs}{LASheader}(x, asText = FALSE)
 

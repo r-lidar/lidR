@@ -186,59 +186,19 @@ NULL
 
 #' @export
 #' @rdname st_crs
-setMethod("projection", "LAS", function(x, asText = TRUE)
+projection <- function(x, asText = TRUE)
 {
-  CRS <- as(st_crs(x), "CRS")
+  CRS <- as(sf::st_crs(x), "CRS")
   if (asText) return(CRS@projargs) else return(CRS)
-})
+}
 
 #' @export
 #' @rdname st_crs
-setMethod("projection", "LASheader", function(x, asText = TRUE)
+"projection<-" <- function(x, value)
 {
-  CRS <- as(st_crs(x), "CRS")
-  if (asText) return(CRS@projargs) else return(CRS)
-})
-
-#' @export
-#' @rdname st_crs
-setMethod("projection", "LAScatalog", function(x, asText = TRUE)
-{
-  CRS <- as(st_crs(x), "CRS")
-  if (asText) return(CRS@projargs) else return(CRS)
-})
-
-#' @export
-#' @rdname st_crs
-setMethod("projection", "LAScluster", function(x, asText = TRUE)
-{
-  CRS <- as(st_crs(x), "CRS")
-  if (asText) return(CRS@projargs) else return(CRS)
-})
-
-#' @export
-#' @rdname st_crs
-setMethod("projection<-", "LAS", function(x, value)
-{
-  st_crs(x) <- value
+  sf::st_crs(x) <- value
   return(x)
-})
-
-#' @export
-#' @rdname st_crs
-setMethod("projection<-", "LAScatalog", function(x, value)
-{
-  st_crs(x) <- value
-  return(x)
-})
-
-#' @export
-#' @rdname st_crs
-setMethod("projection<-", "LASheader", function(x, value)
-{
-  st_crs(x) <- value
-  return(x)
-})
+}
 
 
 # ==== CRS ====

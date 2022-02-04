@@ -10,9 +10,9 @@ In version 4 `lidR` now no longer uses `sp`, it uses `sf` and it no longer uses 
 
 1. `lidR` no longer loads `raster` and `sp`. To manipulate `Raster*` and `Spatial*` objects returned by lidR users need to load `sp` and `raster` with:
     ```r
-    library(lidR)
     library(sp)
     library(raster)
+    library(lidR)
     ```
 
 2. The formal class `LAS` no longer inherits the class `Spatial` from `sp`. It means, among others, that a `LAS` object no longer have a slot `@proj4string` with a `CRS` from `sp` nor a slot `@bbox`. The CRS is now stored in the slot `@crs` in a `crs` object from `sf`. Former functions `crs()` and `projection()` inherited from `raster` are backward compatible and return a `CRS` or a `proj4string` from `sp`. However codes that access these slots manually are no longer valid (but nobody was supposed to do that because it was the purpose of the function `projection()`):
@@ -36,13 +36,22 @@ In version 4 `lidR` now no longer uses `sp`, it uses `sf` and it no longer uses 
     # becomes
     plot(ctg["Max.Z"])
     ```
-  
-5. Serialized `LAS/LAScatalog` objects (i.e. stored in `.rds` or `.Rdata` files) saved with `lidR v3.x.y` are no longer compatible with `lidR v4.x.y`. Indeed the structure of a `LAS/LAScatalog` object is now different mainly because the slot `@crs` replaces the slot `@proj4string`. Users may get errors when using e.g. `readRDS(las.rds)` to load back an R object. However we put safeguards so, in practice, it should be backward compatible transparently and even repaired automatically in some circumstances. Consequently we are not sure it is a backward incompatibility because we handled and fixed all warnings and error we found. In the worst case it is possible to repair a `LAS` object v3 with:
+    
+5. `raster::projection()` no longer works on `LAS*` objects because they no longer inherit `Spatial`. Moreover `lidR` no longer `Depends` on `raster` which mean that `raster::projection()` and `lidR::projection` can mask each other. Users should use `st_crs()` preferentially. To use `projection` users can either load `raster` before `lidR` or call `lidR::projection()` with explicit namespace.
+
+    ```r
+    library(lidR)
+    projection(las) # works
+    library(raster)
+    projection(las) # no longer works
+    ```
+
+6. Serialized `LAS/LAScatalog` objects (i.e. stored in `.rds` or `.Rdata` files) saved with `lidR v3.x.y` are no longer compatible with `lidR v4.x.y`. Indeed the structure of a `LAS/LAScatalog` object is now different mainly because the slot `@crs` replaces the slot `@proj4string`. Users may get errors when using e.g. `readRDS(las.rds)` to load back an R object. However we put safeguards so, in practice, it should be backward compatible transparently and even repaired automatically in some circumstances. Consequently we are not sure it is a backward incompatibility because we handled and fixed all warnings and error we found. In the worst case it is possible to repair a `LAS` object v3 with:
     ```r
     las <- LAS(las)
     ```
 
-6. `track_sensor()` is not backward compatible because it is a very specific function used by probably like 10 peoples in the world. We chose to do not rename it. It now returns an `sf` object instead of a `SpatialPointsDataFrame`.
+7. `track_sensor()` is not backward compatible because it is a very specific function used by probably like 10 peoples in the world. We chose to do not rename it. It now returns an `sf` object instead of a `SpatialPointsDataFrame`.
 
 ### New modern functions
 
