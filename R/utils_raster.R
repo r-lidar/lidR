@@ -94,7 +94,12 @@ raster_value_from_xy = function(raster, x, y, layer = 1)
 raster_value_from_cells = function(raster, cells, layer = 1)
 {
   if (inherits(raster, "Raster"))
-    return(raster::extract(raster, cells, layer = layer))
+  {
+    if (raster_nlayer(raster) > 1)
+      return(raster::extract(raster, cells, layer = layer, nl = 1)[,1])
+    else
+      return(raster::extract(raster, cells, layer = layer, nl = 1))
+  }
 
   if (is(raster, "stars_proxy"))
     stop("stars_proxy not supported yet in 'raster_value_from_cells()'", call. = FALSE) # nocov
@@ -110,7 +115,7 @@ raster_value_from_cells = function(raster, cells, layer = 1)
   }
 
   if (is(raster, "SpatRaster"))
-    return(terra::extract(raster, cells, layer = layer))
+    return(terra::extract(raster, cells, layer = layer)[[1]])
 
   raster_error() # nocov
 }
