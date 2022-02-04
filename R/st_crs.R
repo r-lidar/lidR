@@ -196,7 +196,11 @@ projection <- function(x, asText = TRUE)
 #' @rdname st_crs
 "projection<-" <- function(x, value)
 {
-  sf::st_crs(x) <- value
+  if (inherits(x, "BasicRaster"))
+    raster::projection(x) <- value
+  else
+    sf::st_crs(x) <- value
+
   return(x)
 }
 
