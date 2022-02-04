@@ -7,7 +7,7 @@ sflakes <- sf::st_crop(sflakes, st_bbox(las))
 sflakes$ID <- 1L
 splakes <- sf::as_Spatial(sflakes)
 zmean   <- pixel_metrics(las, mean(Z))
-rgb     <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10, nz = 3L, values = 10)
+rgb     <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10, nz = 3L, values = runif(300, 0, 255))
 rgbi    <- stars::st_as_stars(st_bbox(las), dx = 20, dy = 20, nz = 4L, values = 10)
 
 test_that("merge_spatial works with SpatialPolygonsDataFrame", {
@@ -148,6 +148,17 @@ test_that("merge_spatial works a RGB stars", {
   expect_true(is.integer(las$R))
   expect_equal(las[["Point Data Format ID"]], 3L)
 })
+
+test_that("merge_spatial works a RGB SpatRaster", {
+
+  las <- merge_spatial(las, as(rgb, "SpatRaster"))
+  cn  <- names(las)
+
+  expect_true(all(c("R", "G", "B") %in% cn))
+  expect_true(is.integer(las$R))
+  expect_equal(las[["Point Data Format ID"]], 3L)
+})
+
 
 test_that("merge_spatial fails with too much bands", {
 
