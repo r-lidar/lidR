@@ -45,6 +45,7 @@ Suggests:
     geometry,
     gstat,
     RCSF,
+    RMCC,
     rgdal,
     mapview,
     mapedit,
