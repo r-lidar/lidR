@@ -68,6 +68,11 @@ plugin <- function(f, class_t, omp = FALSE)
 #'   f <- plugin_dtm(f)
 #'   return(f)
 #' }
+#'
+#' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+#' las = readLAS(LASfile)
+#'
+#' dtm = rasterize_terrain(las, algorithm = mba())
 #' }
 NULL
 

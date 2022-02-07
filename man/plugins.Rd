@@ -50,5 +50,10 @@ mba <- function(n = 1, m = 1, h = 8, extend = TRUE) {
   f <- plugin_dtm(f)
   return(f)
 }
+
+LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+las = readLAS(LASfile)
+
+dtm = rasterize_terrain(las, algorithm = mba())
 }
 }
