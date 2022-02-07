@@ -75,16 +75,16 @@ New functions are mostly convenient features that simplify some workflow without
 
 3. New convenient functions `nrow()`, `ncol()`, `dim()`, `names()` inherited from `base` for `LAS*` objects
 
-4. New operators `$` and `[[` on `LASheader`. The following are now valid statements:
+4. New operators `$`,  `[[`, `$<-` and `[[<-` on `LASheader`. The following are now valid statements:
     ```r
     header[["Version Major"]]
-    header[["Z scale factor"]]
+    header[["Z scale factor"]] <- 0.001
     ```
 
-5. Operators `$` and `[[` on `LAS` can now access the `LASheader` metadata. The following are now valid statements:
+5. Operators  `$`,  `[[`, `$<-` and `[[<-` on `LAS` can now access the `LASheader` metadata. The following are now valid statements:
     ```r
     las[["Version Major"]]
-    las[["Z scale factor"]]
+    las[["Z scale factor"]] <- 0.001
     ```
 
 6. RStudio now supports auto completion for operator `$` in `LAS` objects. Yay!

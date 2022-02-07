@@ -226,42 +226,7 @@ setMethod("[[", c("LAS", "ANY", "missing"), function(x, i, j, ...) {
 #' @rdname Extract
 setMethod("$<-", "LAS", function(x, name, value)
 {
-  if (!name %in% names(x@data))
-    stop("Addition of a new column using $ is forbidden for LAS objects. See ?add_attribute", call. = FALSE)
-
-  if (name %in% LASATTRIBUTES)
-  {
-    type1 <- storage.mode(x@data[[name]])
-    type2 <- storage.mode(value)
-
-    if (type1 != type2)
-      stop(glue::glue("Trying to replace data of type {type1} by data of type {type2}: this action is not allowed"), call. = FALSE)
-  }
-
-  for (coordinate_name in c("X", "Y", "Z"))
-  {
-    if (name == coordinate_name)
-    {
-      scale_string <- paste(name, "scale factor")
-      offset_string <- paste(name, "offset")
-      scale  <- x[[scale_string]]
-      offset <- x[[offset_string]]
-      valid_range <- storable_coordinate_range(scale, offset)
-      value_range <- range(value)
-
-      if (value_range[1] < valid_range[1] | value_range[2] > valid_range[2])
-        stop(glue::glue("Trying to store values ranging in [{value_range[1]}, {value_range[2]}] but storable range is [{valid_range[1]}, {valid_range[2]}]"), call. = FALSE)
-
-      if (!is.quantized(value, scale, offset))
-        value <- quantize(value, scale, offset, FALSE)
-    }
-  }
-
-  x@data[[name]] <- value
-
-  if (name %in% c("X", "Y", "Z"))
-    x <- las_update(x)
-
+  x[[name]] <- value
   return(x)
 })
 
@@ -269,7 +234,13 @@ setMethod("$<-", "LAS", function(x, name, value)
 #' @rdname Extract
 setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 {
-  if (!i %in% names(x@data))
+  if (i %in% names(header(x)))
+  {
+    x@header[[i]] <- value
+    return(x)
+  }
+
+  if (!i %in% names(x))
     stop("Addition of a new column using [[ is forbidden for LAS objects. See ?add_attribute", call. = FALSE)
 
   if (i %in% LASATTRIBUTES)

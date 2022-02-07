@@ -21,7 +21,9 @@
 \alias{[[<-,LAScatalog,ANY,ANY-method}
 \alias{$<-,LAScatalog-method}
 \alias{$,LASheader-method}
+\alias{$<-,LASheader-method}
 \alias{[[,LASheader,ANY,missing-method}
+\alias{[[<-,LASheader,character,missing-method}
 \title{Extract or Replace Parts of a LAS* Object}
 \usage{
 \S4method{$}{LAS}(x, name)
@@ -62,7 +64,11 @@
 
 \S4method{$}{LASheader}(x, name)
 
+\S4method{$}{LASheader}(x, name) <- value
+
 \S4method{[[}{LASheader,ANY,missing}(x, i, j, ...)
+
+\S4method{[[}{LASheader,character,missing}(x, i) <- value
 }
 \arguments{
 \item{x}{A \code{LAS*} object}

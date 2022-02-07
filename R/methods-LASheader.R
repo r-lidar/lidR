@@ -74,6 +74,10 @@ setMethod("$", "LASheader", function(x, name) { return(x[[name]]) })
 
 #' @export
 #' @rdname Extract
+setMethod("$<-", "LASheader", function(x, name, value) { x[[name]] <- value ; return(x) })
+
+#' @export
+#' @rdname Extract
 setMethod("[[", c("LASheader", "ANY", "missing"), function(x, i, j, ...) {
 
   assert_is_a_string(i)
@@ -88,4 +92,22 @@ setMethod("[[", c("LASheader", "ANY", "missing"), function(x, i, j, ...) {
     return(x@EVLR[[i]])
 
   return(NULL)
+})
+
+#' @export
+#' @rdname Extract
+setMethod("[[<-", c("LASheader", "character", "missing"), function(x, i, value) {
+
+  assert_is_a_string(i)
+
+  if (i %in% names(x@PHB))
+    x@PHB[[i]] <- value
+
+  if (i %in% names(x@VLR))
+    x@VLR[[i]] <- value
+
+  if (i %in% names(x@EVLR))
+    x@EVLR[[i]] <- value
+
+  return(x)
 })
