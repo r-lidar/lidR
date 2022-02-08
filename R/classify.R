@@ -8,7 +8,8 @@
 #' \item{classify_noise}{Classify points as 'noise' (outliers) with several possible algorithms.
 #' lidR has has: \link{sor}, \link{ivf}. The points classified as 'noise' are assigned a value of 18.}
 #' \item{classify_ground}{Classify points as 'ground' with several possible algorithms.
-#' lidR has \link{pmf} and \link{csf}. The points classified as 'ground' are assigned a value of 2 }
+#' lidR has \link{pmf}, \link{csf} and \link{mcc}. The points classified as 'ground' are assigned a
+#' value of 2 }
 #' \item{classify_poi}{Classify points that meet some logical criterion and/or that belong in a
 #' region of interest with class of choice.}
 #' }
@@ -19,8 +20,8 @@
 #'
 #' @template param-las
 #' @param algorithm An algorithm for classification. lidR has has: \link{sor}, \link{ivf} for noise
-#' classification and \link{pmf} and \link{csf} for ground classification (see respective documentation).
-#' The \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins} package has `mcc`.
+#' classification and \link{pmf}, \link{csf}, \link{mcc} for ground classification (see respective
+#' documentation).
 #' @param class The ASPRS class to attribute to the points that meet the criterion.
 #' @param poi a formula of logical predicates. The points that are `TRUE` will be classified `class`.
 #' @param roi A `SpatialPolygons*`, from `sp` or a `sf/sfc_POLYGON` from `sf`.

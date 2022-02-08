@@ -120,7 +120,10 @@ New functions are mostly convenient features that simplify some workflow without
 
 15. New functions `header()`, `payload()`, `phb()`, `vlr()`, `evlr()` to get the corresponding data from a `LAS` object.
 
+
 16. New algorithm `shp_hline` and `shp_vline` for `segment_shapes()` [#499](https://github.com/r-lidar/lidR/issues/499)
+
+17. New algorithm `mcc` for ground classification.
 
 ### Enhancement
 

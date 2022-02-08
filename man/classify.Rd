@@ -25,8 +25,8 @@ classify_poi(
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{algorithm}{An algorithm for classification. lidR has has: \link{sor}, \link{ivf} for noise
-classification and \link{pmf} and \link{csf} for ground classification (see respective documentation).
-The \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins} package has \code{mcc}.}
+classification and \link{pmf}, \link{csf}, \link{mcc} for ground classification (see respective
+documentation).}
 
 \item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
 in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attributes
@@ -56,7 +56,8 @@ functions update the attribute \code{Classification} of the LAS object according
 \item{classify_noise}{Classify points as 'noise' (outliers) with several possible algorithms.
 lidR has has: \link{sor}, \link{ivf}. The points classified as 'noise' are assigned a value of 18.}
 \item{classify_ground}{Classify points as 'ground' with several possible algorithms.
-lidR has \link{pmf} and \link{csf}. The points classified as 'ground' are assigned a value of 2 }
+lidR has \link{pmf}, \link{csf} and \link{mcc}. The points classified as 'ground' are assigned a
+value of 2 }
 \item{classify_poi}{Classify points that meet some logical criterion and/or that belong in a
 region of interest with class of choice.}
 }
