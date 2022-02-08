@@ -838,12 +838,12 @@ ctg@output_options$drivers$list = list(
  param = list(compress = TRUE))
 ```
 
-More details in `help("lidR-LAScatalog-drivers")` or in this [wiki page](https://github.com/Jean-Romain/lidR/wiki/Modify-the-LAScatalog-drivers).
+More details in `help("lidR-LAScatalog-drivers")` or in this [wiki page](https://github.com/r-lidar/lidR/wiki/Modify-the-LAScatalog-drivers).
 
 
 ### Multi-machines paralellisation
 
-This vignette does not cover the set-up required to make two or more machines able to communicate. In this section we assume that the user is able to connect a remote machine via SSH. There is a [wiki page](https://github.com/Jean-Romain/lidR/wiki/Make-cheap-High-Performance-Computing-to-process-large-datasets) that covers some of this subject. Assuming a user is able to get access to multiple machines remotely and such machines are all able to read files from the same storage, the multi-machine parallelization is straightforward because it is driven by the `future` package. The only thing users need to do is to register a remote strategy
+This vignette does not cover the set-up required to make two or more machines able to communicate. In this section we assume that the user is able to connect a remote machine via SSH. There is a [wiki page](https://github.com/r-lidar/lidR/wiki/Make-cheap-High-Performance-Computing-to-process-large-datasets) that covers some of this subject. Assuming a user is able to get access to multiple machines remotely and such machines are all able to read files from the same storage, the multi-machine parallelization is straightforward because it is driven by the `future` package. The only thing users need to do is to register a remote strategy
 
 ```r
 library(future)
@@ -858,5 +858,5 @@ On cheap multi-machine parallelization made using several regular computers on a
 ctg@input_options$alt_dir = c("/home/Alice/data/", "/home/Bob/remote/project1/data/")
 ```
 
-This is covered by this [wiki page](https://github.com/Jean-Romain/lidR/wiki/Make-cheap-High-Performance-Computing-to-process-large-datasets).
+This is covered by this [wiki page](https://github.com/r-lidar/lidR/wiki/Make-cheap-High-Performance-Computing-to-process-large-datasets).
 

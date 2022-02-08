@@ -9,7 +9,7 @@ R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Ap
 
 The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin LiDAR data, manage a collection of LAS/LAZ files, automatically extract ground inventories, process a collection of tiles using multicore processing, segment individual trees, classify points from geographic data, and provides other tools to manipulate LiDAR data in a research and development context.
 
-:book: Read [the book](https://jean-romain.github.io/lidRbook/index.html) to get started with the lidR package. See changelogs on [NEW.md](https://github.com/r-lidar/lidR/blob/master/NEWS.md)
+:book: Read [the book](https://r-lidar.github.io/lidRbook/index.html) to get started with the lidR package. See changelogs on [NEW.md](https://github.com/r-lidar/lidR/blob/master/NEWS.md)
 
 To cite the package use `citation()` from within R:
 
@@ -44,7 +44,7 @@ las <- readLAS("<file.las>")
 # Khosravipour et al. pitfree algorithm
 thr <- c(0,2,5,10,15)
 edg <- c(0, 1.5)
-chm <- grid_canopy(las, 1, pitfree(thr, edg))
+chm <- rasterize_canopy(las, 1, pitfree(thr, edg))
 
 plot(chm)
 ```
@@ -87,7 +87,7 @@ Most of the lidR functions can seamlessly process a set of tiles and return a co
 ctg <- readLAScatalog("<path/to/folder/>")
 
 # Process it like a LAS file
-chm <- grid_canopy(ctg, 2, p2r())
+chm <- rasterize_canopy(ctg, 2, p2r())
 col <- random.colors(50)
 plot(chm, col = col)
 ```

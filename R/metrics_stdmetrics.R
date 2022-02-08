@@ -26,7 +26,7 @@
 #' For example the metric named `zq60` refers to the elevation, quantile, 60 i.e. the 60th percentile
 #' of elevations. The metric `pground` refers to a percentage. It is the percentage of points
 #' classified as ground. The function `stdmetric_i` refers to metrics of intensity. A description of
-#' each existing metric can be found on the \href{https://github.com/Jean-Romain/lidR/wiki/stdmetrics}{lidR wiki page}.\cr\cr
+#' each existing metric can be found on the \href{https://github.com/r-lidar/lidR/wiki/stdmetrics}{lidR wiki page}.\cr\cr
 #' Some functions have optional parameters. If these parameters are not provided the function
 #' computes only a subset of existing metrics. For example, `stdmetrics_i` requires the intensity
 #' values, but if the elevation values are also provided it can compute additional metrics such as
