@@ -30,7 +30,7 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     expect_equal(res, c(0,2,0))
   })
 
-  test_that("rasterize_canopy works with haliburton with small chunks",
+  test_that("rasterize_canopy works with haliburton with small chunks with stars",
   {
     # Small chunk to trigger potential errors with empty chunks
     # Approx 7 minutes
@@ -87,6 +87,8 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
     # Small chunk to trigger potential errors with empty chunks
     # Approx 10 minutes
+    # Need to check if Nearest neighbour was used but interpolation is weak for those points is
+    # by passed for the buffer
     opt_chunk_size(montmorency) <- 250
     opt_output_files(montmorency) <- "{tempdir()}/montmorency-terrain-{ID}"
     dtm <- rasterize_terrain(montmorency, 2, tin())
@@ -107,7 +109,7 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     options(lidR.raster.default = "stars")
 
     # Small chunk to trigger potential errors with empty chunks
-    # Approx 10 minutes
+    # Approx 4 minutes
     opt_chunk_size(montmorency) <- 0
     opt_output_files(montmorency) <- "{tempdir()}/montmorency-terrain-{ID}"
     dtm <- rasterize_terrain(montmorency, 2, tin())
@@ -122,11 +124,11 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     plot(ntile33_2)
   })
 
- test_that("rasterize_terrain works with montmorency with in memory and stars",
+ test_that("rasterize_canopy works with montmorency with in memory and stars",
  {
    options(lidR.raster.default = "stars")
 
-    # Approx ?? minutes
+    # Approx 4 minutes
     opt_chunk_size(montmorency) <- 0
     opt_output_files(montmorency) <- ""
     dtm = rasterize_canopy(montmorency, 2, p2r())
@@ -138,7 +140,7 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
  test_that("rasterize_terrain works with montmorency with in memory and raster",
  {
-    # Approx ?? minutes
+    # Approx 5 minutes
     options(lidR.raster.default = "raster")
     opt_chunk_size(montmorency) <- 0
     opt_output_files(montmorency) <- ""
@@ -258,12 +260,11 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
   {
     ctg <- lidRbook
 
-
     opt_output_files(ctg) <- paste0(tempdir(), "/{*}_metrics")
     m <- pixel_metrics(ctg, ~mean(Z), 13)
-    vrt = m[[1]]
+    vrt <- terra::sources(m)
 
-    # stars
+    # terra
     opt_output_files(ctg) <- ""
     dtm = rasterize_terrain(ctg, m)
     dtm
@@ -274,8 +275,9 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     plot(chm)
     plot(chm-dtm)
 
-    # terra
-    m <- terra::rast(vrt)
+    # stars
+    m <- stars::read_stars(vrt, proxy = T)
+
     opt_output_files(ctg) <- ""
     dtm = rasterize_terrain(ctg, m)
     dtm
@@ -287,7 +289,7 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
     plot(chm-dtm)
 
     # raster
-    m <- raster::raster(vrt)
+    m <- raster::raster(terra::sources(vrt))
     opt_output_files(ctg) <- ""
     dtm = rasterize_terrain(ctg, m)
     dtm
