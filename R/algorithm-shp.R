@@ -1,22 +1,32 @@
-#' Algorithms for shape detection of the local point neighborhood
+#' Algorithms for shape detection of the local point neighbourhood
 #'
 #' These functions are made to be used in \link{segment_shapes}. They implement algorithms for local
-#' neighborhood shape estimation.
+#' neighbourhood shape estimation.
 #'
-#' In the following, \eqn{a_1, a_2, a_3}{a1, a2, a3} denote the eigenvalues of the covariance matrix of the neighbouring
-#' points in ascending order. \eqn{th_1, th_2, th_3}{th1, th2, th3} denote a set of threshold values. Points are labelled
+#' In the following, \eqn{a_1, a_2, a_3}{a1, a2, a3} denote the eigenvalues of the covariance matrix
+#' of the neighbouring points in ascending order. \eqn{|Z_1|, |Z_2|, |Z_3|}{|Z1|, |Z2|, |Z3|} denote
+#' the norm of the Z component of first, second and third axis of the decomposition.
+#' \eqn{th_1, th_2, th_3}{th1, th2, th3}  denote a set of threshold values. Points are labelled
 #' \code{TRUE} if they meet the following criteria. \code{FALSE} otherwise.\cr
 #' \describe{
-#' \item{shp_plane}{Detection of plans based on criteria defined by Limberger & Oliveira (2015) (see references).
-#' A point is labelled TRUE if the neighborhood is approximately planar, that is:
+#' \item{shp_plane}{Detection of plans based on criteria defined by Limberger & Oliveira (2015) (see
+#' references). A point is labelled TRUE if the neighborhood is approximately planar, that is:
 #' \deqn{a_2 > (th_1 \times a_1) \& (th_2 \times a_2) > a_3}{a2 > (th1*a1) and (th2*a2) > a3}}
 #' \item{shp_hplane}{The same as 'plane' but with an extra test on the orientation of the Z vector
 #' of the principal components to test the horizontality of the surface.
-#' \deqn{a_2 > (th_1 \times a_1) \& (th_2 \times a_2) > a_3 \& |Z| > th_3}{a2 > (th1*a1) and (th2*a2) > a3 and |Z| > th3}
-#' In theory |Z| should be exactly equal to 1. In practice 0.98 or 0.99 should be fine}
+#' \deqn{a_2 > (th_1 \times a_1) \& (th_2 \times a_2) > a_3 \& |Z_3| > th_3}{a2 > (th1*a1) and (th2*a2) > a3 and |Z3| > th3}
+#' In theory  \eqn{|Z_3|}{|Z3|} should be exactly equal to 1. In practice 0.98 or 0.99 should be fine}
 #' \item{shp_line}{Detection of lines inspired by the Limberger & Oliveira (2015) criterion. A point is
-#' labelled TRUE if the neighborhood is approximately linear, that is:
+#' labelled TRUE if the neighbourhood is approximately linear, that is:
 #' \deqn{th_1 \times a_2 < a_3 \& th_1 \times a_1 < a_3}{th1*a2 < a3 and th1*a1 < a3}}
+#' \item{shp_hline}{Detection of horizontal lines inspired by the Limberger & Oliveira (2015) criterion.
+#' A point is labelled TRUE if the neighbourhood is approximately linear and horizontal, that is:
+#' \deqn{th_1 \times a_2 < a_3 \& th_1 \times a_1 < a_3 \& |Z_1| < th_2}{th1*a2 < a3 and th1*a1 < a3 and |Z1| < th2}
+#' In theory \eqn{|Z_1|}{|Z1|} should be exactly equal to 0. In practice 0.02 or 0.01 should be fine}
+#' \item{shp_vline}{Detection of vertical lines inspired by the Limberger & Oliveira (2015) criterion.
+#' A point is labelled TRUE if the neighbourhood is approximately linear and vertical, that is:
+#' \deqn{th_1 \times a_2 < a_3 \& th_1 \times a_1 < a_3 \& |Z_1| > th_2}{th1*a2 < a3 and th1*a1 < a3 and |Z1| > th2}
+#' In theory \eqn{|Z_1|}{|Z1|} should be exactly equal to 1. In practice 0.98 or 0.99 should be fine}
 #' }
 #'
 #' @param th1,th2,th3 numeric. Threshold values (see details)
@@ -26,6 +36,52 @@
 #' Limberger, F. A., & Oliveira, M. M. (2015). Real-time detection of planar regions in unorganized
 #' point clouds. Pattern Recognition, 48(6), 2043–2053. https://doi.org/10.1016/j.patcog.2014.12.020\cr\cr
 #'
+#' @examples
+#' # Generating some data
+#' n = 400
+#' xplane = runif(n,0,6)
+#' yplane = runif(n,0,6)
+#' zplane = xplane + 0.8 * yplane + runif(n, 0, 0.1)
+#' plane = data.frame(X = xplane, Y = yplane, Z = zplane)
+#'
+#' xhplane = runif(n,5,15)
+#' yhplane = runif(n,0,10)
+#' zhplane = 5 + runif(n, 0, 0.)
+#' hplane = data.frame(X = xhplane, Y = yhplane, Z = zhplane)
+#'
+#' tline = 1:n
+#' xline = 0.05*tline
+#' yline = 0.01*tline
+#' zline = 0.02*tline + runif(n, 0, 0.1)
+#' line = data.frame(X = xline, Y = yline, Z = zline)
+#'
+#' thline = 1:n
+#' xhline = 0.05*thline + runif(n, 0, 0.05)
+#' yhline = 10 - 0.01*thline + runif(n, 0, 0.05)
+#' zhline = 3 + runif(n, 0, 0.05)
+#' hline = data.frame(X = xhline, Y = yhline, Z = zhline)
+#'
+#' tvline = 1:n
+#' xvline = 5 + runif(n, 0, 0.05)
+#' yvline = 5 + runif(n, 0, 0.05)
+#' zvline = 0.02*tline
+#' vline = data.frame(X = xvline, Y = yvline, Z = zvline)
+#'
+#' las <- rbind(plane, line, hplane, hline, vline)
+#' las <- LAS(las)
+#'
+#' las <- segment_shapes(las, shp_plane(k = 20), "plane")
+#' las <- segment_shapes(las, shp_hplane(k = 20), "hplane")
+#' las <- segment_shapes(las, shp_line(k = 20), "line")
+#' las <- segment_shapes(las, shp_hline(k = 20), "hline")
+#' las <- segment_shapes(las, shp_vline(k = 20), "vline")
+#'
+#' #plot(las)
+#' #plot(las, color = "plane")
+#' #plot(las, color = "hplane")
+#' #plot(las, color = "line")
+#' #plot(las, color = "hline")
+#' #plot(las, color = "vline")
 #' @name shape_detection
 #' @rdname shape_detection
 NULL
@@ -48,7 +104,7 @@ shp_plane = function(th1 = 25, th2 = 6, k = 8)
     return(C_lasdetectshape(las, 1L , c(th1, th2), k, filter, getThread()))
   }
 
-  class(f) <- c(LIDRALGORITHMSHP, LIDRALGORITHMOPENMP)
+  f <- plugin_shape(f, TRUE)
   return(f)
 }
 
@@ -72,7 +128,7 @@ shp_hplane = function(th1 = 25, th2 = 6, th3 = 0.98, k = 8)
     return(C_lasdetectshape(las, 2L , c(th1, th2, th3), k, filter, getThread()))
   }
 
-  class(f) <- c(LIDRALGORITHMSHP, LIDRALGORITHMOPENMP)
+  f <- plugin_shape(f, TRUE)
   return(f)
 }
 
@@ -92,6 +148,48 @@ shp_line = function(th1 = 10, k = 8)
     return(C_lasdetectshape(las, 3L , th1, k, filter, getThread()))
   }
 
-  class(f) <- c(LIDRALGORITHMSHP, LIDRALGORITHMOPENMP)
+  f <- plugin_shape(f, TRUE)
+  return(f)
+}
+
+#' @export
+#' @rdname shape_detection
+shp_hline = function(th1 = 10, th2 = 0.02, k = 8)
+{
+  assert_is_a_number(th1)
+  assert_is_a_number(k)
+
+  th1 <- lazyeval::uq(th1)
+  th2 <- lazyeval::uq(th2)
+  k   <- lazyeval::uq(k)
+
+  f = function(las, filter)
+  {
+    assert_is_valid_context(LIDRCONTEXTSHP, "shp_line")
+    return(C_lasdetectshape(las, 4L, c(th1, th2), k, filter, getThread()))
+  }
+
+  f <- plugin_shape(f, TRUE)
+  return(f)
+}
+
+#' @export
+#' @rdname shape_detection
+shp_vline = function(th1 = 10, th2 = 0.98, k = 8)
+{
+  assert_is_a_number(th1)
+  assert_is_a_number(k)
+
+  th1 <- lazyeval::uq(th1)
+  th2 <- lazyeval::uq(th2)
+  k   <- lazyeval::uq(k)
+
+  f = function(las, filter)
+  {
+    assert_is_valid_context(LIDRCONTEXTSHP, "shp_line")
+    return(C_lasdetectshape(las, 5L , c(th1, th2), k, filter, getThread()))
+  }
+
+  f <- plugin_shape(f, TRUE)
   return(f)
 }

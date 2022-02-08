@@ -646,9 +646,12 @@ void LAS::filter_shape(int method, NumericVector th, int k)
   bool (*predicate)(arma::vec&, arma::mat&, NumericVector&);
   switch(method)
   {
-    case 1: predicate = &LAS::coplanar; break;
-    case 2: predicate = &LAS::hcoplanar; break;
-    case 3: predicate = &LAS::colinear; break;
+  case 1: predicate = &LAS::coplanar; break;
+  case 2: predicate = &LAS::hcoplanar; break;
+  case 3: predicate = &LAS::colinear; break;
+  case 4: predicate = &LAS::hcolinear; break;
+  case 5: predicate = &LAS::vcolinear; break;
+  default: Rcpp::stop("Internal error in LAS::filter_shape: invalid method") ; break; // # nocov
   }
 
   #pragma omp parallel for num_threads(ncpu)

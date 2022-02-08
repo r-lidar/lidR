@@ -53,6 +53,8 @@ class LAS
     static bool coplanar (arma::vec& latent, arma::mat& coeff, NumericVector& th) { return latent[1] > th[0]*latent[2] && th[1]*latent[1] > latent[0]; }
     static bool hcoplanar(arma::vec& latent, arma::mat& coeff, NumericVector& th) { return latent[1] > th[0]*latent[2] && th[1]*latent[1] > latent[0] && std::abs(coeff(2,2)) > th[2]; }
     static bool colinear (arma::vec& latent, arma::mat& coeff, NumericVector& th) { return th[0]*latent[2] < latent[0] && th[0]*latent[1] < latent[0]; }
+    static bool hcolinear(arma::vec& latent, arma::mat& coeff, NumericVector& th) { return th[0]*latent[2] < latent[0] && th[0]*latent[1] < latent[0] && std::abs(coeff(2,0)) < th[1]; }
+    static bool vcolinear(arma::vec& latent, arma::mat& coeff, NumericVector& th) { return th[0]*latent[2] < latent[0] && th[0]*latent[1] < latent[0] && std::abs(coeff(2,0)) > th[1]; }
     static double rmax(double x, double y) { if (NumericVector::is_na(x)) return y; return (x > y) ? x : y; }
     static double rmin(double x, double y) { if (NumericVector::is_na(x)) return y; return (x < y) ? x : y; }
     static double rcount(double x, double y) { if (NumericVector::is_na(x)) return 1; return x+1;}
