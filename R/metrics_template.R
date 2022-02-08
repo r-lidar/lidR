@@ -565,24 +565,32 @@ assign_to_template.stars <- function(template, cells, metrics, ...)
 assign_to_template.SpatRaster <- function(template, cells, metrics, ...)
 {
   nmetrics <- ncol(metrics)
-  output <- terra::rast(template, nlyrs = nmetrics)
-  suppressWarnings(output[] <- NA_real_)
+  output <- terra::init(template, NA_real_)
+  output[cells] <- metrics[[1]]
 
   if (nmetrics == 1L)
   {
-    output[cells] <- metrics[[1]]
     raster_names(output) <- names(metrics)
     return(output)
   }
 
-  ncells <- raster_ncell(template)
-  for (i in 1:nmetrics)
+  rlist <- vector("list", nmetrics)
+  rlist[[1]] <- output
+
+  for (i in 2:nmetrics)
   {
-    values <- vector(mode = class(metrics[[i]]), length = ncells)
-    values[] <- NA_real_
-    values[cells] <- metrics[[i]]
-    output[[i]][] <- values
+    terra::set.values(template, cells, metrics[[i]])
+    rlist[[i]] <- terra::deepcopy(template)
   }
+
+  output <- terra::rast(rlist)
+
+  # Best option but add is not part of terra if library(terra) is not called
+  #for (i in 2:nmetrics)
+  #{
+  #  terra::set.values(template, cells, metrics[[i]])
+  #  add(output) <- template
+  #}
 
   raster_names(output) <- names(metrics)
   return(output)
