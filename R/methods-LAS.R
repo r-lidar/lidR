@@ -312,7 +312,9 @@ setMethod("[", c("LAS", "logical"),  function(x, i)
 setMethod("[", c("LAS", "logical"),  function(x, i)
 {
   data <- x@data[i]
-  return(LAS(data, x@header, st_crs(x), FALSE, x@index))
+  y <- LAS(data, x@header, st_crs(x), FALSE, x@index)
+  y <- las_update(y)
+  return(y)
 })
 
 #' @export
