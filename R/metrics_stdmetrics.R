@@ -50,7 +50,7 @@
 #' @param dz numeric. Layer thickness  metric \link[=entropy]{entropy}
 #' @param th numeric. Threshold for metrics pzabovex. Can be a vector to compute with several thresholds.
 #' @param zmin numeric. Lower bound of the integral for zpcumx metrics.
-#' See \href{https://github.com/Jean-Romain/lidR/wiki/stdmetrics}{wiki page} and Wood et al.
+#' See \href{https://github.com/r-lidar/lidR/wiki/stdmetrics}{wiki page} and Wood et al.
 #' (2008) reference.
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
