@@ -142,8 +142,10 @@ setMethod("show", "LAS", function(object)
   area      <- as.numeric(st_area(object))
   area.h    <- area
   npoints   <- nrow(object@data)
+  npulses   <- object@header[["Number of points by return"]][1]
   npoints.h <- npoints
   dpts      <- if (area > 0) npoints/area else 0
+  dpulse    <- if (area > 0) npulses/area else 0
   ext       <- st_bbox(object)
   phb       <- object@header@PHB
   major     <- phb[["Version Major"]]
@@ -185,6 +187,8 @@ setMethod("show", "LAS", function(object)
   cat("area         : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
   cat("points       : ", npoints.h, " ", pointprefix, " points\n", sep = "")
   cat("density      : ", round(dpts, 2), " points/", units, "\u00B2\n", sep = "")
+  if (dpulse > 0)
+    cat("density      : ", round(dpulse, 2), " pulses/", units, "\u00B2\n", sep = "")
   #cat("names        :", attr, "\n")
 
   return(invisible(object))
@@ -195,6 +199,7 @@ setMethod("show", "LAScatalog", function(object)
   area        <- as.numeric(st_area(object))
   area.h      <- area
   npoints     <- sum(object@data$Number.of.point.records)
+  npulse      <- sum(object@data$Number.of.1st.return)
   npoints.h   <- npoints
   ext         <- st_bbox(object)
   units       <- st_crs(object)$units
@@ -206,6 +211,7 @@ setMethod("show", "LAScatalog", function(object)
   version     <- paste(major, minor, sep = ".", collapse = " and ")
   format      <- paste(sort(unique(object[["Point.Data.Format.ID"]])), collapse = " and ")
   density     <- round(npoints/area, 1)
+  dpulse      <- round(npulse/area, 1)
 
   if (is.nan(density)) density <- 0
 
@@ -242,6 +248,8 @@ setMethod("show", "LAScatalog", function(object)
   cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
   cat("points      : ", npoints.h, " ", pointprefix, " points\n", sep = "")
   cat("density     : ", density, " points/", units, "\u00B2\n", sep = "")
+  if (dpulse > 0)
+    cat("density      : ", round(dpulse, 2), " pulses/", units, "\u00B2\n", sep = "")
   cat("num. files  :", dim(object@data)[1], "\n")
   return(invisible(object))
 })
