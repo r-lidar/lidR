@@ -420,8 +420,14 @@ plot.LAS = function(x, y, color = "Z", colorPalette = "auto", bg = "black", trim
       id <- col + 1L
     else
     {
+      n <- length(pal)
       if (!is.infinite(trim)) col[col > trim] <- trim
-      id <- cut(col, length(pal), labels = FALSE)
+      id <- cut(col, n, labels = FALSE)
+      if (anyNA(id))
+      {
+        id[is.na(id)] <- n+1L
+        pal <- c(pal, "gray50")
+      }
     }
 
     eval(parse(text = "lidRviewer::plot_xyzcol(las@data$X, las@data$Y, las@data$Z, pal, id, args$size)"))
