@@ -56,6 +56,11 @@ forest.colors = function(n)
   return(colfunc(n))
 }
 
+amplitude.color = function(n)
+{
+  colfunc <- grDevices::colorRampPalette(rev(c("#ff0000", "#ff1919", "#ff3333", "#ff4d4d", "#ff6666", "#ff8080", "#ff9999", "#ffb3b3", "#ffcccc", "#ffe6e6")))
+  return(colfunc(n))
+}
 
 #' @export
 #' @rdname plot
@@ -79,7 +84,7 @@ pastel.colors = function(n)
   return(grDevices::hcl(h,c,l))
 }
 
-lasclass.colors = function()
+lasclass.colors = function(...)
 {
   return(c("lightgrey",   # 0 never classifiied
            "lightgray",   # 1 unclassified

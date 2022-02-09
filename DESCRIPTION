@@ -24,6 +24,7 @@ Depends:
     R (>= 3.4.0),
     methods
 Imports:
+    classInt,
     data.table (>= 1.12.0),
     glue,
     grDevices,

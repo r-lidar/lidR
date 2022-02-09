@@ -130,6 +130,8 @@ New functions are mostly convenient features that simplify some workflow without
 
 2. `readLAS()` can now read two or more files that do not have the same point format (see [#508](https://github.com/r-lidar/lidR/discussions/508))
 
+3. `plot()` for `LAS` gains arguments `pal`, `breaks` and `nbreaks` similar to `sf`. Arguments `trim` and `colorPalette` are deprecated
+
 ### Fix
 
 1. The metric `itot` from `stdmetrics_i` which generates troubles (see [#463](https://github.com/Jean-Romain/lidR/issues/463) [#514](https://github.com/Jean-Romain/lidR/issues/514)) is now `double` instead of `int`
