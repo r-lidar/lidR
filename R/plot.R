@@ -38,6 +38,7 @@
 #' easily take 15 seconds for 10000 voxels. It should be reserved for small scenes. If boolean the voxel
 #' resolution is guessed automatically. Otherwise users can provide the size of the voxels. To reduce the rendering time,
 #' an internal optimization removes voxels that are not visible when surrounded by other voxels.
+#' @param NAcol a color for NA values.
 #'
 #' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
 #' @param chunk_pattern logical. Display the current chunk pattern used to process the catalog.

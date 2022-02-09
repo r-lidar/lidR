@@ -89,6 +89,8 @@ easily take 15 seconds for 10000 voxels. It should be reserved for small scenes.
 resolution is guessed automatically. Otherwise users can provide the size of the voxels. To reduce the rendering time,
 an internal optimization removes voxels that are not visible when surrounded by other voxels.}
 
+\item{NAcol}{a color for NA values.}
+
 \item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.}
 
 \item{chunk_pattern}{logical. Display the current chunk pattern used to process the catalog.}
@@ -125,6 +127,7 @@ plot(las, color = "Classification")
 # This dataset is already tree segmented
 plot(las, color = "treeID")
 plot(las, color = "treeID", pal = random.colors)
+
 
 # single file LAScatalog using data provided in lidR
 ctg = readLAScatalog(LASfile)
