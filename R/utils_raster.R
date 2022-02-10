@@ -212,7 +212,7 @@ raster_as_matrix <- function(raster, downsample = FALSE)
 raster_as_dataframe <- function(raster,  xy = TRUE, na.rm = TRUE)
 {
   if (raster_is_proxy(raster))
-    stop("stars_proxy not supported in 'raster_as_dataframe()'", call. = FALSE) # nocov
+    stop("On-disk rasters not supported in 'raster_as_dataframe()'", call. = FALSE) # nocov
 
   m <- raster_as_matrix(raster)
   z <- as.numeric(t(apply(m$z, 1, rev)))
@@ -235,14 +235,13 @@ raster_as_dataframe <- function(raster,  xy = TRUE, na.rm = TRUE)
 
 raster_as_las <- function(raster, bbox = NULL)
 {
-  if (is(raster, "stars_proxy") & is.null(bbox))
-    stop("stars_proxy not supported without a bbox in 'raster_as_las()'", call. = FALSE) # nocov
+  ondisk <- raster_is_proxy(raster)
 
-  if (is(raster, "stars_proxy"))
-  {
-    raster <- raster[bbox]
-    raster <- stars::st_as_stars(raster)
-  }
+  if (ondisk & is.null(bbox))
+    stop("On-disk rasters not supported without a bbox in 'raster_as_las()'", call. = FALSE) # nocov
+
+  if (ondisk & !is.null(bbox))
+    raster <- raster_crop(raster, bbox)
 
   data <- raster_as_dataframe(raster, xy = FALSE, na.rm = TRUE)
   header <- rlas::header_create(data)

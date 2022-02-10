@@ -36,7 +36,7 @@ normalize_height.LAS = function(las, algorithm, use_class = c(2L,9L), dtm = NULL
     if (nnas > 0)
     {
       nn <- knnidw(1, rmax = .Machine$double.xmax)
-      znn <- nn(raster_as_las(dtm), las@data[isna, .(X,Y,Z)])
+      znn <- nn(raster_as_las(dtm, bbox = st_bbox(las)), las@data[isna, .(X,Y,Z)])
       Zg[isna] <- znn
       warning(glue::glue("{nnas} points do not belong in the raster. Nearest neighbor was used to assign a value."), call. = FALSE)
     }
