@@ -1,18 +1,18 @@
 #' Surface covered by a LAS* object
 #'
-#' Surface covered by a `LAS*` object. For `LAS` point clouds it is computed based the number of
-#' occupied cells or on the area of convex hull of the points when the density is too low. For a
+#' Surface covered by a `LAS*` object. For `LAS` point clouds it is computed based on the number of
+#' occupied cells, or on the area of the convex hull of the points when the density is too low. For a
 #' `LAScatalog` it is computed as the sum of the bounding boxes of the files. For overlapping tiles
-#' the value may be larger than the total covered area because some regions are sampled twice.
-#' For a `LASheader` it is computed with the bounding box. As a consequence for the same file
+#' the value may be larger than the total area covered because some regions are sampled twice.
+#' For a `LASheader` it is computed with the bounding box. As a consequence, for the same file
 #' `st_area` applied on a LASheader or on a LAS can return slightly different values. `st_area()`
 #' extends `sf:st_area()`, `area()` extends `raster:area()`. `area()` is provided for backward
 #' compatibility.
 #'
-#' @param x An object class \code{LAS*}.
+#' @param x An object of class \code{LAS*}.
 #' @param ... unused.
 #'
-#' @return numeric. A number in the same units of the coordinate reference system.
+#' @return numeric. A number in the same units as the coordinate reference system.
 #'
 #' @export
 #' @name st_area
@@ -46,7 +46,7 @@ st_area.LAS = function(x, ...)
   n <- data.table::uniqueN(cells)
   area <- sum(n)*r^2
 
-  # Workaround to get area with units without depending directly on units
+  # Workaround to get area with units, but without depending directly on units
   # and without parsing the CRS.
   bbox <- sf::st_as_sfc(sf::st_bbox(c(xmin = 0, ymin = 0, xmax = sqrt(area), ymax = sqrt(area)), crs = st_crs(x)))
 

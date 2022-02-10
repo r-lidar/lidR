@@ -1,6 +1,6 @@
-#' Coordinates of LAS* object in a matrix form
+#' Coordinates of a LAS* object in a matrix form
 #'
-#' Retrieve coordinates of a LAS* object in matrix form. It creates a copy of the coordinates
+#' Retrieve coordinates of a `LAS*` object in matrix form. It creates a copy of the coordinates
 #' because of the coercion from `data.frame` to `matrix`. This function inherits `sf::st_coordinates`
 #'
 #' @param x A LAS* object

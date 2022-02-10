@@ -1,17 +1,17 @@
 #' Get or set the projection of a LAS* object
 #'
-#' Get or set the projection of a LAS* object.  `st_crs()` extends `sf:st_crs()`, `projection()` and
+#' Get or set the projection of a `LAS*` object.  `st_crs()` extends `sf:st_crs()`, `projection()` and
 #' `crs()` extend `raster:projection()` and `raster:crs()`. `projection()` and `crs()` are provided
-#' for backward compatibility. For `epsg()` and `wkt()` see details.
+#' for backward compatibility. For `epsg()` and `wkt()`, see details.
 #'
 #' There are two ways to store the CRS of a point cloud in a LAS file:
 #'
 #'    - Store an EPSG code (for LAS 1.0 to 1.3)
 #'    - Store a WTK string (for LAS 1.4)
 #'
-#' On the other hand, R spatial packages use a `crs` to store the CRS. This is why the CRS is duplicated
+#' On the other hand, R spatial packages use a `crs` object to store the CRS. This is why the CRS is duplicated
 #' in a LAS object. The information belongs within the header in a format that can be written in a
-#' LAS file and in the slot `crs` in a format that can be understood by other R packages.
+#' LAS file and in the slot `crs`, and also in a format that can be understood by other R packages.
 #'
 #'    - `st_crs` return the CRS in `sf` format.
 #'    - `st_crs<-`: assigns a CRS from a `CRS` (`sp`), a `crs` (`sf`), a WKT
@@ -25,7 +25,7 @@
 #' @param asText logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned.
 #' @param value A `CRS` or a `crs` or a `proj4string` string or WKT string or an EPSG code.
 #'
-#' @return A `st_crs()` return a `sf::crs`. `projection()` and `crs()` return a `sp::CRS` and should
+#' @return A `st_crs()` returns a `sf::crs`. `projection()` and `crs()` return a `sp::CRS` and should
 #' no longer be used.
 #'
 #' @export

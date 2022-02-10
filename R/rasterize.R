@@ -1,8 +1,8 @@
 #' Rasterize a point cloud
 #'
-#' Rasterize a point-cloud in different ways to compute a DTM, a CHM or a density map. Most
+#' Rasterize a point cloud in different ways to compute a DTM, a CHM or a density map. Most
 #' raster products can be computed with \link{pixel_metrics} but some are more complex and require
-#' dedicated and optimized functions.  See Details and Examples.
+#' dedicated and optimized functions. See Details and Examples.
 #'
 #' \describe{
 #' \item{`rasterize_terrain`}{Interpolates the ground points and creates a rasterized
@@ -11,33 +11,33 @@
 #' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications})
 #' to compute the interpolation. How well the edges of the dataset are interpolated depends on the
 #' interpolation method used. A buffer around the region of interest is always recommended to avoid
-#' edge effects. }
+#' edge effects.}
 #' \item{`rasterize_canopy`}{Creates a digital surface model (DSM) using several
-#' possible algorithms. If the user provides a normalised point cloud, the output is indeed a canopy
+#' possible algorithms. If the user provides a normalized point cloud, the output is indeed a canopy
 #' height model (CHM).}
 #' \item{`rasterize_density`}{Creates a map of the point density. If a "pulseID"
 #' attribute is found, also returns a map of the pulse density.}
 #' }
 #'
 #' @section Non-supported LAScatalog options:
-#' The option `select` is not supported and not respected in`rasterize_*` because it is internally
-#' known what is the best to select.\cr
+#' The option `select` is not supported and not respected in `rasterize_*` because it is internally
+#' known what is best to select.\cr
 #' The option `chunk_buffer` is not supported and not respected in `rasterize_canopy` and
 #' `rasterize_density` because it is not necessary.
 #'
 #' @template param-las
 #' @param algorithm function. A function that implements an algorithm to compute a digital surface model
 #' or a digital terrain model. \code{lidR} implements \link{p2r}, \link{dsmtin}, \link{pitfree}
-#' for digital surface models and \link{knnidw}, \link{tin}, and \link{kriging} for digital terrain
+#' for digital surface models, and \link{knnidw}, \link{tin}, and \link{kriging} for digital terrain
 #' models (see respective documentation and examples).
-#' @param ... Use `pkg = "terra|raster|stars"` to get an output in format `SpatRaster`, `RasterLayer`
-#' or `stars`. Default is `getOption("lidR.raster.default")`.
-#' @param res numeric. The size of a grid cell in point-cloud coordinates units. Can also be
+#' @param ... Use `pkg = "terra|raster|stars"` to get an output in `SpatRaster`, `RasterLayer`
+#' or `stars` format. Default is `getOption("lidR.raster.default")`.
+#' @param res numeric. The size of a grid cell in point cloud coordinates units. Can also be
 #'  `RasterLayer` or a `stars` or a `SpatRaster` used as layout.
 #' @param shape By default the interpolation is made only within the `"convex"` hull of
 #' the point cloud to get a DTM with the shape of the point cloud. This prevents meaningless
 #' interpolations where there is no data. It can also be `"concave"` or `"bbox"`. It can also be an `sfc`
-#' to define a polygon where to perform the interpolation.
+#' to define a polygon in which to perform the interpolation.
 #' @param use_class integer vector. By default the terrain is computed by using ground points
 #' (class 2) and water points (class 9).
 #'

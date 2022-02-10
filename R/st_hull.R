@@ -1,15 +1,15 @@
 #' Concave and convex hulls for LAS objects
 #'
 #' Concave and convex hulls for LAS objects. `st_convex_hull` extends `sf::st_convex_hull` for LAS
-#' objects, Both functions return a `sfc_POLYGON`.`concaveman` is very a fast 2D concave hull algorithm
-#' for a set of points
+#' objects. Both functions return a `sfc_POLYGON`. `concaveman` is very a fast 2D concave hull algorithm
+#' for a set of points.
 #'
 #' The concaveman algorithm is based on ideas from Park and Oh (2012). A first implementation in
 #' JavaScript was proposed by Vladimir Agafonkin in \href{https://github.com/mapbox/concaveman}{mapbox}.
 #' This implementation dramatically improved performance over the one stated in the paper
 #' using a spatial index. The algorithm was then ported to R by Joël Gombin in the R package
 #' \href{https://github.com/joelgombin/concaveman}{concaveman} that runs the JavaScript
-#' implementation proposed by Vladimir Agafonkin. Later a C++ version of Vladimir Agafonkin's
+#' implementation proposed by Vladimir Agafonkin. Later, a C++ version of Vladimir Agafonkin's
 #' JavaScript implementation was proposed by Stanislaw Adaszewski in
 #' \href{https://github.com/sadaszewski/concaveman-cpp}{concaveman-cpp}. This concaveman
 #' function uses Stanislaw Adaszewski's C++ code making the concaveman algorithm an
@@ -17,14 +17,14 @@
 #'
 #' @param x,y An object of class LAS or XY coordinates of points in case of `concaveman`. This can be
 #' specified as two vectors x and y, a 2-column matrix x, a list with two components, etc.
-#' @param method string. currently support "concaveman"
-#' @param ... Propagate to the method
+#' @param method string. currently supports "concaveman".
+#' @param ... Propagate to the method.
 #' @param concavity numeric a relative measure of concavity. 1 results in a relatively detailed shape,
 #' Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy
 #' shapes.
-#' @param length_threshold numeric. When a segment length is under this threshold, it stops being
+#' @param length_threshold numeric. When a segment length is below this threshold, it stops being
 #' considered for further detailed processing. Higher values result in simpler shapes.
-#' @return A `sfc_POLYGON` from `sf` or a `data.frame` in case of `concaveman`
+#' @return A `sfc_POLYGON` from `sf` or a `data.frame` in the case of `concaveman`
 #' @importFrom sf st_convex_hull
 #' @name st_hull
 #' @rdname st_hull
@@ -92,7 +92,7 @@ concaveman <- function(x, y = NULL, concavity = 2, length_threshold = 0)
 
   if (is.null(y))
   {
-    if (!is.matrix(x) && !is.data.frame(x) && !is.list(x)) stop("A matrix a list or a data.frame is expected.")
+    if (!is.matrix(x) && !is.data.frame(x) && !is.list(x)) stop("A matrix, a list, or a data.frame is expected.")
     if (dim(x)[2] != 2) stop("Two columns are expected.")
 
     if (is.matrix(x))
@@ -117,7 +117,7 @@ concavetin <- function(las, max_length = 8)
   assert_is_a_number(max_length)
   assert_all_are_non_negative(max_length)
 
-  if (npoints(las) < 3) stop("Impossible to triangllate less than 3 points.", call. = FALSE)
+  if (npoints(las) < 3) stop("Impossible to triangulate fewer than 3 points.", call. = FALSE)
 
   # Triangulate the points and trim small triangles
   D <- tDelaunay(las, trim = max_length)
@@ -149,7 +149,7 @@ tin_exterior_ring = function(D, X, s = 5)
     return(c(x[3], x[2], x[1]))
   }))
 
-  # Compute the vertices (egde of each triangle)
+  # Compute the vertices (edge of each triangle)
   n  <- nrow(D)
   p1 <- integer(n*3)
   p2 <- integer(n*3)
@@ -185,12 +185,12 @@ tin_exterior_ring = function(D, X, s = 5)
   p1 <- numeric(n)
   p2 <- numeric(n)
 
-  # The first vertice initiate a polygon
+  # The first vertice initiates a polygon
   p1[1] <- contour$p1[1]
   p2[1] <- contour$p2[1]
   data.table::set(contour, 1L, 3L, TRUE)
 
-  # Find the last vertice that close the polygon
+  # Find the last vertice that closes the polygon
   j <- which(contour$p1 == p1[1] & contour$used == FALSE)
   s <- length(j) == 0L
 
@@ -208,7 +208,7 @@ tin_exterior_ring = function(D, X, s = 5)
 
   data.table::set(contour, j, 3L, TRUE)
 
-  # Continue until the we reach the last vertice
+  # Continue until we reach the last vertice
   for (i in 2:n)
   {
     j <- which(contour$p1 == p2[i - 1] & contour$used == FALSE)

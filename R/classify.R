@@ -1,12 +1,12 @@
 #' Classify points
 #'
 #' Classify points that meet some criterion and/or that belong in a region of interest. The
-#' functions update the attribute `Classification` of the LAS object according to
+#' functions updates the attribute `Classification` of the LAS object according to
 #' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{las specifications}
 #'
 #' \describe{
 #' \item{classify_noise}{Classify points as 'noise' (outliers) with several possible algorithms.
-#' lidR has has: \link{sor}, \link{ivf}. The points classified as 'noise' are assigned a value of 18.}
+#' lidR has: \link{sor}, \link{ivf}. The points classified as 'noise' are assigned a value of 18.}
 #' \item{classify_ground}{Classify points as 'ground' with several possible algorithms.
 #' lidR has \link{pmf} and \link{csf}. The points classified as 'ground' are assigned a value of 2 }
 #' \item{classify_poi}{Classify points that meet some logical criterion and/or that belong in a
@@ -14,12 +14,12 @@
 #' }
 #'
 #' @section Non-supported LAScatalog options:
-#' The option `select` is not supported and not respected  because it always preserves the file format
+#' The option `select` is not supported and not respected because it always preserves the file format
 #' and all the attributes. `select = "*"` is imposed internally.
 #'
 #' @template param-las
 #' @param algorithm An algorithm for classification. lidR has has: \link{sor}, \link{ivf} for noise
-#' classification and \link{pmf} and \link{csf} for ground classification (see respective documentation).
+#' classification, and \link{pmf} and \link{csf} for ground classification (see respective documentation).
 #' The \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins} package has `mcc`.
 #' @param class The ASPRS class to attribute to the points that meet the criterion.
 #' @param poi a formula of logical predicates. The points that are `TRUE` will be classified `class`.
@@ -27,7 +27,7 @@
 #' The points that are in the region of interest delimited by the polygon(s) are classified
 #' `class`.
 #' @param inverse_roi bool. Inverses the `roi`. The points that are outside the polygon(s)
-#' are classified `class`
+#' are classified `class`.
 #' @param by_reference bool. Updates the classification in place (LAS only).
 #' @param last_returns logical. The algorithm will use only the last returns (including the first returns
 #' in cases of a single return) to run the algorithm. If FALSE all the returns are used. If the attributes

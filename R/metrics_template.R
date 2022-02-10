@@ -2,7 +2,7 @@
 #'
 #' `template_metrics()` computes a series of user-defined descriptive statistics for a LiDAR dataset
 #' within each element of a template. Depending on the template it can be for each pixel of a raster
-#' (area-based approach) or each polygon, or each segmented tree or on the whole point cloud. Other
+#' (area-based approach), or each polygon, or each segmented tree, or on the whole point cloud. Other
 #' functions are convenient and simplified wrappers around `template_metrics()` and are expected to be
 #' the actual functions used. See Details and Examples.
 #'
@@ -10,8 +10,8 @@
 #' \item{`pixel_metrics`}{Area-based approach. Computes metrics in a square tessellation. The output is a
 #' raster.}
 #' \item{`hexagon_metrics`}{Computes metrics in an hexagon tessellation. The output is a `sf/sfc_POLYGON`}
-#' \item{`plot_metrics`}{Computes metrics for each plot of a ground inventory by 1. clipping the plots
-#' inventories with \link{clip_roi} 2. computing user's metrics to each plot with  \link{cloud_metrics}
+#' \item{`plot_metrics`}{Computes metrics for each plot of a ground inventory by 1. clipping the plot
+#' inventories with \link{clip_roi}, 2. computing the user's metrics for each plot with  \link{cloud_metrics}, and
 #' 3. combining spatial data and metrics into one data.frame ready for statistical modelling with
 #' `cbind`. The output is of the class of the input.}
 #' \item{`cloud_metrics`}{Computes a series of user-defined descriptive statistics for an entire point cloud.
@@ -30,15 +30,15 @@
 #' "Parameter func").
 #' @param template can be of many types and corresponds to the different levels of regularization.
 #' `RasterLayer/stars/SpatRaster`, `sf/sfc` (polygons), `numeric`, `bbox`, `NULL`. The metrics are
-#' computed for each element of the template. See examples
+#' computed for each element of the template. See examples.
 #' @param filter formula of logical predicates. Enables the function to run only on points of interest
 #' in an optimized way. See examples.
-#' @param by_echo characters. The metrics are computed multiples times for different echo types. Can
-#' be one or more of "all", "first", "intermediate", "lastofmany", "single", "multiple". See examples.
+#' @param by_echo characters. The metrics are computed multiple times for different echo types. Can
+#' be one or more of "all", "first", "intermediate", "lastofmany", "single", and "multiple". See examples.
 #' Default is "all" meaning that it computes metrics with all points provided.
 #' @param ... propagated to `template_metrics` i.e. `filter` and `by_echo`. `pixel_metrics()` also
-#' supports `pkg = "terra|raster|stars"` to get an output in format `SpatRaster`, `Raster*`
-#' or `stars`. Default is `getOption("lidR.raster.default")`.
+#' supports `pkg = "terra|raster|stars"` to get an output in `SpatRaster`, `Raster*`
+#' or `stars` format. Default is `getOption("lidR.raster.default")`.
 #'
 #' @section Parameter \code{func}:
 #' The function to be applied to each cell is a classical function (see examples) that
@@ -59,9 +59,9 @@
 #' function.
 #'
 #' @return Depends on the function, the template and the number of metrics. Can be a `RasterLayer`,
-#' a `RasterBrick`, a `stars`, a `SpatRaster` a `sf/sfc`, a `list`, a `SpatialPolygonDataFrame`,
-#' a `data.table`. Functions are supposed to return an object that best suit for storing the level
-#' of regularization asked.
+#' a `RasterBrick`, a `stars`, a `SpatRaster` a `sf/sfc`, a `list`, a `SpatialPolygonDataFrame`, or
+#' a `data.table`. Functions are supposed to return an object that is best suited for storing the level
+#' of regularization needed.
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -98,7 +98,7 @@
 #' # ================
 #'
 #' # Define a function that computes custom metrics
-#' # in a R&D perspective.
+#' # in an R&D perspective.
 #' myMetrics = function(z, i) {
 #'   metrics = list(
 #'      zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
@@ -163,7 +163,7 @@
 #' # CROWN METRICS
 #' # ================
 #'
-#' # Already tree segmented point cloud
+#' # Already tree-segmented point cloud
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 #' trees <- readLAS(LASfile, filter = "-drop_z_below 0")
 #'
@@ -205,7 +205,7 @@
 #' func = ~list(avgI = mean(Intensity))
 #' echo = c("all", "first","multiple")
 #'
-#' # func defines one metrics but 3 are computed respectively for: (1) all echo types,
+#' # func defines one metric but 3 are computed respectively for: (1) all echo types,
 #' # (2) for first returns only and (3) for multiple returns only
 #' metrics <- pixel_metrics(las, func, 20, by_echo = echo)
 #' plot(metrics, col = heat.colors(25))
@@ -247,10 +247,10 @@ template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "
   func   <- lazyeval::f_interp(func)
   call   <- lazyeval::as_call(func)
 
-  # The way the user's expression is evaluated makes the scoping rule counter intuitive and
-  # somehow buggy. It gives precedence to lidR in all cases. For example it will call an internal
+  # The way the user's expression is evaluated makes the scoping rule counterintuitive and
+  # somewhat buggy. It gives precedence to lidR in all cases. For example, it will call an internal
   # function of lidR instead of its globalenv version if they have the same name. The following
-  # tries to parse the expression and evaluates if ambiguous definition are existing.
+  # tries to parse the expression and evaluates whether ambiguous definitions exist.
   call_names <- all.names(call)
   las_names  <- names(las)
   call_names <- call_names[!call_names %in% las_names]
@@ -280,7 +280,7 @@ template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "
       {
         # For backward compatibility we return the template with NAs
         # It means that pixel_metrics and grid_metrics never fails
-        warning("No point fall in the raster. Bounding boxes are not intersecting.", call. = FALSE)
+        warning("No points fall in the raster. Bounding boxes are not intersecting.", call. = FALSE)
         return(template)
       }
 
@@ -308,7 +308,7 @@ template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "
   data.table::setDT(M)
   data.table::setkey(M, echo)
 
-  # Cast the table into appropriated objects
+  # Cast the table into appropriate objects
   computed_echos <- sort(match(by_echo, echo_types) - 1L)
   output <- vector("list", length(computed_echos))
   i <- 1
@@ -696,7 +696,7 @@ merge_list.stars <- function(template, list)
 
 merge_list.sfc.SpatRaster <- function(template, list)
 {
-  stop("Internal error: terra not suppporter yet")
+  stop("Internal error: terra not suppported yet")
 }
 
 merge_list.sfc <- function(template, list)
@@ -756,7 +756,7 @@ stop_if_ambiguous_definition <- function(name)
   # the precedence. We don't want that
   if (u) stop(glue::glue("The function '{name}' exists in the package lidR but is also defined in {n}. The scoping rules give precedence to lidR and the result may not be the one expected. Please rename your function."), call. = FALSE)
 
-  # We do that while we did not reached R_GlobalEnv
+  # We do that while we did not reach R_GlobalEnv
   i <- 2
   while(!identical(parent.frame(i-1), globalenv()) & isFALSE(u))
   {
@@ -767,12 +767,12 @@ stop_if_ambiguous_definition <- function(name)
     i <- i+1
   }
 
-  # u is FALSE, we did not find ambiguous definition
+  # u is FALSE, we did not find ambiguous definitions
   if (!u) return(invisible(NULL))
 
   if (n == "") n <- glue::glue("parent.frame({i-1})")
 
-  # u is TRUE, we found ambiguous definition
+  # u is TRUE, we found ambiguous definitions
   stop(glue::glue("The function '{name}' exists in the package lidR but is also defined in {n}. The scoping rules give precedence to lidR and the result may not be the one expected. Please rename your function."), call. = FALSE)
 }
 
