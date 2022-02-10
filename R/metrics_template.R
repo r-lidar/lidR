@@ -303,7 +303,7 @@ template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "
   else if (split_echos)
     M <- M2
   else
-    stop("Internal error") # nocov
+    stop("Internal error") #nocov
 
   data.table::setDT(M)
   data.table::setkey(M, echo)
@@ -362,9 +362,10 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
 {
   .BY <- echo <- . <- NULL
 
-  header <- as.list(las@header)
+  header <- as.list(header(las))
 
   # Somewhat aggressive defensive programming
+  #nocov start
   if (is.null(las$ReturnNumber) || is.null(las$NumberOfReturns))
     stop("ReturnNumber and NumberOfReturns must be loaded to perform computation by echo type", call. = FALSE)
 
@@ -382,6 +383,7 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
 
   if(!rlas::is_compliant_ReturnNumber_vs_NumberOfReturns(las@data))
     stop("ReturnNumber and NumberOfReturns are not compatible. See las_check(). Operation aborted.", call. = FALSE)
+  #nocov end
 
   echo_types = character(5)
   echo_types[LASFIRST] <- "first"
@@ -428,11 +430,15 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
   else
   {
     filter <- lasfilter_(las, list(filter))
+    cells <- cells[filter]
+    echo_class1 <- echo_class1[filter]
+    echo_class2 <- echo_class2[filter]
 
     verbose(glue::glue("Argument filter retained {sum(filter)} points..."))
 
     metrics1 <- NULL
     metrics2 <- NULL
+
 
     if (compute_type1)
     {
@@ -440,7 +446,9 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
     }
 
     if (compute_type2)
+    {
       metrics2 <- las@data[filter, if (!anyNA(.BY)) c(eval(call)), by = list(cells = cells, echo = echo_class2)]
+    }
 
     metrics12 <- rbind(metrics1, metrics2)
     data.table::setkey(metrics12, echo)
@@ -694,11 +702,6 @@ merge_list.stars <- function(template, list)
   return(output)
 }
 
-merge_list.sfc.SpatRaster <- function(template, list)
-{
-  stop("Internal error: terra not suppporter yet")
-}
-
 merge_list.sfc <- function(template, list)
 {
   list <- Filter(Negate(is.null), list)
@@ -736,6 +739,9 @@ merge_list.numeric <- function(template, list)
 
 }
 
+
+# ==== ERROR ====
+
 stop_if_ambiguous_definition <- function(name)
 {
   # Check if this name exists in lidR (internal or not)
@@ -752,7 +758,7 @@ stop_if_ambiguous_definition <- function(name)
   n <- environmentName(e)
   if (n == "") n <- "parent.frame(1)"
 
-  # If TRUE, there is an ambiguity, to object have the same name, lidR object will take
+  # If TRUE, there is an ambiguity, two objects have the same name, lidR object will take
   # the precedence. We don't want that
   if (u) stop(glue::glue("The function '{name}' exists in the package lidR but is also defined in {n}. The scoping rules give precedence to lidR and the result may not be the one expected. Please rename your function."), call. = FALSE)
 

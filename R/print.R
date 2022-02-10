@@ -171,13 +171,13 @@ setMethod("show", "LAS", function(object)
   }
   else if (npoints >= 1000^2 & npoints < 1000^3)
   {
-    pointprefix <- "million"
-    npoints.h   <- round(npoints/(1000^2), 2)
+    pointprefix <- "million" #nocov
+    npoints.h   <- round(npoints/(1000^2), 2) #nocov
   }
   else if (npoints >= 1000^3)
   {
-    pointprefix <- "billion"
-    npoints.h   <- round(npoints/(1000^3), 2)
+    pointprefix <- "billion" #nocov
+    npoints.h   <- round(npoints/(1000^3), 2) #nocov
   }
 
   cat("class        : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
@@ -233,13 +233,13 @@ setMethod("show", "LAScatalog", function(object)
   }
   else if (npoints >= 1000^2 & npoints < 1000^3)
   {
-    pointprefix <- "million"
-    npoints.h   <- round(npoints/(1000^2), 2)
+    pointprefix <- "million" #nocov
+    npoints.h   <- round(npoints/(1000^2), 2) #nocov
   }
   else if (npoints >= 1000^3)
   {
-    pointprefix <- "billion"
-    npoints.h   <- round(npoints/(1000^3), 2)
+    pointprefix <- "billion" #nocov
+    npoints.h   <- round(npoints/(1000^3), 2) #nocov
   }
 
   cat("class       : ", class(object), " (v", version, " format ", format, ")\n", sep = "")
@@ -333,14 +333,6 @@ setMethod("show", "LASheader",  function(object)
           cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
         })
       }
-      else if (vlr$`record ID` == 4)
-      {
-        cat("       Extra Bytes Description:\n")
-        lapply(vlr$`Extra Bytes Description`, function(xx)
-        {
-          cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
-        })
-      }
       else if (vlr$`record ID` == 2112)
       {
         cat("       WKT OGC COORDINATE SYSTEM: ", strtrim(vlr$`WKT OGC COORDINATE SYSTEM`, 70), " [...] (truncated)\n", sep = "")
@@ -382,14 +374,6 @@ setMethod("show", "LASheader",  function(object)
       else if (vlr$`record ID` == 34737)
       {
         cat("       data:                ", vlr[[6]], "\n")
-      }
-      else if (vlr$`record ID` == 4)
-      {
-        cat("       Extra Bytes Description:\n")
-        lapply(vlr$`Extra Bytes Description`, function(xx)
-        {
-          cat("          ", xx$name, ": ", xx$description, "\n", sep = "")
-        })
       }
       else if (vlr$`record ID` == 4)
       {

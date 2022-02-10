@@ -243,6 +243,7 @@ plot.LAS = function(x, y, ...,
     args$size <- 1.5
 
   # Backward compatibility
+  #nocov start
   if (!is.null(args$colorPalette))
   {
     if (length(args$colorPalette) == 1L && args$colorPalette == "auto")
@@ -267,6 +268,7 @@ plot.LAS = function(x, y, ...,
     args$nbits <- NULL
     message("The argument 'nbits' is not longer supported. It is now infered automatically.")
   }
+  #nocov end
 
   backend <- match.arg(backend, c("rgl", "lidRviewer"))
   use_pcv <- backend == "lidRviewer"

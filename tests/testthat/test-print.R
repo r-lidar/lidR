@@ -4,6 +4,7 @@ las     <- example
 
 LASfile <- system.file("extdata", "extra_byte.laz", package = "rlas")
 las2     <- readLAS(LASfile)
+las2@header@EVLR = las2@header@VLR
 
 las3 <- random_10_points
 las3@data$X <- las3@data$X * 1000
@@ -82,4 +83,10 @@ test_that("print works with lidR algorithms ", {
   sink(NULL)
 
 })
+
+test_that("print raster_template works", {
+  tpl <- lidR:::raster_layout(megaplot, 10)
+  expect_error(print(tpl), NA)
+})
+
 

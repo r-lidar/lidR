@@ -58,7 +58,7 @@ NULL
 st_crs.LAS = function(x, ...) {
   # Workaround to minimize backward incompatibilities
   if (is_las_v3(x))
-    return(sf::st_crs(x@proj4string))
+    return(sf::st_crs(x@proj4string)) #nocov
 
   return(x@crs)
 }
@@ -69,7 +69,7 @@ st_crs.LAScatalog = function(x, ...)
 {
   # Workaround to minimize backward incompatibilities
   if (is_lascatalog_v3(x))
-    return(sf::st_crs(x@proj4string))
+    return(sf::st_crs(x@proj4string)) #nocov
 
   return(sf::st_crs(x@data))
 }

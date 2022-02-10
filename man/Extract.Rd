@@ -11,7 +11,6 @@
 \alias{[,LAS,logical,ANY-method}
 \alias{[,LAS,sf,ANY-method}
 \alias{[,LAS,sfc,ANY-method}
-\alias{[,LAS,sfg,ANY-method}
 \alias{$,LAScatalog-method}
 \alias{[[,LAScatalog,ANY,missing-method}
 \alias{[,LAScatalog,ANY,ANY-method}
@@ -43,8 +42,6 @@
 \S4method{[}{LAS,sf,ANY}(x, i)
 
 \S4method{[}{LAS,sfc,ANY}(x, i)
-
-\S4method{[}{LAS,sfg,ANY}(x, i)
 
 \S4method{$}{LAScatalog}(x, name)
 

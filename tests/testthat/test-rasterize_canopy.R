@@ -60,6 +60,22 @@ test_that("rasterize_canopy with p2r() works with subcircle option", {
   expect_equivalent(sf::st_bbox(x), expected_bbox)
 })
 
+
+test_that("rasterize_canopy pit-free works subcircle", {
+
+  skip_on_cran()
+
+  las <- lidR:::generate_las(2000)
+
+  f <- pitfree(thresholds = c(0,2,5,10,15), max_edge = c(0, 1.5), subcircle = 5)
+  x <- rasterize_canopy(las, 1, f)
+  expected_bbox = sf::st_bbox(c(xmin = 0,xmax = 100, ymin = 0, ymax = 100), crs = st_crs(las))
+
+  expect_true(is(x, slr))
+  expect_equal(lidR:::raster_res(x), c(1,1))
+  expect_equivalent(sf::st_bbox(x), expected_bbox)
+})
+
 test_that("rasterize_canopy with p2r() works with na.fill", {
 
   las <- lidR:::generate_las(1000)

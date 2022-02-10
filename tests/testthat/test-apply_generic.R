@@ -160,6 +160,23 @@ test_that("catalog_apply can bypass errors", {
   expect_message(catalog_apply(ctg, test), NA)
 })
 
+test_that("catalog_apply works with no future option", {
+
+  options(lidR.no.future = TRUE)
+
+  opt_chunk_size(ctg) <- 0
+  opt_wall_to_wall(ctg) <- FALSE
+  opt_stop_early(ctg) <- TRUE
+
+  test <- function(cluster) {
+    return(0)
+  }
+
+  expect_error(catalog_apply(ctg, test), NA)
+
+  options(lidR.no.future = FALSE)
+})
+
 test_that("User get a warning/error when using ORIGINALFILENAME", {
 
   expect_message({opt_output_files(ctg) <- "{*}"}, "makes sense only when processing by file")
