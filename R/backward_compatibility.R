@@ -168,7 +168,7 @@ rOverlay = function(las, res, start = c(0,0), buffer = 0)
   bbox@xmax <- round_any(bbox@xmax - 0.5 * res - start[1], res) + res + start[1]
   bbox@ymin <- round_any(bbox@ymin - 0.5 * res - start[2], res) + start[2]
   bbox@ymax <- round_any(bbox@ymax - 0.5 * res - start[2], res) + res + start[2]
-  layout    <- suppressWarnings(raster::raster(bbox, res = res, crs = las@proj4string))
+  layout    <- suppressWarnings(raster::raster(bbox, res = res, crs = crs(las)))
   layout@data@values <- rep(NA, raster::ncell(layout))
   raster::crs(layout) <- raster::crs(las)
   return(layout)
