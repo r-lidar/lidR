@@ -141,6 +141,7 @@ las_check.LAS = function(las, print = TRUE, ...)
   infos <- character(0)
   g <- glue::glue
 
+  #nocov start
   if (is_las_v3(las))
   {
     .h1("Checking format")
@@ -148,6 +149,7 @@ las_check.LAS = function(las, print = TRUE, ...)
     .fail("This LAS is in old format from lidR v3")
     las <- las_v3_repair(las)
   }
+  #nocov end
 
   data <- payload(las)
   head <- as.list(header(las))
@@ -886,6 +888,7 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
 
 # code from testthat
 # https://github.com/r-lib/testthat/blob/717b02164def5c1f027d3a20b889dae35428b6d7/R/colour-text.r
+# nocov start
 .colourise <- function(text, fg = "black", bg = NULL) {
   term <- Sys.getenv()["TERM"]
   colour_terms <- c("xterm-color","xterm-256color", "screen", "screen-256color")
@@ -937,3 +940,4 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
   reset <- col_escape("0")
   paste0(init, text, reset)
 }
+# nocov end

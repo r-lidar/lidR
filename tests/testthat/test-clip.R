@@ -75,6 +75,22 @@ test_that("clip_roi clips polygon works sfc", {
   expect_equal(poly1@crs, las@crs)
 })
 
+test_that("clip_roi clips multipolygon with hole", {
+
+  wkt <- "POLYGON ((339008 5248000, 339010 5248000, 339010 5248002, 339008 5248000))"
+  p1 <- sf::st_point(c(684850, 5017850))
+  p2 <- sf::st_point(c(684900, 5017900))
+  poly1e <- sf::st_buffer(p1, 20)
+  poly1i <- sf::st_buffer(p1, 10)
+  poly1 <- sf::st_difference(poly1e, poly1i)
+  poly2 <- sf::st_buffer(p2, 20)
+  poly <- c(poly1, poly2)
+
+  donut <- clip_roi(megaplot, poly)
+
+  expect_equal(npoints(donut), 3905)
+})
+
 test_that("clip_roi clips polygon works from sp polygons both on a LAS and LAScatalog", {
 
   wkt1 <- "MULTIPOLYGON (((339010.5 5248000, 339012 5248000, 339010.5 5248002, 339010.5 5248000)), ((339008 5248000, 339010 5248000, 339010 5248002, 339008 5248000), (339008.5 5248000.2, 339009.5 5248000.2, 339009.5 5248001, 339008.5 5248000.2)))"

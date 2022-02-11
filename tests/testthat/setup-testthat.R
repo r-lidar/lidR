@@ -3,6 +3,7 @@ options(rgl.useNULL = TRUE)
 
 cat("Tests using raster:", getOption("lidR.raster.default"), "\n")
 cat("Tests using future:", lidR:::engine_use_future(), "\n")
+cat("Tests using OpenMP thread:", get_lidr_threads(), "\n")
 #Sys.setenv(NOT_CRAN = "false")
 
 megaplot_laz_path <- system.file("extdata", "Megaplot.laz", package="lidR")

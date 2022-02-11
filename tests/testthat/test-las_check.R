@@ -13,6 +13,7 @@ las1@data[1, Withheld_flag := TRUE]
 las1@data[1, Synthetic_flag := TRUE]
 las1@data[1, Keypoint_flag := TRUE]
 las1@data[25, Z := 1234567890.1]
+las1@data[8:9, Intensity := c(NA_integer_, 12345679L)]
 las1@data$gpstime <- 0
 las1@crs <- sf::st_crs(26917)
 las1@header@PHB[["X scale factor"]] <- 0.123
