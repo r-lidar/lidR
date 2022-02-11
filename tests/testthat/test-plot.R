@@ -110,3 +110,20 @@ test_that("add = x overlay a second point cloud", {
 
 })
 
+test_that("plot voxels", {
+  skip_on_cran()
+
+  v <- voxel_metrics(example, func = ~length(Z))
+
+  expect_error(plot(v, voxel = TRUE), NA)
+  rgl::rgl.close()
+
+  expect_error(plot(v, voxel = 2), NA)
+  rgl::rgl.close()
+
+  attr(v, "res") = NULL
+
+  expect_error(plot(v, voxel = TRUE), NA)
+  rgl::rgl.close()
+})
+

@@ -2,6 +2,12 @@ context("projection")
 
 las = random_10_points
 
+test_that("st_crs works", {
+
+  expect_error(st_crs(las), NA)
+  expect_error(st_crs(header(las)), NA)
+})
+
 test_that("Internal projection conversion works", {
 
   wkt <- "PROJCS[\"NAD27(CGQ77) / SCoPQ zone 2\",GEOGCS[\"NAD27(CGQ77)\",DATUM[\"North_American_Datum_1927_CGQ77\",SPHEROID[\"Clarke 1866\",6378206.4,294.978698213898,AUTHORITY[\"EPSG\",\"7008\"]],AUTHORITY[\"EPSG\",\"6609\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4609\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-55.5],PARAMETER[\"scale_factor\",0.9999],PARAMETER[\"false_easting\",304800],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]"

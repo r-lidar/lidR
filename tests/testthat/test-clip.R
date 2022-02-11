@@ -60,6 +60,21 @@ test_that("clip_roi clips polygon works from WTK both on a LAS and LAScatalog", 
   expect_equal(poly1@crs, las@crs)
 })
 
+test_that("clip_roi clips polygon works sfc", {
+
+  wkt <- "POLYGON ((339008 5248000, 339010 5248000, 339010 5248002, 339008 5248000))"
+  p <- sf::st_as_sfc(wkt)
+  sf::st_crs(p) <- st_crs(las)
+
+  poly1   <- las[p]
+  poly2   <- clip_roi(las, p)
+
+  expect_is(poly2, "LAS")
+  expect_equal(npoints(poly2), 15L)
+  expect_equal(poly1, poly2)
+  expect_equal(poly1@crs, las@crs)
+})
+
 test_that("clip_roi clips polygon works from sp polygons both on a LAS and LAScatalog", {
 
   wkt1 <- "MULTIPOLYGON (((339010.5 5248000, 339012 5248000, 339010.5 5248002, 339010.5 5248000)), ((339008 5248000, 339010 5248000, 339010 5248002, 339008 5248000), (339008.5 5248000.2, 339009.5 5248000.2, 339009.5 5248001, 339008.5 5248000.2)))"

@@ -16,6 +16,7 @@ LAS <- function(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = 
   .N <- X <- Y <- Z <- NULL
 
   # This is a repair feature for lidR v3 to lidR v4
+  #nocov start
   if (is(data, "LAS"))
   {
     if (methods::.hasSlot(data, "proj4string"))
@@ -29,6 +30,7 @@ LAS <- function(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = 
       return(LAS(pts, head, crs = crs, check = FALSE))
     }
 
+
     return(data)
   }
 
@@ -39,6 +41,7 @@ LAS <- function(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = 
     warning("Argument proj4string is deprecated. Use argument crs instead.", call. = TRUE)
     crs <- sf::st_crs(dots$proj4string)
   }
+  #nocov end
 
   if (is.data.frame(data))
     data.table::setDT(data)
@@ -338,17 +341,6 @@ setMethod("[", c("LAS", "sfc"),  function(x, i)
 
   return(clip_roi(x, i))
 })
-
-#' @export
-#' @rdname Extract
-setMethod("[", c("LAS", "sfg"),  function(x, i)
-{
-  if (!is(i, "POLYGON") | !is(i, "MULTIPOLYGON"))
-    stop("Only POLYGONS are supported for subsetting. See clip_roi() for more options", call. = FALSE)
-
-  return(clip_roi(x, i))
-})
-
 
 fix_name_convention <- function(names)
 {

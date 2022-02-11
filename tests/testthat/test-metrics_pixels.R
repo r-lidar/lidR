@@ -31,6 +31,18 @@ test_that("pixel_metrics returns a named multilayers raster", {
   expect_equal(lidR:::raster_names(x), c("meanZ", "maxZ"))
 })
 
+test_that("pixel_metrics return raster terra or stars", {
+
+  x <- pixel_metrics(las, f2, pkg = "raster")
+  expect_true(is(x, "RasterBrick"))
+
+  x <- pixel_metrics(las, f2, pkg = "terra")
+  expect_true(is(x, "SpatRaster"))
+
+  x <- pixel_metrics(las, f2, pkg = "stars")
+  expect_true(is(x, "stars"))
+})
+
 test_that("pixel_metrics returns a raster aligned with the start option", {
 
   x <- pixel_metrics(las, f1, start = c(10,10))
