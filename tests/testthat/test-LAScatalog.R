@@ -6,21 +6,6 @@ opt_chunk_size(ctg)      <- 140
 opt_chunk_alignment(ctg) <- c(684760, 5017760)
 opt_chunk_buffer(ctg)    <- 3
 
-test_that("Print LAScatalog object works", {
-  sink(tempfile())
-  expect_error(show(ctg), NA)
-  expect_error(summary(ctg), NA)
-  sink(NULL)
-})
-
-test_that("Plot LAScatalog object works", {
-  expect_error(plot(ctg), NA)
-  expect_error(plot(ctg, chunk = TRUE), NA)
-  expect_error(plot(ctg, mapview = TRUE), NA)
-  expect_error(plot(ctg, col = "red"), NA)
-  expect_error(plot(ctg@data["Min.Z"]), NA)
-})
-
 test_that("LAScatalog redefined behavior of $, [, and [[", {
 
   expect_true(is.character(ctg$File.Signature))

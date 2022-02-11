@@ -64,11 +64,15 @@ test_that("plot LASheader works", {
   expect_error(plot(las@header), NA)
 })
 
-test_that("plot LAScatalog works", {
+test_that("Plot LAScatalog object works", {
   expect_error(plot(ctg), NA)
+  expect_error(plot(ctg, chunk = TRUE), NA)
+  expect_error(plot(ctg, col = "red"), NA)
+  expect_error(plot(ctg@data["Min.Z"]), NA)
 
-  ctg$process <- 1
-  expect_warning(plot(ctg))
+  skip_on_cran()
+  skip_on_os("windows")
+  expect_error(plot(ctg, mapview = TRUE), NA)
 })
 
 test_that("plot lasmetrics3d works", {
