@@ -58,8 +58,6 @@ jobs:
       - name: Query dependencies
         run: |
           install.packages('remotes')
-          install.packages("BiocManager")
-          BiocManager::install("EBImage")
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
@@ -92,6 +90,8 @@ jobs:
 
       - name: Install dependencies
         run: |
+          install.packages("BiocManager")
+          BiocManager::install("EBImage")
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("covr")
