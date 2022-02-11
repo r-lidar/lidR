@@ -1,10 +1,10 @@
 #' Bounding box of a LAS* object
 #'
-#' Bounding box of a LAS* object. `st_bbox()` extends `sf`, `extent()` extends
-#' `raster`, `bbox()` extends `sp` and `ext()` extend `terra`. The value returned are similar to their
+#' Bounding box of a `LAS*` object. `st_bbox()` extends `sf`, `extent()` extends
+#' `raster`, `bbox()` extends `sp`, and `ext()` extends `terra`. The values returned are similar to their
 #' parent functions.
 #'
-#' @return A `bbox` from sf, an `Extent` from raster, a `matrix` from sp or a `SpatExtent` from `terra`
+#' @return A `bbox` from sf, an `Extent` from raster, a `matrix` from sp, or a `SpatExtent` from `terra`.
 #'
 #' @param obj,x An object of class \code{LAS*}.
 #' @param ... unused

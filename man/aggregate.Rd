@@ -44,8 +44,8 @@ voxel_metrics(las, func, res = 1, ..., all_voxels = FALSE)
 "Parameter func").}
 
 \item{...}{propagated to \code{template_metrics} i.e. \code{filter} and \code{by_echo}. \code{pixel_metrics()} also
-supports \code{pkg = "terra|raster|stars"} to get an output in format \code{SpatRaster}, \verb{Raster*}
-or \code{stars}. Default is \code{getOption("lidR.raster.default")}.}
+supports \code{pkg = "terra|raster|stars"} to get an output in \code{SpatRaster}, \verb{Raster*}
+or \code{stars} format. Default is \code{getOption("lidR.raster.default")}.}
 
 \item{geom}{character. Geometry type of the output. Can be 'point', 'convex', 'concave' or 'bbox'.}
 
@@ -71,13 +71,13 @@ radius or a vector of radii for variable plot sizes.}
 
 \item{template}{can be of many types and corresponds to the different levels of regularization.
 \code{RasterLayer/stars/SpatRaster}, \code{sf/sfc} (polygons), \code{numeric}, \code{bbox}, \code{NULL}. The metrics are
-computed for each element of the template. See examples}
+computed for each element of the template. See examples.}
 
 \item{filter}{formula of logical predicates. Enables the function to run only on points of interest
 in an optimized way. See examples.}
 
-\item{by_echo}{characters. The metrics are computed multiples times for different echo types. Can
-be one or more of "all", "first", "intermediate", "lastofmany", "single", "multiple". See examples.
+\item{by_echo}{characters. The metrics are computed multiple times for different echo types. Can
+be one or more of "all", "first", "intermediate", "lastofmany", "single", and "multiple". See examples.
 Default is "all" meaning that it computes metrics with all points provided.}
 
 \item{all_voxels}{boolean. By default the function returns only voxels that
@@ -87,14 +87,14 @@ voxels with 0 points.}
 }
 \value{
 Depends on the function, the template and the number of metrics. Can be a \code{RasterLayer},
-a \code{RasterBrick}, a \code{stars}, a \code{SpatRaster} a \code{sf/sfc}, a \code{list}, a \code{SpatialPolygonDataFrame},
-a \code{data.table}. Functions are supposed to return an object that best suit for storing the level
-of regularization asked.
+a \code{RasterBrick}, a \code{stars}, a \code{SpatRaster} a \code{sf/sfc}, a \code{list}, a \code{SpatialPolygonDataFrame}, or
+a \code{data.table}. Functions are supposed to return an object that is best suited for storing the level
+of regularization needed.
 }
 \description{
 \code{template_metrics()} computes a series of user-defined descriptive statistics for a LiDAR dataset
 within each element of a template. Depending on the template it can be for each pixel of a raster
-(area-based approach) or each polygon, or each segmented tree or on the whole point cloud. Other
+(area-based approach), or each polygon, or each segmented tree, or on the whole point cloud. Other
 functions are convenient and simplified wrappers around \code{template_metrics()} and are expected to be
 the actual functions used. See Details and Examples.
 }
@@ -103,8 +103,8 @@ the actual functions used. See Details and Examples.
 \item{\code{pixel_metrics}}{Area-based approach. Computes metrics in a square tessellation. The output is a
 raster.}
 \item{\code{hexagon_metrics}}{Computes metrics in an hexagon tessellation. The output is a \code{sf/sfc_POLYGON}}
-\item{\code{plot_metrics}}{Computes metrics for each plot of a ground inventory by 1. clipping the plots
-inventories with \link{clip_roi} 2. computing user's metrics to each plot with  \link{cloud_metrics}
+\item{\code{plot_metrics}}{Computes metrics for each plot of a ground inventory by 1. clipping the plot
+inventories with \link{clip_roi}, 2. computing the user's metrics for each plot with  \link{cloud_metrics}, and
 3. combining spatial data and metrics into one data.frame ready for statistical modelling with
 \code{cbind}. The output is of the class of the input.}
 \item{\code{cloud_metrics}}{Computes a series of user-defined descriptive statistics for an entire point cloud.
@@ -173,7 +173,7 @@ print(m)
 # ================
 
 # Define a function that computes custom metrics
-# in a R&D perspective.
+# in an R&D perspective.
 myMetrics = function(z, i) {
   metrics = list(
      zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
@@ -238,7 +238,7 @@ m <- voxel_metrics(las, ~mean(Intensity), 8)
 # CROWN METRICS
 # ================
 
-# Already tree segmented point cloud
+# Already tree-segmented point cloud
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
 trees <- readLAS(LASfile, filter = "-drop_z_below 0")
 
@@ -280,7 +280,7 @@ metrics = pixel_metrics(las, ~mean(Z), 20)
 func = ~list(avgI = mean(Intensity))
 echo = c("all", "first","multiple")
 
-# func defines one metrics but 3 are computed respectively for: (1) all echo types,
+# func defines one metric but 3 are computed respectively for: (1) all echo types,
 # (2) for first returns only and (3) for multiple returns only
 metrics <- pixel_metrics(las, func, 20, by_echo = echo)
 plot(metrics, col = heat.colors(25))

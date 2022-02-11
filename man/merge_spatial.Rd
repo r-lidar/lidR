@@ -13,24 +13,24 @@ merge_spatial(las, source, attribute = NULL)
 \code{RasterStack} or \code{RasterBrick} or \code{stars}.}
 
 \item{attribute}{character. The name of an attribute in the table of attributes or
-the name of a new column in the LAS object. Not relevant for RGB colourization.}
+the name of a new column in the LAS object. Not relevant for RGB colorization.}
 }
 \value{
-An \code{LAS} object
+a \code{LAS} object
 }
 \description{
 Merge a point cloud with a source of spatial data. It adds an attribute along each point based on
-a value found in the spatial data. Sources of spatial data can be a \verb{SpatialPolygons*} an \code{sf}/\code{sfc}
-a \verb{Raster*} a \code{stars} or a \code{SpatRaster}.\cr
+a value found in the spatial data. Sources of spatial data can be a \verb{SpatialPolygons*}, an \code{sf}/\code{sfc},
+a \verb{Raster*}, a \code{stars}, or a \code{SpatRaster}.\cr
 \itemize{
 \item{\verb{SpatialPolygons*}, \code{sf} and \code{sfc}: it checks if the points belongs within each polygon. If
 the parameter \code{attribute} is the name of an attribute in the table of attributes it assigns
 to the points the values of that attribute. Otherwise it classifies the points as boolean.
 TRUE if the points are in a polygon, FALSE otherwise.}
-\item{\code{RasterLayer}, single band \code{stars} or single layer \code{SpaTRaster}: it attributes to each point
+\item{\code{RasterLayer}, single band \code{stars} or single layer \code{SpatRaster}: it attributes to each point
 the value found in each pixel of the raster}.
 \item{\code{RasterStack}, \code{RasterBrick}, multibands \code{stars} or multilayer \code{SpatRaster} must have 3
-layers for RGB colors. It colourizes the point cloud with RGB values.}
+layers for RGB colors. It colorizes the point cloud with RGB values.}
 }
 }
 \examples{

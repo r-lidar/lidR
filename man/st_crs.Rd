@@ -99,13 +99,13 @@ wkt(obj) <- value
 \item{asText}{logical. If TRUE, the projection is returned as text. Otherwise a CRS object is returned.}
 }
 \value{
-A \code{st_crs()} return a \code{sf::crs}. \code{projection()} and \code{crs()} return a \code{sp::CRS} and should
+A \code{st_crs()} returns a \code{sf::crs}. \code{projection()} and \code{crs()} return a \code{sp::CRS} and should
 no longer be used.
 }
 \description{
-Get or set the projection of a LAS* object.  \code{st_crs()} extends \code{sf:st_crs()}, \code{projection()} and
+Get or set the projection of a \verb{LAS*} object.  \code{st_crs()} extends \code{sf:st_crs()}, \code{projection()} and
 \code{crs()} extend \code{raster:projection()} and \code{raster:crs()}. \code{projection()} and \code{crs()} are provided
-for backward compatibility. For \code{epsg()} and \code{wkt()} see details.
+for backward compatibility. For \code{epsg()} and \code{wkt()}, see details.
 }
 \details{
 There are two ways to store the CRS of a point cloud in a LAS file:
@@ -114,9 +114,9 @@ There are two ways to store the CRS of a point cloud in a LAS file:
 \item Store a WTK string (for LAS 1.4)
 }
 
-On the other hand, R spatial packages use a \code{crs} to store the CRS. This is why the CRS is duplicated
+On the other hand, R spatial packages use a \code{crs} object to store the CRS. This is why the CRS is duplicated
 in a LAS object. The information belongs within the header in a format that can be written in a
-LAS file and in the slot \code{crs} in a format that can be understood by other R packages.
+LAS file and in the slot \code{crs}, and also in a format that can be understood by other R packages.
 \itemize{
 \item \code{st_crs} return the CRS in \code{sf} format.
 \item \verb{st_crs<-}: assigns a CRS from a \code{CRS} (\code{sp}), a \code{crs} (\code{sf}), a WKT

@@ -24,16 +24,16 @@ rasterize_terrain(
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{res}{numeric. The size of a grid cell in point-cloud coordinates units. Can also be
+\item{res}{numeric. The size of a grid cell in point cloud coordinates units. Can also be
 \code{RasterLayer} or a \code{stars} or a \code{SpatRaster} used as layout.}
 
 \item{algorithm}{function. A function that implements an algorithm to compute a digital surface model
 or a digital terrain model. \code{lidR} implements \link{p2r}, \link{dsmtin}, \link{pitfree}
-for digital surface models and \link{knnidw}, \link{tin}, and \link{kriging} for digital terrain
+for digital surface models, and \link{knnidw}, \link{tin}, and \link{kriging} for digital terrain
 models (see respective documentation and examples).}
 
-\item{...}{Use \code{pkg = "terra|raster|stars"} to get an output in format \code{SpatRaster}, \code{RasterLayer}
-or \code{stars}. Default is \code{getOption("lidR.raster.default")}.}
+\item{...}{Use \code{pkg = "terra|raster|stars"} to get an output in \code{SpatRaster}, \code{RasterLayer}
+or \code{stars} format. Default is \code{getOption("lidR.raster.default")}.}
 
 \item{use_class}{integer vector. By default the terrain is computed by using ground points
 (class 2) and water points (class 9).}
@@ -41,15 +41,15 @@ or \code{stars}. Default is \code{getOption("lidR.raster.default")}.}
 \item{shape}{By default the interpolation is made only within the \code{"convex"} hull of
 the point cloud to get a DTM with the shape of the point cloud. This prevents meaningless
 interpolations where there is no data. It can also be \code{"concave"} or \code{"bbox"}. It can also be an \code{sfc}
-to define a polygon where to perform the interpolation.}
+to define a polygon in which to perform the interpolation.}
 }
 \value{
 \code{RasterLayer} or a \code{stars} or a \code{SpatRaster} depending on the settings.
 }
 \description{
-Rasterize a point-cloud in different ways to compute a DTM, a CHM or a density map. Most
+Rasterize a point cloud in different ways to compute a DTM, a CHM or a density map. Most
 raster products can be computed with \link{pixel_metrics} but some are more complex and require
-dedicated and optimized functions.  See Details and Examples.
+dedicated and optimized functions. See Details and Examples.
 }
 \details{
 \describe{
@@ -59,9 +59,9 @@ digital terrain model. The algorithm uses the points classified as "ground" and 
 \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications})
 to compute the interpolation. How well the edges of the dataset are interpolated depends on the
 interpolation method used. A buffer around the region of interest is always recommended to avoid
-edge effects. }
+edge effects.}
 \item{\code{rasterize_canopy}}{Creates a digital surface model (DSM) using several
-possible algorithms. If the user provides a normalised point cloud, the output is indeed a canopy
+possible algorithms. If the user provides a normalized point cloud, the output is indeed a canopy
 height model (CHM).}
 \item{\code{rasterize_density}}{Creates a map of the point density. If a "pulseID"
 attribute is found, also returns a map of the pulse density.}
@@ -69,8 +69,8 @@ attribute is found, also returns a map of the pulse density.}
 }
 \section{Non-supported LAScatalog options}{
 
-The option \code{select} is not supported and not respected in\verb{rasterize_*} because it is internally
-known what is the best to select.\cr
+The option \code{select} is not supported and not respected in \verb{rasterize_*} because it is internally
+known what is best to select.\cr
 The option \code{chunk_buffer} is not supported and not respected in \code{rasterize_canopy} and
 \code{rasterize_density} because it is not necessary.
 }

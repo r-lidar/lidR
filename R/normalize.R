@@ -3,7 +3,7 @@
 #' Normalize elevation or intensity values using multiple methods.
 #'
 #' \describe{
-#' \item{normalize_height}{Subtract digital terrain model (DTM) from LiDAR point cloud to create a
+#' \item{normalize_height}{Subtract digital terrain model (DTM) from a LiDAR point cloud to create a
 #' dataset normalized with the ground at 0. The DTM can be a raster, but it can also be computed
 #' on-the-fly. In this case the algorithm does not use rasterized data and each point is interpolated.
 #' There is no inaccuracy due to the discretization of the terrain and the resolution of the terrain
@@ -28,7 +28,7 @@
 #' @param dtm raster. If `dtm` is provided, then the DTM is used in place of ground points. This is
 #' different than providing a DTM in `algorithm`. If `algorithm = dtm` the dtm is subtracted naively.
 #' If `algorithm = tin()` and `dtm = raster` the ground points are not used and the DTM is
-#' interpolated as if it were made of regularly spaced ground points.
+#' interpolated as if it were made of regularly-spaced ground points.
 #'
 #' @name normalize
 #' @rdname normalize

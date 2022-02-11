@@ -58,11 +58,11 @@
 \item{...}{unused}
 }
 \value{
-A \code{bbox} from sf, an \code{Extent} from raster, a \code{matrix} from sp or a \code{SpatExtent} from \code{terra}
+A \code{bbox} from sf, an \code{Extent} from raster, a \code{matrix} from sp, or a \code{SpatExtent} from \code{terra}.
 }
 \description{
-Bounding box of a LAS* object. \code{st_bbox()} extends \code{sf}, \code{extent()} extends
-\code{raster}, \code{bbox()} extends \code{sp} and \code{ext()} extend \code{terra}. The value returned are similar to their
+Bounding box of a \verb{LAS*} object. \code{st_bbox()} extends \code{sf}, \code{extent()} extends
+\code{raster}, \code{bbox()} extends \code{sp}, and \code{ext()} extends \code{terra}. The values returned are similar to their
 parent functions.
 }
 \examples{

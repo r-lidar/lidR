@@ -22,9 +22,9 @@ raster_template <- function(raster)
     stattr <- attr(stars::st_dimensions(raster), "raster")
 
     # https://r-spatial.github.io/stars/articles/stars4.html
-    if (sdim$y$delta > 0) stop("stars objects with delta > 0 are not supported yet", call. = FALSE)
-    if (!all(stattr$affine == 0)) stop("Rotated and sheared stars objects are not supported yet", call. = FALSE)
-    if (stattr$curvilinear == TRUE) stop("Curvilinear stars objects are not supported yet", call. = FALSE)
+    if (sdim$y$delta > 0) stop("stars objects with delta > 0 are not yet supported", call. = FALSE)
+    if (!all(stattr$affine == 0)) stop("Rotated and sheared stars objects are not yet supported", call. = FALSE)
+    if (stattr$curvilinear == TRUE) stop("Curvilinear stars objects are not yet supported", call. = FALSE)
 
     bbox <- raster_bbox(raster)
     xmin <- bbox$xmin
@@ -102,7 +102,7 @@ raster_value_from_cells = function(raster, cells, layer = 1)
   }
 
   if (is(raster, "stars_proxy"))
-    stop("stars_proxy not supported yet in 'raster_value_from_cells()'", call. = FALSE) # nocov
+    stop("stars_proxy not yet supported in 'raster_value_from_cells()'", call. = FALSE) # nocov
 
   if (is(raster, "stars"))
   {
@@ -160,7 +160,7 @@ raster_as_matrix <- function(raster, downsample = FALSE)
     if (raster_ncell(raster) > size)
     {
       if (downsample == FALSE)
-        stop("Cannot convert this ondisk raster into a matrix without downsampling")
+        stop("Cannot convert this on-disk raster into a matrix without downsampling")
 
       raster <- raster_downsample(raster, size)
     }
@@ -182,7 +182,7 @@ raster_as_matrix <- function(raster, downsample = FALSE)
   if (is(raster, "stars"))
   {
     sdim   <- stars::st_dimensions(raster)
-    if (sdim$y$delta > 0) stop("stars objects with delta > 0 are not supported yet", call. = FALSE)
+    if (sdim$y$delta > 0) stop("stars objects with delta > 0 are not yet supported", call. = FALSE)
 
     dims <- dim(raster)
 
@@ -346,11 +346,11 @@ raster_layout <- function(las, res, start = c(0,0), buffer = 0, format = "templa
   if (is_raster(res))
   {
     if (raster_nlayer(res) > 1)
-      stop("Multilayer rasters are not supported as template", call. = FALSE)
+      stop("Multilayer rasters are not supported as a template", call. = FALSE)
 
     resolution <- raster_res(res)
     if (resolution[1] != resolution[2])
-      stop("Rasters with different x y resolutions are not supported as template", call. = FALSE)
+      stop("Rasters with different x y resolutions are not supported as a template", call. = FALSE)
 
     pkg <- raster_pkg(res)
     res <- raster_template(res)
@@ -501,7 +501,7 @@ raster_set_values <- function(raster, values, cells = NULL)
     stop("Internal error in raster_value: the raster must be materialized. Please report.", call. = FALSE) # nocov
 
   if (raster_nlayer(raster) > 1)
-    stop("Internal error in raster_values: the raster must be single layer. Please report.", call. = FALSE) # nocov
+    stop("Internal error in raster_values: the raster must be a single layer. Please report.", call. = FALSE) # nocov
 
   if (is.null(cells))
     cells <- 1:raster_ncell(raster)
@@ -562,7 +562,7 @@ raster_replace_na <- function(raster, value = 0)
 raster_error <- function()
 {
   parent = deparse(sys.calls()[[sys.nframe()-1]])
-  stop(glue::glue("Internal error in {parent}: raster must be a raster from raster, stars or terra. Please report"), call. = FALSE) # nocov
+  stop(glue::glue("Internal error in {parent}: raster must be a raster from raster, stars,7 or terra. Please report"), call. = FALSE) # nocov
 }
 
 raster_is_proxy <- function(raster)

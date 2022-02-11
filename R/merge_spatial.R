@@ -1,26 +1,26 @@
 #' Merge a point cloud with a source of spatial data
 #'
 #' Merge a point cloud with a source of spatial data. It adds an attribute along each point based on
-#' a value found in the spatial data. Sources of spatial data can be a `SpatialPolygons*` an `sf`/`sfc`
-#' a `Raster*` a `stars` or a `SpatRaster`.\cr
+#' a value found in the spatial data. Sources of spatial data can be a `SpatialPolygons*`, an `sf`/`sfc`,
+#' a `Raster*`, a `stars`, or a `SpatRaster`.\cr
 #' \itemize{
 #' \item{`SpatialPolygons*`, `sf` and `sfc`: it checks if the points belongs within each polygon. If
 #' the parameter `attribute` is the name of an attribute in the table of attributes it assigns
 #' to the points the values of that attribute. Otherwise it classifies the points as boolean.
 #' TRUE if the points are in a polygon, FALSE otherwise.}
-#' \item{`RasterLayer`, single band `stars` or single layer `SpaTRaster`: it attributes to each point
+#' \item{`RasterLayer`, single band `stars` or single layer `SpatRaster`: it attributes to each point
 #' the value found in each pixel of the raster}.
 #' \item{`RasterStack`, `RasterBrick`, multibands `stars` or multilayer `SpatRaster` must have 3
-#' layers for RGB colors. It colourizes the point cloud with RGB values.}
+#' layers for RGB colors. It colorizes the point cloud with RGB values.}
 #' }
 #'
 #' @param las An object of class `LAS`
 #' @param source An object of class `SpatialPolygons*` or `sf` or `sfc` or `RasterLayer` or
 #' `RasterStack` or `RasterBrick` or `stars`.
 #' @param attribute character. The name of an attribute in the table of attributes or
-#' the name of a new column in the LAS object. Not relevant for RGB colourization.
+#' the name of a new column in the LAS object. Not relevant for RGB colorization.
 #'
-#' @return An `LAS` object
+#' @return a `LAS` object
 #'
 #' @export
 #' @md
@@ -132,7 +132,7 @@ merge_sf = function(las, source, attribute = NULL)
     else if (class(data) == "character")
       values = rep(NA_character_, npoints)
     else
-      stop(glue::glue("The attribute {attribute} in the table of attribute is not of a supported type."))
+      stop(glue::glue("The attribute {attribute} in the table of attributes is not of a supported type."))
   }
   # The attribute is not the name of an attribute in the attribute table: assign a boolean value if
   # the point is in a polygon or not.

@@ -6,12 +6,12 @@
 \title{An S4 class to represent a collection of .las or .laz files}
 \description{
 A \code{LAScatalog} object is a representation of a collection of las/laz files. A \code{LAScatalog} is
-a way to manage and batch process a lidar coverage It allows the user to process a large area, or to
+a way to manage and batch process a lidar coverage. It allows the user to process a large area, or to
 selectively clip data from a large area without loading all the data into computer memory.
 A \code{LAScatalog} can be built with the function \link{readLAScatalog}.
 }
 \details{
-A \code{LAScatalog} contains a \code{sf} object to store the geometry and metadata. It is extended with slots
+A \code{LAScatalog} contains an \code{sf} object to store the geometry and metadata. It is extended with slots
 that contain processing options. In \code{lidR}, each function that supports a \code{LAScatalog} as
 input will respect these processing options. Internally, processing a catalog is almost always the
 same and relies on a few steps:\cr
@@ -38,7 +38,7 @@ possible. This is possible if the overlapping points are flagged, for example in
 \section{Slots}{
 
 \describe{
-\item{\code{data}}{sf. A \code{sf} \code{data.frame} with the bounding box of each file as well as all the information
+\item{\code{data}}{sf. An \code{sf} \code{data.frame} with the bounding box of each file as well as all the information
 read from the header of each LAS/LAZ file.}
 
 \item{\code{processing_options}}{list. A list that contains some settings describing how the collection will be
@@ -83,7 +83,7 @@ The slot \verb{@chunk_options} contains a \code{list} of options that determine 
 A small size allows small amounts of data to be loaded at once, saving computer memory.
 With big chunks the computation is usually faster but uses much more memory. If \code{chunk_size = 0} the
 chunk pattern is build using the file pattern. The chunks are expecting to be wall-to-wall coverage,
-this means that chunk size = 0 has meaning only if the files are not overlapping. Default is 0 i.e.
+which means that \code{chunk_size = 0} has meaning only if the files are not overlapping. Default is 0 i.e.
 by default the processing engine respects the existing tiling pattern. See \link{opt_chunk_size}.
 \item \strong{buffer}: numeric. Each chunk can be read with an extra buffer around it to ensure there are
 no edge effects between two independent chunks and that the output is continuous. This is mandatory for
@@ -93,9 +93,9 @@ chunk pattern. By default the alignment is made along (0,0), meaning that the ed
 will belong on x = 0 and y = 0 and all the the other chunks will be multiples of the chunk size.
 Not relevant if \code{chunk_size = 0}. See \link{opt_chunk_alignment}.
 \item \strong{drop}: integers. A vector of integers that specify the IDs of the chunks that should not be
-created. This is designed to enable to restart a computation that failed without reprocessing
-everything. See \link{opt_restart<-}. Technically this options may be used for partial processing of
-a collection but should not. Partial processing is already a feature of the engine. See
+created. This is designed to enable users to restart a computation that failed without reprocessing
+everything. See \link{opt_restart<-}. Technically, this option may be used for partial processing of
+a collection, but it generally should not be. Partial processing is already a feature of the engine. See
 \href{https://cran.r-project.org/package=lidR/vignettes/lidR-LAScatalog-engine.html#partial-processing}{this vignette}
 }
 }
@@ -109,7 +109,7 @@ or written in R memory.
 \item \strong{output_files}: string. If \code{output_files = ""} outputs are returned in R. Otherwise, if
 \code{output_files} is a string the outputs will be written to files.
 This is useful if the output is too big to be returned in R. A path to a filename template
-without extension (the engine guesses it for you) is expected. When several files are going to be
+without a file extension (the engine guesses it for you) is expected. When several files are going to be
 written a single string is provided with a template that is automatically filled. For example,
 the following file names are possible:
 \preformatted{

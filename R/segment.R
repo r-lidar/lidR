@@ -1,7 +1,7 @@
-#' Segment a point-cloud
+#' Segment a point cloud
 #'
-#' Segment a point-cloud using different methods. `segment_*` functions add a new attribute to the
-#' point-cloud to label each point. They segment either each individual trees, snags or
+#' Segment a point cloud using different methods. `segment_*` functions add a new attribute to the
+#' point cloud to label each point. They segment either individual trees, snags, or
 #' geometrical features.
 #'
 #' \describe{
@@ -14,7 +14,7 @@
 #' as approximately coplanar/colinear or any other shape supported.}
 #' \item{`segment_snags`}{Snag segmentation using several possible algorithms. The function attributes
 #' a number identifying a snag class (`snagCls` attribute) to each point of the point cloud.
-#' The classification/segmentation is done at the point cloud level and currently only one algorithm
+#' The classification/segmentation is done at the point cloud level and currently only one algorithm is
 #' implemented, which uses LiDAR intensity thresholds and specified neighbourhoods to differentiate
 #' bole and branch from foliage points.}
 #' }
@@ -24,11 +24,11 @@
 #' and all the attributes. `select = "*"` is imposed internally.
 #'
 #' @template param-las
-#' @param algorithm function. An algorithm of for segmentation. For individual tree segmenation, lidR
-#' has \link{dalponte2016}, \link{watershed}, \link{li2012} and \link{silva2016}. More experimental
+#' @param algorithm function. An algorithm for segmentation. For individual tree segmentation, lidR
+#' has \link{dalponte2016}, \link{watershed}, \link{li2012}, and \link{silva2016}. More experimental
 #' algorithms may be found in the package [lidRplugins](https://github.com/Jean-Romain/lidRplugins).
-#' For snag segmentation, \code{lidR} has \link{wing2015}. For geometry segmentation lidR has
-#' \link{shp_plane}, \link{shp_hplane} and \link{shp_line}.
+#' For snag segmentation, \code{lidR} has \link{wing2015}. For geometry segmentation, lidR has
+#' \link{shp_plane}, \link{shp_hplane}, and \link{shp_line}.
 #' @param attribute character. The returned LAS object as a new attribute (in a new column).
 #' This parameter controls the name of the new attribute.
 #' @param uniqueness character. A method to compute a unique ID. Can be 'incremental', 'gpstime' or

@@ -17,24 +17,24 @@ concaveman(x, y = NULL, concavity = 2, length_threshold = 0)
 \item{x, y}{An object of class LAS or XY coordinates of points in case of \code{concaveman}. This can be
 specified as two vectors x and y, a 2-column matrix x, a list with two components, etc.}
 
-\item{method}{string. currently support "concaveman"}
+\item{method}{string. currently supports "concaveman".}
 
-\item{...}{Propagate to the method}
+\item{...}{Propagate to the method.}
 
 \item{concavity}{numeric a relative measure of concavity. 1 results in a relatively detailed shape,
 Infinity results in a convex hull. You can use values lower than 1, but they can produce pretty crazy
 shapes.}
 
-\item{length_threshold}{numeric. When a segment length is under this threshold, it stops being
+\item{length_threshold}{numeric. When a segment length is below this threshold, it stops being
 considered for further detailed processing. Higher values result in simpler shapes.}
 }
 \value{
-A \code{sfc_POLYGON} from \code{sf} or a \code{data.frame} in case of \code{concaveman}
+A \code{sfc_POLYGON} from \code{sf} or a \code{data.frame} in the case of \code{concaveman}
 }
 \description{
 Concave and convex hulls for LAS objects. \code{st_convex_hull} extends \code{sf::st_convex_hull} for LAS
-objects, Both functions return a \code{sfc_POLYGON}.\code{concaveman} is very a fast 2D concave hull algorithm
-for a set of points
+objects. Both functions return a \code{sfc_POLYGON}. \code{concaveman} is very a fast 2D concave hull algorithm
+for a set of points.
 }
 \details{
 The concaveman algorithm is based on ideas from Park and Oh (2012). A first implementation in
@@ -42,7 +42,7 @@ JavaScript was proposed by Vladimir Agafonkin in \href{https://github.com/mapbox
 This implementation dramatically improved performance over the one stated in the paper
 using a spatial index. The algorithm was then ported to R by Joël Gombin in the R package
 \href{https://github.com/joelgombin/concaveman}{concaveman} that runs the JavaScript
-implementation proposed by Vladimir Agafonkin. Later a C++ version of Vladimir Agafonkin's
+implementation proposed by Vladimir Agafonkin. Later, a C++ version of Vladimir Agafonkin's
 JavaScript implementation was proposed by Stanislaw Adaszewski in
 \href{https://github.com/sadaszewski/concaveman-cpp}{concaveman-cpp}. This concaveman
 function uses Stanislaw Adaszewski's C++ code making the concaveman algorithm an

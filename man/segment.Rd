@@ -6,7 +6,7 @@
 \alias{segment_shapes}
 \alias{segment_snags}
 \alias{segment_trees}
-\title{Segment a point-cloud}
+\title{Segment a point cloud}
 \usage{
 segment_shapes(las, algorithm, attribute = "Shape", filter = NULL)
 
@@ -17,11 +17,11 @@ segment_trees(las, algorithm, attribute = "treeID", uniqueness = "incremental")
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{algorithm}{function. An algorithm of for segmentation. For individual tree segmenation, lidR
-has \link{dalponte2016}, \link{watershed}, \link{li2012} and \link{silva2016}. More experimental
+\item{algorithm}{function. An algorithm for segmentation. For individual tree segmentation, lidR
+has \link{dalponte2016}, \link{watershed}, \link{li2012}, and \link{silva2016}. More experimental
 algorithms may be found in the package \href{https://github.com/Jean-Romain/lidRplugins}{lidRplugins}.
-For snag segmentation, \code{lidR} has \link{wing2015}. For geometry segmentation lidR has
-\link{shp_plane}, \link{shp_hplane} and \link{shp_line}.}
+For snag segmentation, \code{lidR} has \link{wing2015}. For geometry segmentation, lidR has
+\link{shp_plane}, \link{shp_hplane}, and \link{shp_line}.}
 
 \item{attribute}{character. The returned LAS object as a new attribute (in a new column).
 This parameter controls the name of the new attribute.}
@@ -33,8 +33,8 @@ in an optimized way. See the examples.}
 'bitmerge'. See section 'Uniqueness'. This feature must be considered as 'experimental'.}
 }
 \description{
-Segment a point-cloud using different methods. \verb{segment_*} functions add a new attribute to the
-point-cloud to label each point. They segment either each individual trees, snags or
+Segment a point cloud using different methods. \verb{segment_*} functions add a new attribute to the
+point cloud to label each point. They segment either individual trees, snags, or
 geometrical features.
 }
 \details{
@@ -48,7 +48,7 @@ compute derived metrics. The points that meet a given criterion based on the eig
 as approximately coplanar/colinear or any other shape supported.}
 \item{\code{segment_snags}}{Snag segmentation using several possible algorithms. The function attributes
 a number identifying a snag class (\code{snagCls} attribute) to each point of the point cloud.
-The classification/segmentation is done at the point cloud level and currently only one algorithm
+The classification/segmentation is done at the point cloud level and currently only one algorithm is
 implemented, which uses LiDAR intensity thresholds and specified neighbourhoods to differentiate
 bole and branch from foliage points.}
 }

@@ -25,7 +25,7 @@ classify_poi(
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{algorithm}{An algorithm for classification. lidR has has: \link{sor}, \link{ivf} for noise
-classification and \link{pmf}, \link{csf}, \link{mcc} for ground classification (see respective
+classification, and \link{pmf}, \link{csf}, \link{mcc} for ground classification (see respective
 documentation).}
 
 \item{last_returns}{logical. The algorithm will use only the last returns (including the first returns
@@ -42,19 +42,19 @@ The points that are in the region of interest delimited by the polygon(s) are cl
 \code{class}.}
 
 \item{inverse_roi}{bool. Inverses the \code{roi}. The points that are outside the polygon(s)
-are classified \code{class}}
+are classified \code{class}.}
 
 \item{by_reference}{bool. Updates the classification in place (LAS only).}
 }
 \description{
 Classify points that meet some criterion and/or that belong in a region of interest. The
-functions update the attribute \code{Classification} of the LAS object according to
+functions updates the attribute \code{Classification} of the LAS object according to
 \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{las specifications}
 }
 \details{
 \describe{
 \item{classify_noise}{Classify points as 'noise' (outliers) with several possible algorithms.
-lidR has has: \link{sor}, \link{ivf}. The points classified as 'noise' are assigned a value of 18.}
+lidR has: \link{sor}, \link{ivf}. The points classified as 'noise' are assigned a value of 18.}
 \item{classify_ground}{Classify points as 'ground' with several possible algorithms.
 lidR has \link{pmf}, \link{csf} and \link{mcc}. The points classified as 'ground' are assigned a
 value of 2 }
@@ -64,7 +64,7 @@ region of interest with class of choice.}
 }
 \section{Non-supported LAScatalog options}{
 
-The option \code{select} is not supported and not respected  because it always preserves the file format
+The option \code{select} is not supported and not respected because it always preserves the file format
 and all the attributes. \code{select = "*"} is imposed internally.
 }
 
