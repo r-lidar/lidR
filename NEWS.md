@@ -134,7 +134,7 @@ New functions are mostly convenient features that simplify some workflow aspects
 
 ### Fix
 
-1. The metric `itot` from `stdmetrics_i` which generates troubles (see [#463](https://github.com/Jean-Romain/lidR/issues/463) [#514](https://github.com/Jean-Romain/lidR/issues/514)) is now `double` instead of `int`
+1. The metric `itot` from `stdmetrics_i` which generates troubles (see [#463](https://github.com/r-lidar/lidR/issues/463) [#514](https://github.com/r-lidar/lidR/issues/514)) is now `double` instead of `int`
 
 ### Documentation
 
