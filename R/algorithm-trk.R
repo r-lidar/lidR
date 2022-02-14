@@ -55,7 +55,7 @@ Roussel2020 = function(interval = 0.5, pmin = 50)
     return(P)
   }
 
-  class(f) <- LIDRALGORITHMTRK
+  f <- plugin_track(f)
   return(f)
 }
 
@@ -149,7 +149,7 @@ Gatziolis2019 <- function(SEGLENFactor = 1.0059, AngleFactor = 0.8824, deltaT = 
     return(trj.df)
   }
 
-  class(f) <- LIDRALGORITHMTRK
+  f <- plugin_track(f)
   return(f)
 }
 

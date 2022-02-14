@@ -50,7 +50,7 @@ tin = function(..., extrapolate = knnidw(3,1,50))
     return(z)
   }
 
-  class(f) <- c(LIDRALGORITHMSPI, LIDRALGORITHMOPENMP)
+  f <- plugin_dtm(f, omp = TRUE)
   return(f)
 }
 
@@ -91,7 +91,7 @@ knnidw = function(k = 10, p = 2, rmax = 50)
     return(interpolate_knnidw(las, where, k, p, rmax))
   }
 
-  class(f) <- c(LIDRALGORITHMSPI, LIDRALGORITHMOPENMP)
+  f <- plugin_dtm(f, omp = TRUE)
   return(f)
 }
 
@@ -135,7 +135,7 @@ kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
     return(interpolate_kriging(las, where, model, k))
   }
 
-  class(f) <- LIDRALGORITHMSPI
+  f <- plugin_dtm(f)
   return(f)
 }
 

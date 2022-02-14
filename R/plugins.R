@@ -54,6 +54,8 @@ plugin <- function(f, class_t, omp = FALSE)
 #'
 #' @param f a function
 #' @param omp logical is the function natively parallized with OpenMP
+#' @param raster_based logical. For ITS and ITD algorithms, is the method raster-based or
+#' or point-cloud-based?
 #'
 #' @name plugins
 #' @rdname plugins
@@ -90,14 +92,6 @@ plugin_gnd      <- function(f, omp = FALSE) return(plugin(f, LIDRALGORITHMGND, o
 
 #' @export
 #' @rdname plugins
-plugin_itd      <- function(f, omp = FALSE) return(plugin(f, LIDRALGORITHMITD, omp))
-
-#' @export
-#' @rdname plugins
-plugin_its      <- function(f, omp = FALSE) return(plugin(f, LIDRALGORITHMITS, omp))
-
-#' @export
-#' @rdname plugins
 plugin_decimate <- function(f, omp = FALSE) return(plugin(f, LIDRALGORITHMDEC, omp))
 
 #' @export
@@ -111,3 +105,31 @@ plugin_snag     <- function(f, omp = FALSE) return(plugin(f, LIDRALGORITHMSNG, o
 #' @export
 #' @rdname plugins
 plugin_track    <- function(f, omp = FALSE) return(plugin(f, LIDRALGORITHMTRK, omp))
+
+#' @export
+#' @rdname plugins
+plugin_nintensity    <- function(f, omp = FALSE) return(plugin(f, LIDRALGORITHMNIT, omp))
+
+#' @export
+#' @rdname plugins
+plugin_outliers    <- function(f, omp = FALSE) return(plugin(f, LIDRALGORITHMOUT, omp))
+
+#' @export
+#' @rdname plugins
+plugin_itd    <- function(f, omp = FALSE, raster_based = FALSE)
+{
+  if (isTRUE(raster_based))
+    return(plugin(f, c(LIDRALGORITHMITD, LIDRALGORITHMRASTERBASED), omp))
+  else
+    return(plugin(f, c(LIDRALGORITHMITD, LIDRALGORITHMPOINTCLOUDBASED), omp))
+}
+
+#' @export
+#' @rdname plugins
+plugin_its    <- function(f, omp = FALSE, raster_based = FALSE)
+{
+  if (isTRUE(raster_based))
+    return(plugin(f, c(LIDRALGORITHMITS, LIDRALGORITHMRASTERBASED), omp))
+  else
+    return(plugin(f, c(LIDRALGORITHMITS, LIDRALGORITHMPOINTCLOUDBASED), omp))
+}

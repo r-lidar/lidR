@@ -54,7 +54,7 @@ random = function(density, use_pulse = FALSE)
     }
   }
 
-  class(f) <- LIDRALGORITHMDEC
+  f <- plugin_decimate(f)
   return(f)
 }
 
@@ -123,7 +123,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
       return(las@data[, .I[.selected_pulses(1:.N, n)], by = cells]$V1)
   }
 
-  class(f) <- LIDRALGORITHMDEC
+  f <- plugin_decimate(f)
   return(f)
 }
 
@@ -165,7 +165,7 @@ highest = function(res = 1)
     return(C_highest(las, layout))
   }
 
-  class(f) <- LIDRALGORITHMDEC
+  f <- plugin_decimate(f)
   return(f)
 }
 
@@ -186,7 +186,7 @@ lowest = function(res = 1)
     return(C_lowest(las, layout))
   }
 
-  class(f) <- LIDRALGORITHMDEC
+  f <- plugin_decimate(f)
   return(f)
 }
 
@@ -223,7 +223,7 @@ random_per_voxel = function(res = 1, n = 1)
     return(las@data[, .selected_pulses(1:.N, n), by = by]$V1)
   }
 
-  class(f) <- LIDRALGORITHMDEC
+  f <- plugin_decimate(f)
   return(f)
 }
 

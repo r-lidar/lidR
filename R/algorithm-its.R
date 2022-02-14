@@ -270,7 +270,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
     return(crown)
   }
 
-  class(f) <- c(LIDRALGORITHMITS, LIDRALGORITHMRASTERBASED, LIDRALGORITHMOPENMP)
+  f <- plugin_its(f, omp = TRUE, raster_based = TRUE)
   return(f)
 }
 
@@ -359,7 +359,7 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
     return(output)
   }
 
-  class(f) <- c(LIDRALGORITHMITS, LIDRALGORITHMRASTERBASED)
+  f <- plugin_its(f, omp = TRUE, raster_based = TRUE)
   return(f)
 }
 #' Individual Tree Segmentation Algorithm
@@ -440,8 +440,7 @@ li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)
     }
   }
 
-  class(f) <- c(LIDRALGORITHMITS, LIDRALGORITHMPOINTCLOUDBASED)
-
+  f <- plugin_its(f, omp = FALSE, raster_based = FALSE)
   return(f)
 }
 

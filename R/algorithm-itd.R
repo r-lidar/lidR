@@ -94,7 +94,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
     return(C_lmf(las, ws, hmin, circ, getThread()))
   }
 
-  class(f) <- c(LIDRALGORITHMITD, LIDRALGORITHMOPENMP, LIDRALGORITHMPOINTCLOUDBASED)
+  f <- plugin_itd(f, omp = TRUE, raster_based = FALSE)
   return(f)
 }
 
@@ -232,6 +232,6 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
     return(output)
   }
 
-  class(f) <- c(LIDRALGORITHMITD, LIDRALGORITHMPOINTCLOUDBASED)
+  f <- plugin_itd(f, omp = FALSE, raster_based = FALSE)
   return(f)
 } # nocov end

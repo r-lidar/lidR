@@ -68,7 +68,7 @@ sor = function(k = 10, m = 3, quantile = FALSE)
     return(dmean > th)
   }
 
-  class(f) <- c(LIDRALGORITHMOUT, LIDRALGORITHMOPENMP)
+  f <- plugin_outliers(f, omp = TRUE)
   return(f)
 }
 
@@ -116,7 +116,7 @@ ivf = function(res = 5, n = 6)
     return(C_isolated_voxel(las, res, n))
   }
 
-  class(f) <- c(LIDRALGORITHMOUT)
+  f <- plugin_outliers(f)
   return(f)
 }
 

@@ -87,7 +87,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
     return(dsm)
   }
 
-  class(f) <- LIDRALGORITHMDSM
+  f <- plugin_dsm(f)
   return(f)
 }
 
@@ -291,7 +291,7 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
     return(z)
   }
 
-  class(f) <- c(LIDRALGORITHMDSM, LIDRALGORITHMOPENMP)
+  f <- plugin_dsm(f, omp = TRUE)
   return(f)
 }
 

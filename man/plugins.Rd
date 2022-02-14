@@ -5,12 +5,14 @@
 \alias{plugin_dsm}
 \alias{plugin_dtm}
 \alias{plugin_gnd}
-\alias{plugin_itd}
-\alias{plugin_its}
 \alias{plugin_decimate}
 \alias{plugin_shape}
 \alias{plugin_snag}
 \alias{plugin_track}
+\alias{plugin_nintensity}
+\alias{plugin_outliers}
+\alias{plugin_itd}
+\alias{plugin_its}
 \title{Plugin system}
 \usage{
 plugin_dsm(f, omp = FALSE)
@@ -19,10 +21,6 @@ plugin_dtm(f, omp = FALSE)
 
 plugin_gnd(f, omp = FALSE)
 
-plugin_itd(f, omp = FALSE)
-
-plugin_its(f, omp = FALSE)
-
 plugin_decimate(f, omp = FALSE)
 
 plugin_shape(f, omp = FALSE)
@@ -30,11 +28,22 @@ plugin_shape(f, omp = FALSE)
 plugin_snag(f, omp = FALSE)
 
 plugin_track(f, omp = FALSE)
+
+plugin_nintensity(f, omp = FALSE)
+
+plugin_outliers(f, omp = FALSE)
+
+plugin_itd(f, omp = FALSE, raster_based = FALSE)
+
+plugin_its(f, omp = FALSE, raster_based = FALSE)
 }
 \arguments{
 \item{f}{a function}
 
 \item{omp}{logical is the function natively parallized with OpenMP}
+
+\item{raster_based}{logical. For ITS and ITD algorithms, is the method raster-based or
+or point-cloud-based?}
 }
 \description{
 Tools to build plugin functions for lidR

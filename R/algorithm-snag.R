@@ -105,7 +105,6 @@ wing2015 = function(neigh_radii = c(1.5,1,2), low_int_thrsh = 50, uppr_int_thrsh
     return(C_Wing2015(las, neigh_radii, low_int_thrsh, uppr_int_thrsh, pt_den_req, BBPRthrsh_mat, getThread()))
   }
 
-  class(f) <- c(LIDRALGORITHMSNG, LIDRALGORITHMOPENMP)
-
+  f <- plugin_snag(f, omp = TRUE)
   return(f)
 }
