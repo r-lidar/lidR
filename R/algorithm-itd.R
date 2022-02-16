@@ -30,7 +30,7 @@
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-#' las <- readLAS(LASfile, select = "xyz", filter = "-inside 481250 3812980 481300 3813050")
+#' las <- readLAS(LASfile, select = "xyzi", filter = "-inside 481250 3812980 481300 3813050")
 #'
 #' # =================
 #' # point-cloud-based

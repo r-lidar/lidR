@@ -23,17 +23,17 @@
 #' @noRd
 locate_localmaxima = function(las, w, filter = NULL)
 {
-  lidR:::assert_all_are_positive(w[1])
-  if (!is.na(w[2])) lidR:::assert_all_are_positive(w[2])
-  if (!is.na(w[3])) lidR:::assert_all_are_in_open_range(w[3], -pi/2, pi/2)
+  assert_all_are_positive(w[1])
+  if (!is.na(w[2])) assert_all_are_positive(w[2])
+  if (!is.na(w[3])) assert_all_are_in_open_range(w[3], -pi/2, pi/2)
   if (length(w) == 0 || length(w) > 3) stop("Invalid window.", call. = FALSE)
 
-  if (length(w) == 1) lidR:::verbose("Local maxima search in a disc")
-  if (length(w) == 2) lidR:::verbose("Local maxima search in a rectangle")
-  if (length(w) == 3) lidR:::verbose("Local maxima search in an oriented rectangle")
+  if (length(w) == 1) verbose("Local maxima search in a disc")
+  if (length(w) == 2) verbose("Local maxima search in a rectangle")
+  if (length(w) == 3) verbose("Local maxima search in an oriented rectangle")
 
-  filter <- lidR:::parse_filter(las, filter)
-  id <- lidR:::C_local_maximum(las, w, filter, lidR:::getThreads())
+  filter <- parse_filter(las, filter)
+  id <- C_local_maximum(las, w, filter, getThreads())
 
   maxima <- las@data[id]
   data.table::setDF(maxima)

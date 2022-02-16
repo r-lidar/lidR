@@ -13,7 +13,7 @@ maxima in the units of the input data (usually meters). If it is numeric a fixed
 If it is a function, the function determines the size of the window at any given location on the canopy.
 By default function takes the height of a given pixel or point as its only argument and return the
 desired size of the search window when centered on that pixel/point. This can be controled with
-the `ws_arg` parameter}
+the `ws_args` parameter}
 
 \item{hmin}{numeric. Minimum height of a tree. Threshold below which a pixel or a point
 cannot be a local maxima. Default is 2.}
@@ -31,7 +31,7 @@ It is deeply inspired by Popescu & Wynne (2004) (see references).
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
-las <- readLAS(LASfile, select = "xyz", filter = "-inside 481250 3812980 481300 3813050")
+las <- readLAS(LASfile, select = "xyzi", filter = "-inside 481250 3812980 481300 3813050")
 
 # =================
 # point-cloud-based
