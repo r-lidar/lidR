@@ -34,3 +34,4 @@ topography_ctg <- readLAScatalog(topography_las_path)
 example_ctg <- readLAScatalog(example_las_path)
 random_2files_250points <- lidR:::catalog_generator(2, 250) # 180 ms
 
+chunk = lidR:::engine_chunks(random_2files_250points)[[1]]

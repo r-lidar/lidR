@@ -632,7 +632,12 @@ las_check.LAScluster = function(las, print = TRUE, ...)
   }
 
   x <- readLAS(las)
-  return(las_check(x, print))
+  u <- las_check(x, print)
+
+  if (print)
+    return(invisible(u))
+  else
+    return(u)
 }
 
 #' @export
@@ -665,6 +670,7 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
   infos <- character(0)
   g <- glue::glue
 
+  # nocov start
   if (is_lascatalog_v3(las))
   {
     .h1("Checking format")
@@ -672,6 +678,7 @@ las_check.LAScatalog = function(las, print = TRUE, deep = FALSE, ...)
     .fail("This LAScatalog is in old format from lidR v3")
     las <- lascatalog_v3_repair(las)
   }
+  # nocov end
 
   data <- las@data
 

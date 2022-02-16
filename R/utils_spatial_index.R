@@ -63,8 +63,6 @@ sensor = function(las, h = FALSE)
 #' @export
 index = function(las, h = FALSE)
 {
-
-
   if (isTRUE(h))
     index = format_index(las)
   else
@@ -105,45 +103,15 @@ format_index = function(las)
   sensor = index$sensor
   index = index$index
 
-  if (sensor == UKNLAS)
-    sensor = "not registered"
-  else if (sensor == ALSLAS)
-    sensor = "ALS"
-  else if (sensor == TLSLAS)
-    sensor = "TLS"
-  else if (sensor == UAVLAS)
-    sensor = "UAV"
-  else if (sensor == DAPLAS)
-    sensor = "DAP"
-  else if (sensor == MLSLAS)
-    sensor = "mutispectral ALS"
-  else if (sensor == UKNLAS + NLAS)
-    sensor = "not registered (normalized)"
-  else if (sensor == ALSLAS + NLAS)
-    sensor = "ALS (normalized)"
-  else if (sensor == TLSLAS + NLAS)
-    sensor = "TLS (normalized)"
-  else if (sensor == UAVLAS + NLAS)
-    sensor = "UAV (normalized)"
-  else if (sensor == DAPLAS + NLAS)
-    sensor = "DAP (normalized)"
-  else if (sensor == MLSLAS + NLAS)
-    sensor = "mutispectral ALS (normalized)"
-  else
-    stop("invalid sensor registred", call. = FALSE)
+  sensor_names <- c("not registered", "ALS", "TLS", "UAV", "DAP", "mutispectral ALS", NA_character_, NA_character_, NA_character_, NA_character_,
+                    "not registered (normalized)", "ALS (normalized)", "TLS (normalized)", "UAV (normalized)", "DAP (normalized)", "mutispectral ALS (normalized)", NA_character_, NA_character_, NA_character_, NA_character_)
+  index_names <- c("automatic", "grid partition", "voxel partition", "quadtree", "octree")
 
-  if (index == LIDRAUTOINDEX)
-    index = "automatic"
-  else if (index == LIDRGRIDPARTITION)
-    index = "grid partition"
-  else if (index == LIDRVOXELPARTITION)
-    index = "voxel partition"
-  else if (index == LIDRQUADTREE)
-    index = "quadtree"
-  else if (index == LIDROCTREE)
-    index = "octree"
-  else
-    stop("invalid spatial index registered", call. = FALSE)
+  sensor <- sensor_names[sensor + 1]
+  if (is.na(sensor)) stop("invalid sensor registred", call. = FALSE)
+
+  index = index_names[index + 1]
+  if (is.na(index)) stop("invalid spatial index registered", call. = FALSE)
 
   return(return(list(sensor = sensor, index = index)))
 }

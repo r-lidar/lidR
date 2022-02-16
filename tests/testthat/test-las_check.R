@@ -67,6 +67,12 @@ test_that("las_check works without error with LAScatalog", {
   sink(NULL)
 })
 
+test_that("las_check works without error with LAScluster", {
+  sink(tempfile())
+  expect_error(las_check(chunk), NA)
+  sink(NULL)
+})
+
 test_that("las_check CRS specific test", {
 
   sink(tempfile())

@@ -302,29 +302,6 @@ raster_names <- function(raster)
   raster_error() # nocov
 }
 
-as_Raster <- function(raster)
-{
-  if (is(raster, "list"))
-  {
-    return(lapply(raster, as_Raster))
-  }
-
-  if (is(raster, "stars"))
-  {
-    names <- raster_names(raster)
-    raster <- as(raster, "Raster")
-    names(raster) <- names
-    return(raster)
-  }
-
-  if (inherits(raster, "Raster"))
-  {
-    return(raster)
-  }
-
-  raster_error() # nocov
-}
-
 raster_is_supported <- function(raster)
 {
   return(inherits(raster, "Raster") | is(raster, "stars") | is(raster, "SpatRaster") | is(raster, "raster_template"))

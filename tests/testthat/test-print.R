@@ -85,8 +85,10 @@ test_that("print works with lidR algorithms ", {
 })
 
 test_that("print raster_template works", {
+  sink(tempfile())
   tpl <- lidR:::raster_layout(megaplot, 10)
   expect_error(print(tpl), NA)
+  sink(NULL)
 })
 
 

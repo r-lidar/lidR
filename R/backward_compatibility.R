@@ -44,6 +44,7 @@ as.spatial.LAS = function(x) { sp::SpatialPointsDataFrame(x@data[, 1:2], x@data[
 as.spatial.LAScatalog = function(x)
 {
   # Workaround to repair LAScatalog v3 and minimize backward incompatibilities with v4
+  # nocov start
   if (is_lascatalog_v3(x))
   {
     res <- new("SpatialPolygonsDataFrame")
@@ -54,6 +55,7 @@ as.spatial.LAScatalog = function(x)
     res@polygons <- x@polygons
     return(res)
   }
+  # nocov end
 
   return(sf::as_Spatial(x@data))
 }
@@ -134,8 +136,9 @@ delineate_crowns = function(las, type = c("convex", "concave", "bbox"), concavit
   res
 }
 
-is_las_v3 <- function(x) { !methods::.hasSlot(x, "crs") }
-las_v3_repair <- function(x) { if (is_las_v3(x)) return(LAS(x)) else return(x) }
+
+is_las_v3 <- function(x) { !methods::.hasSlot(x, "crs") } # nocov
+las_v3_repair <- function(x) { if (is_las_v3(x)) return(LAS(x)) else return(x) } # nocov
 
 is_lascatalog_v3 <- function(x) { !is(x@data, "sf") }
 lascatalog_v3_repair <- function(x)
