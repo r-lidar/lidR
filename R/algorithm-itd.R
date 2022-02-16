@@ -10,12 +10,14 @@
 #' @param ws numeric or function. Length or diameter of the moving window used to detect the local
 #' maxima in the units of the input data (usually meters). If it is numeric a fixed window size is used.
 #' If it is a function, the function determines the size of the window at any given location on the canopy.
-#' The function should take the height of a given pixel or point as its only argument and return the
-#' desired size of the search window when centered on that pixel/point.
+#' By default function takes the height of a given pixel or point as its only argument and return the
+#' desired size of the search window when centered on that pixel/point. This can be controled with
+#' the `ws_args` parameter
 #' @param hmin numeric. Minimum height of a tree. Threshold below which a pixel or a point
 #' cannot be a local maxima. Default is 2.
 #' @param shape character. Shape of the moving window used to find the local maxima. Can be "square"
 #' or "circular".
+#' @param ws_args list. Named list of argument for the function `ws` if `ws` is a function.
 #'
 #' @references
 #' Popescu, Sorin & Wynne, Randolph. (2004). Seeing the Trees in the Forest: Using Lidar and
@@ -45,6 +47,11 @@
 #'
 #' #plot(las) |> add_treetops3d(ttops)
 #'
+#' # Very custom variable windows size
+#' f <- function(x, y, z) { x * 0.07 + y * 0.01 + z}
+#' ws_args <- list(x = "Z", y = "Intensity", z = 3)
+#' ttops <- locate_trees(las, lmf(f, ws_args = ws_args))
+#'
 #' # ============
 #' # raster-based
 #' # ============
@@ -62,12 +69,16 @@
 #' plot(chm, col = height.colors(30))
 #' plot(sf::st_geometry(ttops), add = TRUE, col = "black", cex = 0.5, pch = 3)
 #' @name itd_lmf
-lmf = function(ws, hmin = 2, shape = c("circular", "square"))
+lmf = function(ws, hmin = 2, shape = c("circular", "square"), ws_args = "Z")
 {
   shape <- match.arg(shape)
   circ  <- shape == "circular"
   ws    <- lazyeval::uq(ws)
   hmin  <- lazyeval::uq(hmin)
+  ws_args  <- lazyeval::uq(ws_args)
+
+  if (!is.numeric(ws) & !is.function(ws))
+    stop("'ws' must be a number or a function", call. = FALSE)
 
   f = function(las)
   {
@@ -75,26 +86,23 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"))
 
     if (is.function(ws))
     {
-      n     <- nrow(las@data)
-      ws    <- ws(las@data$Z)
-      b     <- las$Z < hmin
-      ws[b] <- ws(hmin)
+      args <- lapply(ws_args, function(x) if (x %in% names(las)) las@data[[x]] else x)
+      ws <- do.call(ws, args)
+      b <- las$Z < hmin
+      ws[b] <- min(ws)
 
+      n <- npoints(las)
       if (!is.numeric(ws)) stop("The function 'ws' did not return a correct output. ", call. = FALSE)
       if (any(ws <= 0))    stop("The function 'ws' returned negative or null values.", call. = FALSE)
       if (anyNA(ws))       stop("The function 'ws' returned NA values.",               call. = FALSE)
       if (length(ws) != n) stop("The function 'ws' did not return a correct output.",  call. = FALSE)
-    }
-    else if (!is.numeric(ws))
-    {
-      stop("'ws' must be a number or a function", call. = FALSE)
     }
 
     force_autoindex(las) <- LIDRGRIDPARTITION
     return(C_lmf(las, ws, hmin, circ, getThread()))
   }
 
-  f <- plugin_itd(f, omp = TRUE, raster_based = FALSE)
+  f <- plugin_itd(f , TRUE)
   return(f)
 }
 

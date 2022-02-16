@@ -5,20 +5,23 @@
 \alias{lmf}
 \title{Individual Tree Detection Algorithm}
 \usage{
-lmf(ws, hmin = 2, shape = c("circular", "square"))
+lmf(ws, hmin = 2, shape = c("circular", "square"), ws_args = "Z")
 }
 \arguments{
 \item{ws}{numeric or function. Length or diameter of the moving window used to detect the local
 maxima in the units of the input data (usually meters). If it is numeric a fixed window size is used.
 If it is a function, the function determines the size of the window at any given location on the canopy.
-The function should take the height of a given pixel or point as its only argument and return the
-desired size of the search window when centered on that pixel/point.}
+By default function takes the height of a given pixel or point as its only argument and return the
+desired size of the search window when centered on that pixel/point. This can be controled with
+the `ws_arg` parameter}
 
 \item{hmin}{numeric. Minimum height of a tree. Threshold below which a pixel or a point
 cannot be a local maxima. Default is 2.}
 
 \item{shape}{character. Shape of the moving window used to find the local maxima. Can be "square"
 or "circular".}
+
+\item{ws_args}{list. Named list of argument for the function `ws` if `ws` is a function.}
 }
 \description{
 This function is made to be used in \link{locate_trees}. It implements an algorithm for tree
@@ -44,6 +47,11 @@ f <- function(x) { x * 0.07 + 3}
 ttops <- locate_trees(las, lmf(f))
 
 #plot(las) |> add_treetops3d(ttops)
+
+# Very custom variable windows size
+f <- function(x, y, z) { x * 0.07 + y * 0.01 + z}
+ws_args <- list(x = "Z", y = "Intensity", z = 3)
+ttops <- locate_trees(las, lmf(f, ws_args = ws_args))
 
 # ============
 # raster-based
