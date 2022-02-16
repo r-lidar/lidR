@@ -102,7 +102,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"), ws_args = "Z")
     return(C_lmf(las, ws, hmin, circ, getThread()))
   }
 
-  f <- plugin_itd(f , TRUE)
+  f <- plugin_itd(f, omp = TRUE, raster_based = FALSE)
   return(f)
 }
 
