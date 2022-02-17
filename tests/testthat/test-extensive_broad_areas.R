@@ -23,10 +23,14 @@ if (Sys.getenv("LIDR_EXTENSIVE_TESTS") == "TRUE")
 
   test_that("las_check works",
   {
-    res <- las_check(haliburton) |> lapply(length) |> unlist() |> unname()
+    res <- las_check(haliburton)
+    res <- lapply(res, length)
+    res <- unname(unlist(res))
     expect_equal(res, c(0,0,0))
 
-    res <- las_check(montmorency) |> lapply(length) |> unlist() |> unname()
+    res <- las_check(montmorency)
+    res <- lapply(res, length)
+    res <- unname(unlist(res))
     expect_equal(res, c(0,2,0))
   })
 

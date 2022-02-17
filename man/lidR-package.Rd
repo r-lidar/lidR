@@ -26,7 +26,7 @@ Should lengthy operations show a progress bar? Default: TRUE}
 of computation does the progress bar appear? Default: 2}
 \item{\code{lidR.raster.default}}{The functions that return a raster are raster agnostic meaning
 that they work either with rasters from packages `raster`, `stars` or `terra`. By default they return
-rasters from `stars`. Can be one of "raster", "stars" or "terra". Default: "stars"}
+rasters from `stars`. Can be one of "raster", "stars" or "terra". Default: "terra"}
 \item{\code{lidR.check.nested.parallelism}}{The catalog processing engine (\link{catalog_apply})
 checks the parallel strategy chosen by the user and verify if C++ parallelization with
 OpenMP should be disabled to avoid nested parallel loops. Default: TRUE. If FALSE
