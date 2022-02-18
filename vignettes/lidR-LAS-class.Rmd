@@ -228,12 +228,6 @@ If your file contains RGB data the string `"RGB"` is supported:
 plot(las, color ="RGB")
 ```
 
-The `trim` parameter enables trimming of values when outliers break the color palette range. For example, Intensity often contains large outliers. The palette range would be too large and most of the values will be considered as "very low", so everything will appear in the same color.
-
-```r
-plot(las, color = "Intensity", trim = 450)
-```
-
 ## Memory considerations
 
 This section is of major importance because there are many instances where R is weak at memory management. 
