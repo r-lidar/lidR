@@ -167,6 +167,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
   else if (chunk_pattern)
   {
     opt_progress(x) <- TRUE
+    opt_output_files(x) <- ""
     engine_chunks(x)
     return(invisible())
   }
