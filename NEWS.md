@@ -2,7 +2,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v4.0.1 (Release date: )
 
-- Fix:`plot(ctg, chunk = TRUE)` do not fail if an invalid output file template is registered [#537](https://github.com/r-lidar/lidR/issues/537)
+- Fix: `plot(ctg, chunk = TRUE)` do not fail if an invalid output file template is registered [#537](https://github.com/r-lidar/lidR/issues/537)
+- Enhance: `*_metrics()` functions are 20 to 40% faster by properly detecting which attributes are actually necessary for the evaluation of `func`. In previous versions all attributes were included to evaluate each group. For example in `pixel_metrics(las, mean(Z))` we only need to consider the attribute Z in each group. No need to allocate and copy memory for `Intensity`, `ScanAngle` and so on.
 
 ## lidR v4.0.0 (Release date: 2022-02-17)
 

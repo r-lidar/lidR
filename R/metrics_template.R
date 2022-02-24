@@ -256,6 +256,10 @@ template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "
   call_names <- call_names[!call_names %in% las_names]
   lapply(call_names, stop_if_ambiguous_definition)
 
+  call <- deparse(call)
+  call <- trimws(call)
+  call <- paste0(call, collapse = " ")
+
   if (is.null(template)) template <- st_bbox(las)
 
   # Pre-computation of the groups
@@ -340,16 +344,17 @@ metrics_classic = function(las, call, cells, filter)
 
   if (is.null(filter))
   {
-    ls(parent.frame())
     verbose("Argument filter is NULL...")
-    metrics <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
+    cmd <- paste0('las@data[, if (!anyNA(.BY)) ', call, ', by = .(cells, echo)]')
   }
   else
   {
     filter  <- lasfilter_(las, list(filter))
     verbose(glue::glue("Argument filter retained {sum(filter)} points..."))
-    metrics <- las@data[filter, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
+    cmd <- paste0('las@data[filter, if (!anyNA(.BY)) ', call, ', by = .(cells, echo)]')
   }
+
+  metrics <- eval(parse(text = cmd))
 
   # This may append because new versions of data.table are more flexible than before
   if (any(duplicated(metrics[[1]])))
@@ -414,14 +419,16 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
     {
       verbose("Computing metrics for first intermediate and last...")
       las@data[["echo"]] <- echo_class1
-      metrics1 <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
+      cmd <- paste0('las@data[, if (!anyNA(.BY)) ', call, ', by = .(cells, echo)]')
+      metrics1 <- eval(parse(text = cmd))
     }
 
     if (compute_type2)
     {
       verbose("Computing metrics for single and multiple...")
       las@data[["echo"]] <- echo_class2
-      metrics2 <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
+      cmd <- paste0('las@data[, if (!anyNA(.BY)) ', call, ', by = .(cells, echo)]')
+      metrics2 <-eval(parse(text = cmd))
     }
 
     metrics12 <- rbind(metrics1, metrics2)
@@ -439,15 +446,16 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
     metrics1 <- NULL
     metrics2 <- NULL
 
-
     if (compute_type1)
     {
-      metrics1 <- las@data[filter, if (!anyNA(.BY)) c(eval(call)), by = list(cells = cells, echo = echo_class1)]
+      cmd <- paste0('las@data[filter, if (!anyNA(.BY)) ', call, ', by = list(cells = cells, echo = echo_class1)]')
+      metrics1 <- eval(parse(text = cmd))
     }
 
     if (compute_type2)
     {
-      metrics2 <- las@data[filter, if (!anyNA(.BY)) c(eval(call)), by = list(cells = cells, echo = echo_class2)]
+      cmd <- paste0('las@data[filter, if (!anyNA(.BY)) ', call, ', by = list(cells = cells, echo = echo_class2)]')
+      metrics1 <- eval(parse(text = cmd))
     }
 
     metrics12 <- rbind(metrics1, metrics2)
