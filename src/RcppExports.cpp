@@ -527,6 +527,39 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// is_altrep
+bool is_altrep(SEXP x);
+RcppExport SEXP _lidR_is_altrep(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(is_altrep(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// is_materialized
+bool is_materialized(SEXP x);
+RcppExport SEXP _lidR_is_materialized(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(is_materialized(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// altrep_full_class
+SEXP altrep_full_class(SEXP x);
+RcppExport SEXP _lidR_altrep_full_class(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(altrep_full_class(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_concaveman
 DataFrame cpp_concaveman(NumericVector x, NumericVector y, double concavity, double lengthThreshold, IntegerVector chull);
 RcppExport SEXP _lidR_cpp_concaveman(SEXP xSEXP, SEXP ySEXP, SEXP concavitySEXP, SEXP lengthThresholdSEXP, SEXP chullSEXP) {
@@ -593,6 +626,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_orectangle_lookup", (DL_FUNC) &_lidR_C_orectangle_lookup, 6},
     {"_lidR_C_knn2d_lookup", (DL_FUNC) &_lidR_C_knn2d_lookup, 4},
     {"_lidR_C_knn3d_lookup", (DL_FUNC) &_lidR_C_knn3d_lookup, 5},
+    {"_lidR_is_altrep", (DL_FUNC) &_lidR_is_altrep, 1},
+    {"_lidR_is_materialized", (DL_FUNC) &_lidR_is_materialized, 1},
+    {"_lidR_altrep_full_class", (DL_FUNC) &_lidR_altrep_full_class, 1},
     {"_lidR_cpp_concaveman", (DL_FUNC) &_lidR_cpp_concaveman, 5},
     {"_lidR_R_omp_get_max_threads", (DL_FUNC) &_lidR_R_omp_get_max_threads, 0},
     {NULL, NULL, 0}

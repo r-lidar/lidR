@@ -43,7 +43,10 @@ LAS <- function(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = 
   }
   #nocov end
 
-  if (is.data.frame(data))
+  if (is(data, "lasmetrics3d"))
+    class(data) <- class(data)[-1]
+
+  if (is.data.frame(data) & !data.table::is.data.table(data))
     data.table::setDT(data)
 
   if (!data.table::is.data.table(data))
@@ -298,26 +301,14 @@ setMethod("[[<-", c("LAS", "ANY", "missing", "ANY"),  function(x, i, j, value)
 #' @rdname Extract
 setMethod("[", c("LAS", "numeric"),  function(x, i)
 {
-  data <- x@data[i]
-  return(LAS(data, x@header, st_crs(x), FALSE, x@index))
+  return(smart_subset(x, i))
 })
 
 #' @export
 #' @rdname Extract
 setMethod("[", c("LAS", "logical"),  function(x, i)
 {
-  data <- x@data[i]
-  return(LAS(data, x@header, st_crs(x), FALSE, x@index))
-})
-
-#' @export
-#' @rdname Extract
-setMethod("[", c("LAS", "logical"),  function(x, i)
-{
-  data <- x@data[i]
-  y <- LAS(data, x@header, st_crs(x), FALSE, x@index)
-  y <- las_update(y)
-  return(y)
+  return(smart_subset(x, i))
 })
 
 #' @export
@@ -351,4 +342,26 @@ fix_name_convention <- function(names)
   changed <- new != names
   for (i in which(changed)) message(glue::glue("Attribute '{names[i]}' renamed '{new[i]}' to match with default attribute names."))
   return(new)
+}
+
+smart_subset <- function(las, i)
+{
+  data <- payload(las)
+
+  # Start a copy by preserving addresses
+  # data[, c("X", "Y", "Z")] makes deeps copies
+  new_data <- data.frame(X = data[["X"]], Y = data[["Y"]], Z = data[["Z"]])
+  data.table::setDT(new_data)
+
+  # Subset the coodinate
+  new_data <- new_data[i]
+
+  # Iteratively add subseted elements in a way that preserve ALTREP
+  attr <- names(las)
+  attr <- attr[!attr %in% c("X", "Y", "Z")]
+  for (name in attr) new_data[[name]] <- data[[name]][i]
+
+  new_las <- LAS(new_data, las@header, st_crs(las), FALSE, las@index)
+  new_las <- las_update(new_las)
+  return(new_las)
 }

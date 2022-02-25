@@ -39,3 +39,18 @@ uuid <- function()
     paste0(sample(hex_digits, 12), collapse=''),
     sep='-')
 }
+
+fast_count_equal = function(x, v)
+{
+  if (is_compact(x))
+  {
+    if (x[1] == v)
+      return(length(x))
+    else
+      return(0)
+  }
+  else
+  {
+    return(fast_countequal(x, v))
+  }
+}

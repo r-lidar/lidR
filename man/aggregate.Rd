@@ -40,8 +40,8 @@ voxel_metrics(las, func, res = 1, ..., all_voxels = FALSE)
 \arguments{
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
-\item{func}{formula. An expression to be applied to each element of the template (see section
-"Parameter func").}
+\item{func}{formula or expression. An expression to be applied to each element of the template (see
+section "Parameter func").}
 
 \item{...}{propagated to \code{template_metrics} i.e. \code{filter} and \code{by_echo}. \code{pixel_metrics()} also
 supports \code{pkg = "terra|raster|stars"} to get an output in \code{SpatRaster}, \verb{Raster*}
@@ -128,8 +128,8 @@ f = function(x) {list(mean = mean(x), max = max(x))}
 And could be applied either on the \code{Z} coordinates or on the intensities. These two
 statements are valid:
 \preformatted{
-pixel_metrics(las, ~f(Z), res = 20)
-voxel_metrics(las, ~f(Intensity), res = 2)
+pixel_metrics(las, f(Z), res = 20)
+voxel_metrics(las, f(Intensity), res = 2)
 }
 The following existing functions allow the user to
 compute some predefined metrics: \link[=stdmetrics]{stdmetrics}
@@ -185,7 +185,7 @@ myMetrics = function(z, i) {
 
 # example with a stars template
 template <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10)
-m <- template_metrics(las, ~myMetrics(Z, Intensity), template)
+m <- template_metrics(las, myMetrics(Z, Intensity), template)
 plot(m, col = col)
 
 # ================
@@ -201,7 +201,7 @@ cloud_metrics(las, .stdmetrics_z)
 m <- pixel_metrics(las, fun1, 20)
 plot(m, col = col)
 
-m = pixel_metrics(las, ~myMetrics(Z, Intensity))
+m = pixel_metrics(las, myMetrics(Z, Intensity))
 plot(m, col = col)
 
 # ================
@@ -229,8 +229,8 @@ plot(m["zq85"], pch = 19, cex = 3, add = TRUE)
 # VOXEL METRICS
 # ================
 
-m <- voxel_metrics(las, ~length(Z), 8)
-m <- voxel_metrics(las, ~mean(Intensity), 8)
+m <- voxel_metrics(las, length(Z), 8)
+m <- voxel_metrics(las, mean(Intensity), 8)
 #plot(m, color = "V1", colorPalette = heat.colors(50), trim = 60)
 #plot(m, color = "V1", colorPalette = heat.colors(50), trim = 60, voxel = TRUE)
 
@@ -262,16 +262,16 @@ plot(metrics["Z"])
 
 # Compute using only some points: basic
 first = filter_poi(las, ReturnNumber == 1)
-metrics = pixel_metrics(first, ~mean(Z), 20)
+metrics = pixel_metrics(first, mean(Z), 20)
 
 # Compute using only some points: optimized
 # faster and uses less memory. No intermediate object
-metrics = pixel_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
+metrics = pixel_metrics(las, mean(Z), 20, filter = ~ReturnNumber == 1)
 
 # Compute using only some points: best
 # ~50\% faster and uses ~10x less memory
 las = readLAS(LASfile, filter = "-keep_first")
-metrics = pixel_metrics(las, ~mean(Z), 20)
+metrics = pixel_metrics(las, mean(Z), 20)
 
 # ================
 # ARGUMENT BY_ECHO

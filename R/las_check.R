@@ -288,12 +288,12 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (!is.null(data$Classification))
   {
-    s = fast_countequal(data$Classification, 2L)
+    s = fast_count_equal(data$Classification, 2L)
 
     if (s > 0)
     {
       Classification <- NULL
-      gnd = data[Classification == 2L]
+      gnd = payload(filter_ground(las))
 
       s1 = duplicated(gnd, by = c("X", "Y", "Z"))
       s2 = duplicated(gnd, by = c("X", "Y"))  & !s1
@@ -332,7 +332,7 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (!is.null(data[["PointSourceID"]]))
   {
-    s = fast_countequal(data[["PointSourceID"]], 0L)
+    s = fast_count_equal(data[["PointSourceID"]], 0L)
 
     if (s == nrow(data))
       msg = c(msg, g("'PointSourceID' attribute is not populated"))
@@ -340,7 +340,7 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (!is.null(data[["ScanDirectionFlag"]]))
   {
-    s = fast_countequal(data[["ScanDirectionFlag"]], 0L)
+    s = fast_count_equal(data[["ScanDirectionFlag"]], 0L)
 
     if (s == nrow(data))
       msg = c(msg, g("'ScanDirectionFlag' attribute is not populated"))
@@ -348,7 +348,7 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (!is.null(data[["EdgeOfFlightline"]]))
   {
-    s = fast_countequal(data[["EdgeOfFlightline"]], 0L)
+    s = fast_count_equal(data[["EdgeOfFlightline"]], 0L)
 
     if (s == nrow(data))
       msg = c(msg, g("'EdgeOfFlightline' attribute is not populated"))
@@ -406,7 +406,8 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (!is.null(data[["UserData"]]))
   {
-    s = sum(data[["UserData"]] != 0)
+    s <- fast_count_equal(data[["UserData"]], 0L)
+    s <- npoints(las) - s
 
     if (s > 0)
       .info(g("{s} points have a non 0 UserData attribute. This probably has a meaning"))
@@ -533,7 +534,7 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (!is.null(data$Classification))
   {
-    s = fast_countequal(data$Classification, 2L)
+    s = fast_count_equal(data$Classification, 2L)
 
     if (s > 0) {
       .yes()
@@ -585,7 +586,7 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   if (!is.null(data$PointSourceID))
   {
-    s = fast_countequal(data$PointSourceID, 0L)
+    s = fast_count_equal(data$PointSourceID, 0L)
 
     if (s == nrow(data)) {
       .no()
@@ -599,6 +600,32 @@ las_check.LAS = function(las, print = TRUE, ...)
   }
   else
     .skip()
+
+  # ==== Compression ====
+
+  .h1("Checking compression")
+
+  gz <- las_is_compressed(las)
+  gz <- gz[gz == TRUE]
+
+  .h2("Checking attribute compression...")
+
+  if (length(gz) == 0)
+  {
+    if (utils::packageVersion("rlas") < "1.6.0")
+      .info("Compression supported only from rlas 1.6.0")
+    else
+      .no()
+  }
+  else
+  {
+    if (print)
+    {
+      cat("\n")
+      for (name in names(gz))
+        cat("   - ", name, "is compressed\n")
+    }
+  }
 
   warnerr = list(
     messages = infos,

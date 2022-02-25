@@ -138,7 +138,7 @@ summary.LAScatalog <- function(object, ...)
 
 setMethod("show", "LAS", function(object)
 {
-  size      <- format(utils::object.size(object), units = "auto")
+  size      <- format(las_size(object), units = "auto")
   area      <- as.numeric(st_area(object))
   area.h    <- area
   npoints   <- nrow(object@data)

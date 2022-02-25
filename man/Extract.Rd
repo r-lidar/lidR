@@ -37,8 +37,6 @@
 
 \S4method{[}{LAS,logical,ANY}(x, i)
 
-\S4method{[}{LAS,logical,ANY}(x, i)
-
 \S4method{[}{LAS,sf,ANY}(x, i)
 
 \S4method{[}{LAS,sfc,ANY}(x, i)
