@@ -161,6 +161,18 @@ C_knn3d_lookup <- function(las, x, y, z, k) {
     .Call(`_lidR_C_knn3d_lookup`, las, x, y, z, k)
 }
 
+is_altrep <- function(x) {
+    .Call(`_lidR_is_altrep`, x)
+}
+
+is_materialized <- function(x) {
+    .Call(`_lidR_is_materialized`, x)
+}
+
+altrep_full_class <- function(x) {
+    .Call(`_lidR_altrep_full_class`, x)
+}
+
 cpp_concaveman <- function(x, y, concavity, lengthThreshold, chull) {
     .Call(`_lidR_cpp_concaveman`, x, y, concavity, lengthThreshold, chull)
 }

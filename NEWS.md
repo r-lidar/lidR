@@ -2,7 +2,32 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v4.0.1 (Release date: )
 
-- Fix:`plot(ctg, chunk = TRUE)` do not fail if an invalid output file template is registered [#537](https://github.com/r-lidar/lidR/issues/537)
+### Changes related to rlas 1.6.0
+
+We are currently developing rlas 1.6.0 that uses the ALTREP framework to load compact representation of non populated attributes. For example `UserData` is usually populated with zeros (not populated). Yet it takes 32 bits per point to store each 0. With rlas 1.6.0 it will only uses 644 bits no matter the number of points loaded for not populated attributes. This optimization is enabled for `*_flags`, `UserData`, `PointSourceID`, `ScanDirectionFlag`, and `EdgeOfFlightline`. This allows for saving approximately 30% of memory usage depending on the number of non-populated attribute in the file. rlas 1.6.0 is compatible will all versions of lidR but lidR 4.0.1 introduced some internal optimization, internal fixes and new functions to fully take advantage of rlas 1.6.0. lidR v<= 4.0.0 will work with rlas 1.6.0 but won't take advantage of the new compression feature.
+
+1. the function `LAS()` no longer call `data.table::setDT()` if the input is already a `data.table`. Indeed `data.table::setDT()` materializes the compressed ALTREP vectors which is not what we want. One consequence of this change is that `readLAS()` now preserve the ALTREPness (i.e. the compression) of the output of `rlas::read.las()`.
+
+2. Subsetting a `LAS` object no longer call `data.table` native subset. We previously used something like `las@data[indx]` to subset the point cloud. Sadly `data.table` tries to materialized the ALTREPed vector whenever it can. We implemented internally a `smart_subset()` function that subset and preserves the compression of the vectors. One consequence of such change is that all `filter_*()` and `clip_*()` functions preserve the compression of the point cloud if any.
+
+3. `las_check()` has been slightly modified to ensure it does not materialize ALTREPed object. One side effect of `las_check()` was to decompress the point cloud unexpectedly. Such a pity! We also change `las_check()` to print information about the compression.
+
+4. We changed the way `*_metrics()` function evaluates the user defined expression because we found that it had the side effect to materialize all the attributes instead of materializing only those needed. For example `pixel_metrics(las, mean(Z))` only needs to consider the attribute Z. No need to allocate and copy memory for `Intensity`, `ScanAngle` and so on. In previous version all attributes where inspected with the side effect to materialize all compressed vectors. The `*_metrics()` functions now properly detect which attributes are actually necessary for the evaluation of `func`. Three consequences:  (1)`*_metrics()` functions are 20 to 40% faster, (2) the compression is preserved if no compressed attribute is used in the evaluation and e.g. `pixel_metrics(las, mean(UserData))` uncompresses only `UserData` and (3) a formula is no longer required. We can write `mean(Z)` instead of `~mean(Z)`.
+
+5. New functions `las_is_compressed()` that tells which attributes are compressed and `las_size()` that returns the true size of a `LAS` objects taking into account the compression. `las_size()` should returns something similar to `pryr::object_size()` but different to `object.size()` that is not ALTREP aware. We also changed the `print` function so it uses `las_size()` instead of `object.size()`.
+
+On overall lidR's functions are expected to almost never decompress a LAS object. However other R packages and R functions may do it. For example `data.table::print` do materializes the ALTREP vectors. `base::range()` too but not `base::mean()` or `base::var()`.
+
+```r
+las@data                    # Full decompression (print data.table)
+range(las$Userdata)         # Decompression of UserData
+las@data[2, UserData := 1]  # Decompression of UserData
+las@data[1:10]              # Full decompression
+```
+
+### Change not related to rlas
+
+- Fix: `plot(ctg, chunk = TRUE)` does not fail if an invalid output file template is registered [#537](https://github.com/r-lidar/lidR/issues/537)
 
 ## lidR v4.0.0 (Release date: 2022-02-17)
 

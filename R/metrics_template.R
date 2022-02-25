@@ -26,8 +26,8 @@
 #' }
 #'
 #' @template param-las
-#' @param func formula. An expression to be applied to each element of the template (see section
-#' "Parameter func").
+#' @param func formula or expression. An expression to be applied to each element of the template (see
+#' section "Parameter func").
 #' @param template can be of many types and corresponds to the different levels of regularization.
 #' `RasterLayer/stars/SpatRaster`, `sf/sfc` (polygons), `numeric`, `bbox`, `NULL`. The metrics are
 #' computed for each element of the template. See examples.
@@ -49,8 +49,8 @@
 #' And could be applied either on the \code{Z} coordinates or on the intensities. These two
 #' statements are valid:
 #' \preformatted{
-#' pixel_metrics(las, ~f(Z), res = 20)
-#' voxel_metrics(las, ~f(Intensity), res = 2)
+#' pixel_metrics(las, f(Z), res = 20)
+#' voxel_metrics(las, f(Intensity), res = 2)
 #' }
 #' The following existing functions allow the user to
 #' compute some predefined metrics: \link[=stdmetrics]{stdmetrics}
@@ -110,7 +110,7 @@
 #'
 #' # example with a stars template
 #' template <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10)
-#' m <- template_metrics(las, ~myMetrics(Z, Intensity), template)
+#' m <- template_metrics(las, myMetrics(Z, Intensity), template)
 #' plot(m, col = col)
 #'
 #' # ================
@@ -126,7 +126,7 @@
 #' m <- pixel_metrics(las, fun1, 20)
 #' plot(m, col = col)
 #'
-#' m = pixel_metrics(las, ~myMetrics(Z, Intensity))
+#' m = pixel_metrics(las, myMetrics(Z, Intensity))
 #' plot(m, col = col)
 #'
 #' # ================
@@ -154,8 +154,8 @@
 #' # VOXEL METRICS
 #' # ================
 #'
-#' m <- voxel_metrics(las, ~length(Z), 8)
-#' m <- voxel_metrics(las, ~mean(Intensity), 8)
+#' m <- voxel_metrics(las, length(Z), 8)
+#' m <- voxel_metrics(las, mean(Intensity), 8)
 #' #plot(m, color = "V1", colorPalette = heat.colors(50), trim = 60)
 #' #plot(m, color = "V1", colorPalette = heat.colors(50), trim = 60, voxel = TRUE)
 #'
@@ -187,16 +187,16 @@
 #'
 #' # Compute using only some points: basic
 #' first = filter_poi(las, ReturnNumber == 1)
-#' metrics = pixel_metrics(first, ~mean(Z), 20)
+#' metrics = pixel_metrics(first, mean(Z), 20)
 #'
 #' # Compute using only some points: optimized
 #' # faster and uses less memory. No intermediate object
-#' metrics = pixel_metrics(las, ~mean(Z), 20, filter = ~ReturnNumber == 1)
+#' metrics = pixel_metrics(las, mean(Z), 20, filter = ~ReturnNumber == 1)
 #'
 #' # Compute using only some points: best
 #' # ~50% faster and uses ~10x less memory
 #' las = readLAS(LASfile, filter = "-keep_first")
-#' metrics = pixel_metrics(las, ~mean(Z), 20)
+#' metrics = pixel_metrics(las, mean(Z), 20)
 #'
 #' # ================
 #' # ARGUMENT BY_ECHO
@@ -255,6 +255,10 @@ template_metrics.LAS <- function(las, func, template, filter = NULL, by_echo = "
   las_names  <- names(las)
   call_names <- call_names[!call_names %in% las_names]
   lapply(call_names, stop_if_ambiguous_definition)
+
+  call <- deparse(call)
+  call <- trimws(call)
+  call <- paste0(call, collapse = " ")
 
   if (is.null(template)) template <- st_bbox(las)
 
@@ -340,16 +344,17 @@ metrics_classic = function(las, call, cells, filter)
 
   if (is.null(filter))
   {
-    ls(parent.frame())
     verbose("Argument filter is NULL...")
-    metrics <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
+    cmd <- paste0('las@data[, if (!anyNA(.BY)) ', call, ', by = .(cells, echo)]')
   }
   else
   {
     filter  <- lasfilter_(las, list(filter))
     verbose(glue::glue("Argument filter retained {sum(filter)} points..."))
-    metrics <- las@data[filter, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
+    cmd <- paste0('las@data[filter, if (!anyNA(.BY)) ', call, ', by = .(cells, echo)]')
   }
+
+  metrics <- eval(parse(text = cmd))
 
   # This may append because new versions of data.table are more flexible than before
   if (any(duplicated(metrics[[1]])))
@@ -414,14 +419,16 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
     {
       verbose("Computing metrics for first intermediate and last...")
       las@data[["echo"]] <- echo_class1
-      metrics1 <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
+      cmd <- paste0('las@data[, if (!anyNA(.BY)) ', call, ', by = .(cells, echo)]')
+      metrics1 <- eval(parse(text = cmd))
     }
 
     if (compute_type2)
     {
       verbose("Computing metrics for single and multiple...")
       las@data[["echo"]] <- echo_class2
-      metrics2 <- las@data[, if (!anyNA(.BY)) c(eval(call)), by = c("cells", "echo")]
+      cmd <- paste0('las@data[, if (!anyNA(.BY)) ', call, ', by = .(cells, echo)]')
+      metrics2 <-eval(parse(text = cmd))
     }
 
     metrics12 <- rbind(metrics1, metrics2)
@@ -439,15 +446,16 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
     metrics1 <- NULL
     metrics2 <- NULL
 
-
     if (compute_type1)
     {
-      metrics1 <- las@data[filter, if (!anyNA(.BY)) c(eval(call)), by = list(cells = cells, echo = echo_class1)]
+      cmd <- paste0('las@data[filter, if (!anyNA(.BY)) ', call, ', by = list(cells = cells, echo = echo_class1)]')
+      metrics1 <- eval(parse(text = cmd))
     }
 
     if (compute_type2)
     {
-      metrics2 <- las@data[filter, if (!anyNA(.BY)) c(eval(call)), by = list(cells = cells, echo = echo_class2)]
+      cmd <- paste0('las@data[filter, if (!anyNA(.BY)) ', call, ', by = list(cells = cells, echo = echo_class2)]')
+      metrics1 <- eval(parse(text = cmd))
     }
 
     metrics12 <- rbind(metrics1, metrics2)
