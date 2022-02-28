@@ -105,8 +105,14 @@ locate_trees.LAS = function(las, algorithm, uniqueness = 'incremental')
 #' @export
 locate_trees.RasterLayer = function(las, algorithm, uniqueness = 'incremental')
 {
+  if (raster_is_proxy(las))
+  {
+    if (!raster_fits_in_memory(las, n = 2))
+      stop("Large on-disk rasters are not supported by locate_tree. Load the raster manually.", call. = FALSE)
+    else
+      las <- raster_in_memory(las)
+  }
 
-  if (raster_is_proxy(las)) stop("On-disk rasters are not supported by locate_tree. Use an in-memory raster", call. = FALSE)
   las <- raster_as_las(las)
   return(locate_trees(las, algorithm))
 }
@@ -114,7 +120,14 @@ locate_trees.RasterLayer = function(las, algorithm, uniqueness = 'incremental')
 #' @export
 locate_trees.stars = function(las, algorithm, uniqueness = 'incremental')
 {
-  if (raster_is_proxy(las)) stop("On-disk rasters are not supported by locate_tree. Use an in-memory raster", call. = FALSE)
+  if (raster_is_proxy(las))
+  {
+    if (!raster_fits_in_memory(las, n = 2))
+      stop("Large on-disk rasters are not supported by locate_tree. Load the raster manually.", call. = FALSE)
+    else
+      las <- raster_in_memory(las)
+  }
+
   las <- raster_as_las(las)
   return(locate_trees(las, algorithm))
 }
@@ -122,7 +135,14 @@ locate_trees.stars = function(las, algorithm, uniqueness = 'incremental')
 #' @export
 locate_trees.SpatRaster = function(las, algorithm, uniqueness = 'incremental')
 {
-  if (raster_is_proxy(las)) stop("On-disk rasters are not supported by locate_tree. Use an in-memory raster", call. = FALSE)
+  if (raster_is_proxy(las))
+  {
+    if (!raster_fits_in_memory(las, n = 2))
+      stop("Large on-disk rasters are not supported by locate_tree. Load the raster manually.", call. = FALSE)
+    else
+      las <- raster_in_memory(las)
+  }
+
   las <- raster_as_las(las)
   return(locate_trees(las, algorithm))
 }

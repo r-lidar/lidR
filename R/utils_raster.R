@@ -237,6 +237,13 @@ raster_as_las <- function(raster, bbox = NULL)
 {
   ondisk <- raster_is_proxy(raster)
 
+  # Small rasters can be loaded on the fly
+  if (ondisk & raster_fits_in_memory(raster, n = 10))
+  {
+    raster <- raster_materialize(raster)
+    ondisk <- FALSE
+  }
+
   if (ondisk & is.null(bbox))
     stop("On-disk rasters not supported without a bbox in 'raster_as_las()'", call. = FALSE) # nocov
 
@@ -664,4 +671,30 @@ raster_class <- function(pkg = getOption("lidR.raster.default"))
   if (pkg == "raster") return("RasterLayer")
   if (pkg == "terra") return("SpatRaster")
   if (pkg == "stars") return("stars")
+}
+
+raster_fits_in_memory <- function(raster, n = 1)
+{
+  if (!raster_is_proxy(raster)) return(TRUE)
+
+  nc <- raster_ncell(raster)
+  n <- n * raster_nlayer(raster)
+  memneed <- nc * n * 8L
+  memavail <- terra::free_RAM()*1000
+  memavail <- 0.6 * memavail
+  return(memneed < memavail)
+}
+
+raster_in_memory <- function(raster)
+{
+  if (is(raster, "stars"))
+    return(stars::st_as_stars(raster))
+
+  if (inherits(raster, "Raster"))
+    return(raster::readAll(raster))
+
+  if (is(raster,"SpatRaster"))
+    return(raster*1)
+
+  raster_error()
 }
