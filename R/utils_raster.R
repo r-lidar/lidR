@@ -115,7 +115,7 @@ raster_value_from_cells = function(raster, cells, layer = 1)
   }
 
   if (is(raster, "SpatRaster"))
-    return(terra::extract(raster, cells, layer = layer)[[1]])
+    return(terra::extract(raster, cells)[[layer]])
 
   raster_error() # nocov
 }
