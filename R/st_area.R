@@ -86,7 +86,7 @@ area_strategy <- function(x)
   bbarea  <- area(header(x))
   npoints <- npoints(x)
   density <- npoints/bbarea
-  unitsm  <- st_proj_is_meters(las)
+  unitsm  <- st_proj_is_meters(x)
   r <- 0
 
   # For longlat CRS sf::st_area on the convex hull will return something
