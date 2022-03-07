@@ -31,11 +31,13 @@
 numeric. A number in the same units as the coordinate reference system.
 }
 \description{
-Surface covered by a \verb{LAS*} object. For \code{LAS} point clouds it is computed based on the number of
-occupied cells, or on the area of the convex hull of the points when the density is too low. For a
-\code{LAScatalog} it is computed as the sum of the bounding boxes of the files. For overlapping tiles
-the value may be larger than the total area covered because some regions are sampled twice.
-For a \code{LASheader} it is computed with the bounding box. As a consequence, for the same file
+Surface covered by a \verb{LAS*} object. The surface covered by a point cloud is mathematically 0.
+To compute non zero values the function uses different strategies. The area is computed based on
+the number of occupied cells, or on the area of the convex hull of the points depending on the density
+and the size of the point cloud. The result is necessarily an approximation that depends on the method
+used.\cr For a \code{LAScatalog} it is computed as the sum of the bounding boxes of the files. For
+overlapping tiles the value may be larger than the total area covered because some regions are
+sampled twice. For a \code{LASheader} it is computed with the bounding box. As a consequence, for the same file
 \code{st_area} applied on a LASheader or on a LAS can return slightly different values. \code{st_area()}
 extends \code{sf:st_area()}, \code{area()} extends \code{raster:area()}. \code{area()} is provided for backward
 compatibility.
