@@ -34,10 +34,9 @@ st_area.LAS = function(x, ...)
   if (r == 0)
     return(round(sf::st_area(st_convex_hull(x)), 1))
 
-  temp  <- raster_layout(x, r)
-  cells <- raster_cell_from_xy(temp, x$X, x$Y)
-  n <- data.table::uniqueN(cells)
-  area <- sum(n)*r^2
+  lay  <- raster_layout(las, r)
+  temp <- fasterize(x, lay, method = "count")
+  area <- sum(!is.na(temp))*r^2
 
   # Workaround to get area with units, but without depending directly on units
   # and without parsing the CRS.
