@@ -105,7 +105,7 @@ prepare_sensor = function(sensor, gpstime, elevation, las)
   trange.las <- range(las[["gpstime"]])
   trange.sensor <- range(sensor[[gpstime]])
 
-  if ((trange.las[1] < trange.sensor[1] - 2) || (trange.las[2] > trange.sensor[2] + 2))
+  if ((trange.las[1] < trange.sensor[1] - 4) || (trange.las[2] > trange.sensor[2] + 4))
     stop("'gpstime range from the sensor does not contain gpstime range from the point-cloud", call. = FALSE)
 
   if (!is.null(elevation))
