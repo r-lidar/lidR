@@ -20,6 +20,8 @@
 \alias{density,LAS-method}
 \alias{density,LASheader-method}
 \alias{density,LAScatalog-method}
+\alias{head.LAS}
+\alias{tail.LAS}
 \title{Tools inherited from base R for LAS* objects}
 \usage{
 \method{print}{LAS}(x, ...)
@@ -57,6 +59,10 @@ density(x, ...)
 \S4method{density}{LASheader}(x, ...)
 
 \S4method{density}{LAScatalog}(x, ...)
+
+\method{head}{LAS}(x, n = 6L, ...)
+
+\method{tail}{LAS}(x, n = 6L, ...)
 }
 \arguments{
 \item{x}{a LAS* object}

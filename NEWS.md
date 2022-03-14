@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v4.1.0 (Release date: )
+
+1. New functions `head()` and `tail()` for `LAS` objects
+
 ## lidR v4.0.1 (Release date: )
 
 ### Changes related to rlas 1.6.0
