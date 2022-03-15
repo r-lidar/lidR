@@ -34,7 +34,7 @@ st_area.LAS = function(x, ...)
   if (r == 0)
     return(round(sf::st_area(st_convex_hull(x)), 1))
 
-  lay  <- raster_layout(las, r)
+  lay  <- raster_layout(x, r)
   temp <- fasterize(x, lay, method = "count")
   area <- sum(!is.na(temp))*r^2
 
