@@ -28,7 +28,7 @@ interpret_waveform <- function(las)
   # spacing of 1 ns two points emitted at one degree off nadir (worst case considered) are separated
   # by 300*sin(pi/180) = 5.2 mm. We need a resolution of 1 mm to store distinguishable values. With
   # a scale factor of 0.001 we are good. We use a 10th of this to be sure.
-  temporal_spacing <- header(las)@VLR[["Full WaveForm Description"]][["Full WaveForm"]][["Temporal Spacing"]]
+  temporal_spacing <- vlr(las)[["Full WaveForm Description"]][["Full WaveForm"]][["Temporal Spacing"]]
   one_picosecond_light <- 0.0003 # 0.3 mm
   distance_between_two_samples <- temporal_spacing * one_picosecond_light
   minimum_distance_at_one_degree_off_nadir <- distance_between_two_samples * pi/180

@@ -32,7 +32,7 @@ las@data[1:10]              # Full decompression
 - Fix: `merge_spatial()` with RGB and `SpatRaster` was not working properly [#545](https://github.com/r-lidar/lidR/issues/545)
 - Enhance: `st_area()` better estimates the area of small point clouds and is faster
 - Fix: [#548](https://github.com/r-lidar/lidR/issues/548)
-- Enhance: Scale factors are better estimated in `fwf_interpreter`  [#549](https://github.com/r-lidar/lidR/issues/549). 
+- Enhance: Scale factors are better estimated in `interpret_waveform`  [#549](https://github.com/r-lidar/lidR/issues/549). 
 
 ## lidR v4.0.0 (Release date: 2022-02-17)
 
