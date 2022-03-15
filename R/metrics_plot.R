@@ -16,6 +16,7 @@ plot_metrics <- function(las, func, geometry, ..., radius)
   {
     opt_independent_files(rois) <- TRUE
     opt_output_files(rois) <- ""
+    opt_progress(rois) <- FALSE
     metrics <- catalog_apply(rois, cloud_metrics, func = func, ...)
   }
   else
