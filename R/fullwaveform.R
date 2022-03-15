@@ -16,7 +16,7 @@
 #' LASfile <- system.file("extdata", "fwf.laz", package="rlas")
 #' fwf <- readLAS(LASfile)
 #' las <- interpret_waveform(fwf)
-#' x <- plot(fwf, size = 3, colorPalette = "red")
+#' x <- plot(fwf, size = 3, pal = "red")
 #' plot(las, color = "Amplitude", bg = "white", add = x, size = 2)
 #' }
 interpret_waveform <- function(las)
