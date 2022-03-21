@@ -8,9 +8,9 @@
 plot_metrics <- function(las, func, geometry, ..., radius)
 {
   if (missing(radius))
-    rois <- clip_roi(las, geometry)
+    rois <- suppressWarnings(clip_roi(las, geometry))
   else
-    rois <- clip_roi(las, geometry, radius = radius)
+    rois <- suppressWarnings(clip_roi(las, geometry, radius = radius))
 
   if (is(rois, "LAScatalog"))
   {
@@ -27,7 +27,7 @@ plot_metrics <- function(las, func, geometry, ..., radius)
     if (any_empty)
     {
       k <- which(empty)
-      warning(glue::glue("Plots [{glue::glue_collapse(k, sep = ', ')}] are empty. The entries have been removed."), call. = FALSE)
+      warning(glue::glue("Plots [{glue::glue_collapse(k, sep = ', ')}] are empty."), call. = FALSE)
       rois <- rois[-k]
     }
 
