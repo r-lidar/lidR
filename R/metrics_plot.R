@@ -21,7 +21,39 @@ plot_metrics <- function(las, func, geometry, ..., radius)
   }
   else
   {
+    n <- length(rois)
+    empty <- sapply(rois, is.empty)
+    any_empty <- any(empty)
+    if (any_empty)
+    {
+      k <- which(empty)
+      warning(glue::glue("Plots [{glue::glue_collapse(k, sep = ', ')}] are empty. The entries have been removed."), call. = FALSE)
+      rois <- rois[-k]
+    }
+
     metrics <- lapply(rois, template_metrics, template = NULL, func = func, ...)
+
+    if (any_empty)
+    {
+      incomplete_metrics <- metrics
+      ref <- metrics[[1]]
+      metrics <- vector("list", n)
+      ref <- lapply(ref, function(x) return(NA))
+      j = 1
+      for (i in 1:n)
+      {
+        if (empty[i])
+        {
+          metrics[[i]] <- ref
+        }
+        else
+        {
+          metrics[[i]] <- incomplete_metrics[[j]]
+          j = j+1
+        }
+      }
+
+    }
   }
 
   if (length(metrics[[1]]) == 1)

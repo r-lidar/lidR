@@ -157,7 +157,7 @@ clip_rectangle.LAS = function(las, xleft, ybottom, xright, ytop, ...)
   for (i in 1:length(xleft))
   {
     roi <- filter_poi(las, X >= xleft[i] & X < xright[i] & Y >= ybottom[i] & Y < ytop[i])
-    if (is.empty(roi)) warning(glue::glue("No point found for within rectangle ({xleft[i]}, {ybottom[i]}, {xright[i]}, {ytop[i]})."))
+    if (is.empty(roi)) warning(glue::glue("No point found for within rectangle ({xleft[i]}, {ybottom[i]}, {xright[i]}, {ytop[i]})."), call. = FALSE)
     output[[i]] = roi
   }
 
@@ -220,7 +220,7 @@ clip_circle.LAS = function(las, xcenter, ycenter, radius, ...)
   for (i in 1:length(xcenter))
   {
     roi <- filter_poi(las, (X - xcenter[i])^2 + (Y - ycenter[i])^2 <= radius[i]^2)
-    if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xcenter[i]}, {ycenter[i]}, {radius[i]})."))
+    if (is.empty(roi)) warning(glue::glue("No point found for within disc ({xcenter[i]}, {ycenter[i]}, {radius[i]})."), call. = FALSE)
     output[[i]] <- roi
   }
 
