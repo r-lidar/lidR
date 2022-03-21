@@ -35,7 +35,9 @@ las@data[1:10]              # Full decompression
 - Enhance: `locate_trees()` throws an informative error if called with an on-disk raster. The former error was cryptic. If the raster is small enough it is loaded on the fly.
 - Fix: `merge_spatial()` with RGB and `SpatRaster` was not working properly [#545](https://github.com/r-lidar/lidR/issues/545)
 - Enhance: `st_area()` better estimates the area of small point clouds and is faster
-- Fix [#548](https://github.com/r-lidar/lidR/issues/548)
+- Fix: [#548](https://github.com/r-lidar/lidR/issues/548)
+- Enhance: Scale factors are better estimated in `interpret_waveform`  [#549](https://github.com/r-lidar/lidR/issues/549). 
+- Fix: `plot_metrics()` returns NA if 0 points available [#551](https://github.com/r-lidar/lidR/issues/551). 
 
 ## lidR v4.0.0 (Release date: 2022-02-17)
 
