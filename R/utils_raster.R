@@ -413,7 +413,7 @@ raster_materialize <- function(raster, pkg = getOption("lidR.raster.default"), v
 
   if (pkg == "stars")
   {
-    res  <- stars::st_as_stars(bbox, dx = raster$xres, dy = raster$yres, values = values)
+    res  <- stars::st_as_stars(bbox, nx = raster$ncol, ny = raster$nrow, values = values)
     return(res)
   }
 
