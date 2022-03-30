@@ -35,6 +35,7 @@ las@data[1:10]              # Full decompression
 - Enhance: Scale factors are better estimated in `interpret_waveform`  [#549](https://github.com/r-lidar/lidR/issues/549). 
 - Fix: `plot_metrics()` returns NA if 0 points available [#551](https://github.com/r-lidar/lidR/issues/551).
 - Fix: floating point accuracy error with `rasterize_canopy` may generate error or messed-up CHM [#552](https://github.com/r-lidar/lidR/issues/552).
+- Fix: `print()` and `st_area()` were not working for point cloud with no CRS
 
 ## lidR v4.0.0 (Release date: 2022-02-17)
 
