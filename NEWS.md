@@ -36,6 +36,7 @@ las@data[1:10]              # Full decompression
 - Fix: `plot_metrics()` returns NA if 0 points available [#551](https://github.com/r-lidar/lidR/issues/551).
 - Fix: floating point accuracy error with `rasterize_canopy` may generate error or messed-up CHM [#552](https://github.com/r-lidar/lidR/issues/552).
 - Fix: `print()` and `st_area()` were not working for point cloud with no CRS
+- Fix: `track_sensor()` does not fail with a `LAScatalog` when no sensor position is found. It also triggers a warning. [#556](https://github.com/r-lidar/lidR/issues/556).
 
 ## lidR v4.0.0 (Release date: 2022-02-17)
 
