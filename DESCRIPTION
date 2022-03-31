@@ -37,7 +37,7 @@ Imports:
     sp,
     stats,
     stars,
-    terra,
+    terra (>= 1.5-17),
     tools,
     utils
 Suggests:
