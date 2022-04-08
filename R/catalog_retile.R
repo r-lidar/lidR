@@ -76,10 +76,19 @@ catalog_retile = function(ctg)
   ctg@output_options$output_files <- path
   path <- dirname(path)
 
-  reshape_func = function(cluster) {
+  reshape_func = function(cluster)
+  {
     streamLAS(cluster, cluster@save)
-    ret <- structure(cluster@save, class = "lidr_internal_skip_write")
-    return(ret)
+
+    if (file.exists(cluster@save))
+    {
+      ret <- structure(cluster@save, class = "lidr_internal_skip_write")
+      return(ret)
+    }
+    else
+    {
+      return(NULL)
+    }
   }
 
   opt_wall_to_wall(ctg) <- FALSE

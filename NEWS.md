@@ -39,6 +39,7 @@ las@data[1:10]              # Full decompression
 - Fix: `track_sensor()` does not fail with a `LAScatalog` when no sensor position is found. It also triggers a warning. [#556](https://github.com/r-lidar/lidR/issues/556).
 - Fix: The LAScatalog processing engine works with a single file [#558](https://github.com/r-lidar/lidR/issues/558).
 - Fix: `rasterize_terrain()` now works with a `LAScatalog` and `shape = sfc_object` [#558](https://github.com/r-lidar/lidR/issues/558).
+- Fix: `catalog_retile()` now works when some tiles are empty [#563](https://github.com/r-lidar/lidR/issues/563).
 
 ## lidR v4.0.0 (Release date: 2022-02-17)
 
