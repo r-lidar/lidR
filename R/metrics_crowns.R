@@ -37,11 +37,13 @@ crown_metrics.LAS = function(las, func, geom = "point", concaveman = c(3, 0), at
   length_threshold <- concaveman[2]
 
   M1 <- las@data[, if (!anyNA(.BY)) fgeom(X,Y,Z, concavity, length_threshold), by = .(GRPID = template)]
+  data.table::setorder(M1, GRPID)
   geom <- sf::st_as_sfc(M1[["geom"]])
 
   if (!is.null(func))
   {
     M2 <- template_metrics(las, func, template, ...)
+    data.table::setorder(M2, GRPID)
     M2 <- M2[M2$GRPID %in% M1$GRPID]
     data.table::setnames(M2, "GRPID", attribute)
   }

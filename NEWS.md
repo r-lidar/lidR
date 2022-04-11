@@ -40,6 +40,7 @@ las@data[1:10]              # Full decompression
 - Fix: The LAScatalog processing engine works with a single file [#558](https://github.com/r-lidar/lidR/issues/558).
 - Fix: `rasterize_terrain()` now works with a `LAScatalog` and `shape = sfc_object` [#558](https://github.com/r-lidar/lidR/issues/558).
 - Fix: `catalog_retile()` now works when some tiles are empty [#563](https://github.com/r-lidar/lidR/issues/563).
+- Fix: `crown_metrics()` messed up tree IDs with a hull geometry [#554](https://github.com/r-lidar/lidR/issues/554).
 
 ## lidR v4.0.0 (Release date: 2022-02-17)
 
