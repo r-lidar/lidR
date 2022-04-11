@@ -27,7 +27,9 @@ This is only suitable for small-sized plots. First the point cloud is displayed,
 invited to select a rectangular region of interest in the scene using the mouse button.
 Within the selected region the highest point will be flagged as 'tree top' in the scene. Once all the trees
 are labelled the user can exit the tool by selecting an empty region. Points can also be unflagged.
-The goal of this tool is mainly for minor correction of automatically-detected tree outputs.
+The goal of this tool is mainly for minor correction of automatically-detected tree outputs. \cr
+\strong{This algorithm does not preserve tree IDs from \code{detected} and renumber all trees. It also looses
+all attributes}
 }
 \examples{
 \dontrun{
