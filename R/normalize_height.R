@@ -95,6 +95,7 @@ normalize_height.LAS = function(las, algorithm, use_class = c(2L,9L), dtm = NULL
     stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'raster' or 'function'"), call. = FALSE)
   }
 
+  las[["Z offset"]] <- 0
   zoffset <- las[["Z offset"]]
   zscale <- las[["Z scale factor"]]
 
