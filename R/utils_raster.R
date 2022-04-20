@@ -240,7 +240,7 @@ raster_as_las <- function(raster, bbox = NULL)
   # Small rasters can be loaded on the fly
   if (ondisk & raster_fits_in_memory(raster, n = 10))
   {
-    raster <- raster_materialize(raster)
+    raster <- raster_in_memory(raster)
     ondisk <- FALSE
   }
 
