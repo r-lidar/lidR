@@ -18,7 +18,7 @@ crown_metrics.LAS = function(las, func, geom = "point", concaveman = c(3, 0), at
   if (!attribute %in% names(las)) stop("The trees are not segmented yet. See function 'segment_trees'.", call. = FALSE)
   geom <- match.arg(geom, c("point", "convex", "concave", "bbox"))
 
-  . <- .BY <- X <- Y <- Z <- NULL
+  . <- .BY <- X <- Y <- Z <- GRPID <- NULL
 
   template <- las[[attribute]]
 

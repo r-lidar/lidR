@@ -151,7 +151,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
   {
     assert_is_valid_context(LIDRCONTEXTITD, "manual")
 
-    . <- X <- Y <- Z <- treeID <- NULL
+    . <- z <- X <- Y <- Z <- treeID <- NULL
 
     stopifnotlas(las)
     crs = sf::NA_crs_
