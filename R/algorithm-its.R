@@ -494,7 +494,9 @@ crop_special_its <- function (treetops, chm, bbox)
   else
   {
     sf::st_agr(treetops) <- "constant"
-    treetops <- sf::st_crop(treetops, sf::st_bbox(chm))
+    bbox = sf::st_bbox(chm)
+    sf::st_crs(bbox) <- sf::st_crs(chm)
+    treetops <- sf::st_crop(treetops, bbox)
   }
 
   return(list(treetops = treetops, chm = chm))
