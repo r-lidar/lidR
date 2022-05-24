@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v4.0.2
+
+- `dsmtin` and `pitfree` gain an argument `highest`. This option was enable by default in previous releases. There is now an option to disable it.
+
 ## lidR v4.0.1 (Release date: 2022-05-03)
 
 - Fix: `plot(ctg, chunk = TRUE)` does not fail if an invalid output file template is registered [#537](https://github.com/r-lidar/lidR/issues/537)
