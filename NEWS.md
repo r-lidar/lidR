@@ -2,7 +2,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v4.0.2
 
-- `dsmtin` and `pitfree` gain an argument `highest`. This option was enable by default in previous releases. There is now an option to disable it.
+- New: `dsmtin` and `pitfree` gain an argument `highest`. This option was enable by default in previous releases. There is now an option to disable it.
+- Fix: [#580](https://github.com/r-lidar/lidR/issues/580). `normalize_height()` works in parallel with `SpatRaster`.
 
 ## lidR v4.0.1 (Release date: 2022-05-03)
 
