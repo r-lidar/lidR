@@ -132,6 +132,15 @@ delineate_crowns = function(las, type = c("convex", "concave", "bbox"), concavit
 {
   type <- match.arg(type)
   res <- crown_metrics(las, func = func, geom = type, concaveman = c(concavity, length_threshold), attribute = attribute, xyz = TRUE)
+
+  invalid <- !sf::st_is_valid(res)
+  ninvalid <- sum(invalid)
+  if (ninvalid > 0)
+  {
+    res <- res[!invalid,]
+    warning(glue::glue("{ninvalid} geometries were discarded before to convert from sf to sp. To keep them use crown_metrics()"), call. = FALSE)
+  }
+
   if (is(res, "sf")) res <- sf::as_Spatial(res)
   res
 }
