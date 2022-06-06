@@ -44,7 +44,10 @@ crown_metrics.LAS = function(las, func, geom = "point", concaveman = c(3, 0), at
   if (is(sfgeom, "sfc_POLYGON"))
   {
     invalid <- !sf::st_is_valid(sfgeom)
-    ninvalid <- sum(invalid)
+    na.invalid <- is.na(invalid)
+    invalid[na.invalid] <- TRUE
+    ninvalid <- sum(invalid, na.rm = TRUE)
+    nna <- sum(na.invalid)
 
     if (ninvalid > 0)
     {
