@@ -115,7 +115,7 @@ crown_metrics.LAScatalog = function(las, func, geom = "point", concaveman = c(3,
   assert_is_a_string(attribute)
 
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
-  if (!is_formula) func <- lazyeval::f_capture(func)
+  if (!is_formula && !is.null(func)) func <- lazyeval::f_capture(func)
   globals <- future::getGlobalsAndPackages(func)
 
   options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals), automerge = TRUE)
