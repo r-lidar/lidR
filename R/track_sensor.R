@@ -174,6 +174,15 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
 
   P <- algorithm(data)
 
+  # Check out if we have at least 2 sensor position by flightline #608
+  tmp <- P[, .N, by = PointSourceID]
+  ind <- which(tmp$N <= 1L)
+  if (length(ind) > 0L)
+  {
+    str <- glue::glue_collapse(tmp$PointSourceID[ind], ", ", last = " and ")
+    warning(glue::glue("Only one sensor position was found for PointSourceID {str}"), call. = FALSE)
+  }
+
   # If no position found return an empty sf
   if (nrow(P) == 0)
   {
