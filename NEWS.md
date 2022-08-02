@@ -7,6 +7,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Fix: [#586](https://github.com/r-lidar/lidR/issues/586).
 - Fix: [#587](https://github.com/r-lidar/lidR/issues/587). `crown_metrics()` now triggers a warning when invalid geometries are created and `delineate_crowns()` remove these geometries before to convert to `sp`
 - Fix: [#594](https://github.com/r-lidar/lidR/issues/594.) `crown_metrics()` now works with `func = NULL` and a `LAScatalog`
+- Fix: [#609](https://github.com/r-lidar/lidR/issues/609.) `*_metrics()` functions were returning NAs no matter the metric computed for `lastofmany`
 - Doc: `dalponte2016` doc updated to use `terra`
 
 ## lidR v4.0.1 (Release date: 2022-05-03)

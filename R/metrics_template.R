@@ -396,7 +396,7 @@ metrics_by_echo_type = function(las, call, cells, filter, by_echo)
   echo_types[LASMULTIPLE] <- "multiple"
   echo_types[LASLASTOFMANY] <- "lastofmany"
   echo_types[LASINTERMEDIATE] <- "intermediate"
-  echo_types1 <- echo_types[c(LASFIRST, LASINTERMEDIATE, LASLAST)]
+  echo_types1 <- echo_types[c(LASFIRST, LASINTERMEDIATE, LASLASTOFMANY)]
   echo_types2 <- echo_types[c(LASSINGLE, LASMULTIPLE)]
   echo_class  <- get_echo_type(las$ReturnNumber, las$NumberOfReturns)
   echo_class1 <- echo_class[[1]]
@@ -475,7 +475,7 @@ get_echo_type <- function(ReturnNumber, NumberOfReturns)
 
   class1 <- rep(LASINTERMEDIATE, n)
   class1[ReturnNumber == 1L] <- LASFIRST
-  class1[ReturnNumber == NumberOfReturns & ReturnNumber > 1L] <- LASLAST
+  class1[ReturnNumber == NumberOfReturns & ReturnNumber > 1L] <- LASLASTOFMANY
 
   class2 <- rep(LASMULTIPLE, n)
   class2[NumberOfReturns == 1L] <- LASSINGLE
