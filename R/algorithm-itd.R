@@ -195,8 +195,18 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
     plot.LAS(las, ..., clear_artifacts = FALSE)
 
     id = numeric(nrow(apice))
+
+    # It's very slow to redraw after every sphere, so
+    # turn off updates for a bit
+    saveSkip = rgl::par3d(skipRedraw = TRUE)
+    on.exit(rgl::par3d(saveSkip))  # Just in case of error
+
     for (i in 1:nrow(apice))
       id[i] = rgl::spheres3d(apice$X[i], apice$Y[i], apice$Z[i], radius = radius, color = color)
+
+    # Now restore drawing mode
+    rgl::par3d(saveSkip)
+    on.exit() # exit restore no longer needed
 
     apice$id <- id
 
