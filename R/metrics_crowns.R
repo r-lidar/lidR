@@ -18,7 +18,7 @@ crown_metrics.LAS = function(las, func, geom = "point", concaveman = c(3, 0), at
   if (!attribute %in% names(las)) stop("The trees are not segmented yet. See function 'segment_trees'.", call. = FALSE)
   geom <- match.arg(geom, c("point", "convex", "concave", "bbox"))
 
-  . <- .BY <- X <- Y <- Z <- NULL
+  . <- .BY <- X <- Y <- Z <- GRPID <- NULL
 
   template <- las[[attribute]]
 
@@ -37,11 +37,32 @@ crown_metrics.LAS = function(las, func, geom = "point", concaveman = c(3, 0), at
   length_threshold <- concaveman[2]
 
   M1 <- las@data[, if (!anyNA(.BY)) fgeom(X,Y,Z, concavity, length_threshold), by = .(GRPID = template)]
-  geom <- sf::st_as_sfc(M1[["geom"]])
+  data.table::setorder(M1, GRPID)
+  sfgeom <- sf::st_as_sfc(M1[["geom"]])
+
+
+  if (is(sfgeom, "sfc_POLYGON"))
+  {
+    invalid <- !sf::st_is_valid(sfgeom)
+    na.invalid <- is.na(invalid)
+    invalid[na.invalid] <- TRUE
+    ninvalid <- sum(invalid, na.rm = TRUE)
+    nna <- sum(na.invalid)
+
+    if (ninvalid > 0)
+    {
+      if (geom == "concave")
+        warning(glue::glue("{ninvalid} invalid polygons created. They likely correspond either to trees with aligned points or to edge cases where the convex hull converged to polygons that are not valid."), call. = FALSE)
+
+      if (geom == "convex")
+        warning(glue::glue("{ninvalid} invalid polygons created. They likely correspond to trees with aligned points."), call. = FALSE)
+    }
+  }
 
   if (!is.null(func))
   {
     M2 <- template_metrics(las, func, template, ...)
+    data.table::setorder(M2, GRPID)
     M2 <- M2[M2$GRPID %in% M1$GRPID]
     data.table::setnames(M2, "GRPID", attribute)
   }
@@ -67,7 +88,7 @@ crown_metrics.LAS = function(las, func, geom = "point", concaveman = c(3, 0), at
     M2 <- cbind(M2, M3)
   }
 
-  output <- sf::st_set_geometry(M2, geom)
+  output <- sf::st_set_geometry(M2, sfgeom)
   sf::st_crs(output) <- st_crs(las)
   return(output)
 }
@@ -94,7 +115,7 @@ crown_metrics.LAScatalog = function(las, func, geom = "point", concaveman = c(3,
   assert_is_a_string(attribute)
 
   is_formula <- tryCatch(lazyeval::is_formula(func), error = function(e) FALSE)
-  if (!is_formula) func <- lazyeval::f_capture(func)
+  if (!is_formula && !is.null(func)) func <- lazyeval::f_capture(func)
   globals <- future::getGlobalsAndPackages(func)
 
   options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals), automerge = TRUE)

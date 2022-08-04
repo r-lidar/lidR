@@ -47,10 +47,9 @@
 #' las <- readLAS(LASfile, select = "xyz", filter = poi)
 #' col <- pastel.colors(200)
 #'
-#' # Using raster because focal does not exist in stars
-#' chm <- rasterize_canopy(las, 0.5, p2r(0.3), pkg = "raster")
+#' chm <- rasterize_canopy(las, 0.5, p2r(0.3))
 #' ker <- matrix(1,3,3)
-#' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
+#' chm <- terra::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 #'
 #' ttops <- locate_trees(chm, lmf(4, 2))
 #' las   <- segment_trees(las, dalponte2016(chm, ttops))
@@ -494,7 +493,9 @@ crop_special_its <- function (treetops, chm, bbox)
   else
   {
     sf::st_agr(treetops) <- "constant"
-    treetops <- sf::st_crop(treetops, sf::st_bbox(chm))
+    bbox = sf::st_bbox(chm)
+    sf::st_crs(bbox) <- sf::st_crs(chm)
+    treetops <- sf::st_crop(treetops, bbox)
   }
 
   return(list(treetops = treetops, chm = chm))

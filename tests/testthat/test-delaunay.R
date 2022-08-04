@@ -19,6 +19,8 @@ test_that("Boosted delaunay produces the correct output", {
 
 test_that("Old delaunay produces the correct output", {
 
+  skip_if_not_installed("geometry")
+
   ps <- data.frame(
     X = c(0,  1, -1, 1, -1),
     Y = c(0, -1, 1, 1, -1))
@@ -62,6 +64,8 @@ test_that("Boosted Delaunay trimming option works", {
 })
 
 test_that("Old Delaunay trimming option works", {
+
+  skip_if_not_installed("geometry")
 
   set.seed(42)
   X <- round(runif(50,0,10),2)
@@ -138,6 +142,8 @@ test_that("Internal C_Delaunay works with degenerated points", {
 })
 
 test_that("delaunay rasterization fall back to geometry", {
+
+  skip_if_not_installed("geometry")
 
   ps <- data.frame(
     X = c(0,  1, -1, 1, -1),

@@ -174,6 +174,15 @@ track_sensor.LAS <- function(las, algorithm, extra_check = TRUE, thin_pulse_with
 
   P <- algorithm(data)
 
+  # Check out if we have at least 2 sensor position by flightline #608
+  tmp <- P[, .N, by = PointSourceID]
+  ind <- which(tmp$N <= 1L)
+  if (length(ind) > 0L)
+  {
+    str <- glue::glue_collapse(tmp$PointSourceID[ind], ", ", last = " and ")
+    warning(glue::glue("Only one sensor position was found for PointSourceID {str}"), call. = FALSE)
+  }
+
   # If no position found return an empty sf
   if (nrow(P) == 0)
   {
@@ -244,8 +253,7 @@ track_sensor.LAScatalog <- function(las, algorithm, extra_check = TRUE, thin_pul
   }
 
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = FALSE)
-  output  <- catalog_apply(las, track_sensor, algorithm = algorithm, extra_check = extra_check, thin_pulse_with_time = 0, multi_pulse = multi_pulse, .options = options)
-  output  <- do.call(rbind, output)
+  output  <- catalog_sapply(las, track_sensor, algorithm = algorithm, extra_check = extra_check, thin_pulse_with_time = 0, multi_pulse = multi_pulse, .options = options)
 
   # Post-processing to remove duplicated positions selecting the one computed with the more pulses
   SCORE <- gpstime <- NULL
@@ -254,5 +262,7 @@ track_sensor.LAScatalog <- function(las, algorithm, extra_check = TRUE, thin_pul
   i <- data[, .I[which.max(SCORE)], by = gpstime]$V1
   data.table::setDF(data)
 
-  return(output[i,])
+  ans <- output[i,]
+  if (nrow(ans) == 0)  warning("0 sensor locations found. This may be caused by an unsufficient number of multiple returns.", call. = FALSE)
+  return(ans)
 }

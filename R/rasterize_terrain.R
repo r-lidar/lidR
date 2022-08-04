@@ -156,6 +156,9 @@ rasterize_terrain.LAScatalog = function(las, res = 1, algorithm = tin(), use_cla
   if (opt_chunk_size(las) > 0 && opt_chunk_size(las) < 2*alignment$res)
     stop("The chunk size is too small. Process aborted.", call. = FALSE)
 
+  if (is(shape, "sfc"))
+    las = catalog_intersect(las, shape, subset = "flag_processed")
+
   # Processing
   options <- list(need_buffer = TRUE, drop_null = TRUE, raster_alignment = alignment, automerge = TRUE)
   output  <- catalog_apply(las, rasterize_terrain, res = res, algorithm = algorithm, shape = shape, use_class = use_class, ..., .options = options)

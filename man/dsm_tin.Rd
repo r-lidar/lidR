@@ -5,12 +5,15 @@
 \alias{dsmtin}
 \title{Digital Surface Model Algorithm}
 \usage{
-dsmtin(max_edge = 0)
+dsmtin(max_edge = 0, highest = TRUE)
 }
 \arguments{
 \item{max_edge}{numeric. Maximum edge length of a triangle in the Delaunay triangulation.
 If a triangle has an edge length greater than this value it will be removed to trim dummy interpolation
 on non-convex areas. If \code{max_edge = 0} no trimming is done (see examples).}
+
+\item{highest}{bool. By default it keeps only the highest point per pixel before to triangulate to
+decrease computation time. If highest = FALSE all first returns are used.}
 }
 \description{
 This function is made to be used in \link{rasterize_canopy}. It implements an algorithm for digital

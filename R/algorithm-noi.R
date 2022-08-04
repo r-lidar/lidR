@@ -95,8 +95,10 @@ prepare_sensor = function(sensor, gpstime, elevation, las)
 
   if (is(sf::st_geometry(sensor)[[1]], "XYZ"))
   {
+    if (elevation %in% names(sensor))
+      message("3 coordinates detected in the sensor positions, parameter 'elevation' is not considered.")
+
     elevation = NULL
-    message("3 coordinates detected in the sensor positions, parameter 'elevation' is not considered.")
   }
 
   fl <- sf::st_coordinates(sensor)
@@ -133,6 +135,11 @@ prepare_sensor = function(sensor, gpstime, elevation, las)
     warning("Duplicated gpstime found. Duplicated sensor positions were removed.", call. = FALSE)
     fl <- fl[!dup]
   }
+
+ x = diff(fl$gpstime) > 30
+ conseq_true <- with(rle(x), sum(lengths[values] >= 2))
+ if (x[1] == TRUE | conseq_true > 0)
+   warning("Detection of isolated gpstime likely corresponding to flightlines with a single sensor position.", call. = FALSE)
 
   return(fl)
 }

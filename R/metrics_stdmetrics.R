@@ -513,6 +513,7 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
   assert_is_numeric(z)
   assert_are_same_length(x,y)
   assert_are_same_length(x,z)
+  assert_package_is_installed("geometry")
 
   if (length(x) <= 3)
     return(NA_real_)

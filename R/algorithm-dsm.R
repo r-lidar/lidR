@@ -102,6 +102,8 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #' @param max_edge numeric. Maximum edge length of a triangle in the Delaunay triangulation.
 #' If a triangle has an edge length greater than this value it will be removed to trim dummy interpolation
 #' on non-convex areas. If \code{max_edge = 0} no trimming is done (see examples).
+#' @param highest bool. By default it keeps only the highest point per pixel before to triangulate to
+#' decrease computation time. If highest = FALSE all first returns are used.
 #'
 #' @export
 #'
@@ -134,10 +136,10 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #' plot(chm, col = col)
 #' }
 #' @name dsm_tin
-dsmtin = function(max_edge = 0)
+dsmtin = function(max_edge = 0, highest = TRUE)
 {
   max_edge <- lazyeval::uq(max_edge)
-  return(pitfree(0, c(max_edge, 0), 0))
+  return(pitfree(0, c(max_edge, 0), 0, highest))
 }
 
 # ====== PIT-FREE =======
@@ -160,6 +162,8 @@ dsmtin = function(max_edge = 0)
 #' for the classical triangulation (threshold = 0, see also \link{dsmtin}), the second number
 #' is the value for the pit-free algorithm (for thresholds > 0). If \code{max_edge = 0} no trimming
 #' is done (see examples).
+#' @param highest bool. By default it keeps only the highest point per pixel before to triangulate to
+#' decrease computation time. If highest = FALSE all first returns are used.
 #'
 #' @references Khosravipour, A., Skidmore, A. K., Isenburg, M., Wang, T., & Hussin, Y. A. (2014).
 #' Generating pit-free canopy height models from airborne lidar. Photogrammetric Engineering &
@@ -201,7 +205,7 @@ dsmtin = function(max_edge = 0)
 #' }
 #' @export
 #' @name dsm_pitfree
-pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcircle = 0)
+pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcircle = 0, highest = TRUE)
 {
   assert_is_numeric(thresholds)
   assert_all_are_non_negative(thresholds)
@@ -209,6 +213,7 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
   assert_all_are_non_negative(max_edge)
   assert_is_a_number(subcircle)
   assert_all_are_non_negative(subcircle)
+  assert_is_a_bool(highest)
 
   if (length(thresholds) > 1L & length(max_edge) < 2L)
   {
@@ -218,6 +223,7 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
   thresholds <- lazyeval::uq(thresholds)
   max_edge <- lazyeval::uq(max_edge)
   subcircle <- lazyeval::uq(subcircle)
+  highest <- lazyeval::uq(highest)
 
   f <- function(las, layout)
   {
@@ -250,11 +256,14 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
       cloud <- subcircle(cloud, subcircle, 8L)
     }
 
-    verbose("Selecting only the highest points within the grid cells...")
-    template <- raster_template(layout)
-    i <- C_highest(cloud, template)
-    cloud <- cloud[i]
-    if (nrow(cloud) < 3) stop("There are not enought points to triangulate.", call. = FALSE)
+    if (highest)
+    {
+      verbose("Selecting only the highest points within the grid cells...")
+      template <- raster_template(layout)
+      i <- C_highest(cloud, template)
+      cloud <- cloud[i]
+      if (nrow(cloud) < 3) stop("There are not enought points to triangulate.", call. = FALSE)
+    }
 
     # Get interpolation grid
     grid <- raster_as_dataframe(layout, na.rm = FALSE)

@@ -121,15 +121,15 @@ merge_sf = function(las, source, attribute = NULL)
     method <- 1
     data   <- source[[attribute]]
 
-    if (class(data) == "factor")
+    if (is.factor(data))
       values = factor(rep(NA_integer_, npoints), levels = levels(data))
-    else if (class(data) == "integer")
+    else if (is.integer(data))
       values = rep(NA_integer_, npoints)
-    else if (class(data) == "logical")
+    else if (is.logical(data))
       values = rep(NA, npoints)
-    else if (class(data) == "numeric")
+    else if (is.numeric(data))
       values = rep(NA_real_, npoints)
-    else if (class(data) == "character")
+    else if (is.character(data))
       values = rep(NA_character_, npoints)
     else
       stop(glue::glue("The attribute {attribute} in the table of attributes is not of a supported type."))

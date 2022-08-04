@@ -247,65 +247,79 @@ void LAS::i_range_correction(DataFrame flightlines, double Rs, double f)
   return;
 }
 
+// x y z t the spatio-temporal coordinates of the sensor
+// k the index of the current point
 double LAS::range(NumericVector &x, NumericVector &y , NumericVector &z, NumericVector &t,  int k, double R_control)
 {
-  NumericVector::iterator it;
-  double dx, dy, dz, r, R;
-  int j = 0;
+  // Considering a set of xyzt positions of the the sensor S and an XYZT unique point P we are looking
+  // to the two sensor positions the closest (temporarily speaking) to the point P. These two points
+  // must be before and after point P but  "before" and "after" may not exist in edge cases
+  double ti, tf;
+  int i, f;
 
-  // The sensor positions were already sorted a R level
-  // For each point find the first element that is not less than the time t of the points
-  // This give the closest position of the sensor after (t1) the aqcuisition of the points (t)
-  it = std::lower_bound(t.begin(), t.end(), T[k]);
+  // The sensor positions were already sorted by gpstime at R level
+  // For the input point, find the closest sensor position.
+  int ind = search_closest(t, T[k]);
 
-  // We now need the sensor position before (t0) the aqcuisition.
-
-  // If the sensor position is the first one: no sensor position exists before this one
-  // thus no interpolation possible. We use the next one.
-  if (it == t.begin())
+  // We need two sensor positions to perform an interpolation. The second closest sensor position
+  // is either the previous or the next one
+  if (ind == 0)
   {
-    j = 1;
+    i = 0;
+    f = 1;
   }
-  // If the sensor position not found: no sensor position exists after this one
-  // thus no interpolation possible. We use the last one.
-  else if (it == t.end())
+  else if (ind == x.size()-1)
   {
-    j = x.size() - 1;
+    i = x.size()-2;
+    f = x.size()-1;
   }
-  // If t1-t0 is too big it is two differents flightlines. We must hold this case by chosing
-  // if we use the previous point or this one.
-  else if (std::abs(*it - *(it-1)) > 30)
-  {
-    // If t is closer to the previous one
-    if (std::abs(T[k] - *(it-1)) < std::abs(T[k] - *(it+1)))
-      j = it - t.begin() - 1;
-    else
-      j = it - t.begin() + 1;
-  }
-  // General case with t1 > t > t0. We have a sensor position after the aquisition of the point
-  // and it is not the first one. So we necessarily have a previous one. We can make the
-  // interpolation
   else
   {
-    j = it - t.begin();
+    if (std::abs(T[k] - t[ind-1]) < std::abs(T[k] - t[ind+1]))
+    {
+      i = ind-1;
+      f = ind;
+    }
+    else
+    {
+      i = ind;
+      f = ind+1;
+    }
   }
 
-  if (j >= x.size()) throw Rcpp::exception("Internal error: access to coordinates beyond the limits of the array. Please report this bug.", false);
-  if (j <= 0)        throw Rcpp::exception("Internal error: access to coordinates below 0 in the array. Please report this bug.", false);
+  ti = t[i];
+  tf = t[f];
 
-  r  = 1 - (t[j]-T[k])/(t[j]-t[j-1]);
-  dx = X[k] - (x[j-1] + (x[j] - x[j-1])*r);
-  dy = Y[k] - (y[j-1] + (y[j] - y[j-1])*r);
-  dz = Z[k] - (z[j-1] + (z[j] - z[j-1])*r);
+  // Because of some edge cases such as a single available position for a given flightline
+  // the retained positions may come from two different flightlines. We must handle this case.
+  // The sole possibility (AFAIK) for the following to be true is if a flightline has a single
+  // sensor position (see #608). In this case there is no way to get two positions
+  if (tf - ti > 30)
+  {
+    i = ind;
+    f = ind;
+    ti = t[i];
+    tf = t[f];
+  }
 
-  R  = std::sqrt(dx*dx + dy*dy + dz*dz);
+  double r;
+  if (i == f)
+    r = 1;
+  else
+    r = 1 - (t[f]-T[k])/(t[f]-t[i]);
+
+  double dx = X[k] - (x[i] + (x[f] - x[i])*r);
+  double dy = Y[k] - (y[i] + (y[f] - y[i])*r);
+  double dz = Z[k] - (z[i] + (z[f] - z[i])*r);
+
+  double R = std::sqrt(dx*dx + dy*dy + dz*dz);
 
   if (sensor != TLS && R > 3 * R_control)
   {
     Rprintf("An high range R has been computed relatively to the expected average range Rm = %.0lf\n", R_control);
     Rprintf("Point number %d at (x,y,z,t) = (%.2lf, %.2lf, %.2lf, %.2lf)\n", k+1, X[k], Y[k], Z[k], T[k]);
-    Rprintf("Matched with sensor between (%.2lf, %.2lf, %.2lf, %.2lf) and (%.2lf, %.2lf, %.2lf, %.2lf)\n", x[j-1], y[j-1], z[j-1], t[j-1], x[j], y[j], z[j], t[j]);
-    Rprintf("The range computed was R = %.2lf\n", R, dx, dy, dz, t[j]);
+    Rprintf("Matched with sensor between (%.2lf, %.2lf, %.2lf, %.2lf) and (%.2lf, %.2lf, %.2lf, %.2lf)\n", x[i], y[i], z[i], t[i], x[f], y[f], z[f], t[f]);
+    Rprintf("The range computed was R = %.2lf\n", R);
     Rprintf("Check the correctness of the sensor positions and the correctness of the gpstime either in the point cloud or in the sensor positions.\n");
     throw Rcpp::exception("Unrealistic range: see message above", false);
   }
@@ -1677,5 +1691,29 @@ NumericVector LAS::interpolate_knnidw(NumericVector x, NumericVector y, int k, d
   if (abort) throw Rcpp::internal::InterruptedException();
 
   return iZ;
+}
+
+
+long LAS::search_closest(const Rcpp::NumericVector& sorted_array, double x) {
+
+  auto iter_geq = std::lower_bound(
+    sorted_array.begin(),
+    sorted_array.end(),
+    x
+  );
+
+  if (iter_geq == sorted_array.begin()) {
+    return 0;
+  }
+
+  double a = *(iter_geq - 1);
+  double b = *(iter_geq);
+
+  if (fabs(x - a) < fabs(x - b)) {
+    return iter_geq - sorted_array.begin() - 1;
+  }
+
+  return iter_geq - sorted_array.begin();
+
 }
 
