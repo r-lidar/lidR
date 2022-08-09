@@ -1,13 +1,11 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
-<<<<<<< HEAD
 ## lidR v4.1.0 (Release date: )
 
 1. New functions `head()` and `tail()` for `LAS` objects
+2. The plot function can now handle several hundreds of millions points relatively smoothly. `plot` is now capable of spatially indexing the point-cloud to display it at a reduced resolution and only within the frustum. `plot` now never displays more than 3e6 and densifies progressively points when user is zooming in.
 
-## lidR v4.0.1 (Release date: )
-=======
-## lidR v4.0.2
+## lidR v4.0.2  (Release date: )
 
 - New: `dsmtin` and `pitfree` gain an argument `highest`. This option was enable by default in previous releases. There is now an option to disable it.
 - Fix: [#580](https://github.com/r-lidar/lidR/issues/580). `normalize_height()` works in parallel with `SpatRaster`.

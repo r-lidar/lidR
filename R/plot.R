@@ -39,6 +39,10 @@
 #' resolution is guessed automatically. Otherwise users can provide the size of the voxels. To reduce the rendering time,
 #' an internal optimization removes voxels that are not visible when surrounded by other voxels.
 #' @param NAcol a color for NA values.
+#' @param maxpoints numeric. (experimental) The maximum number of points rendered. If the point-cloud
+#' has more than this number of points the point cloud will be spatially indexed such as it dynamically
+#' queries a subset of the points within the frustum. Then it progressively densifies the point-cloud
+#' when zooming in.
 #'
 #' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
 #' @param chunk_pattern logical. Display the current chunk pattern used to process the catalog.
@@ -93,9 +97,10 @@ setMethod("plot", signature(x = "LAS", y = "missing"),
                    legend = FALSE,
                    add = FALSE,
                    voxel = FALSE,
-                   NAcol = "lightgray")
+                   NAcol = "lightgray",
+                   maxpoints = 2e6)
 {
-  plot.LAS(x, y, ..., color = color, pal = pal, bg = bg, breaks = breaks, nbreaks = nbreaks, backend = backend, clear_artifacts = clear_artifacts, axis = axis, legend = legend, add = add, voxel = voxel, NAcol = NAcol)
+  plot.LAS(x, y, ..., color = color, pal = pal, bg = bg, breaks = breaks, nbreaks = nbreaks, backend = backend, clear_artifacts = clear_artifacts, axis = axis, legend = legend, add = add, voxel = voxel, NAcol = NAcol, maxpoints = maxpoints)
 })
 
 #' @export
@@ -169,7 +174,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
     opt_progress(x) <- TRUE
     opt_output_files(x) <- ""
     engine_chunks(x)
-    return(invisible())
+    return(invisible(NULL))
   }
   else
   {
@@ -221,7 +226,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
       plot(catalog_overlaps(x), add = T, col = "red", border = "red")
     }
 
-    return(invisible())
+    return(invisible(NULL))
   }
 }
 
@@ -237,14 +242,15 @@ plot.LAS = function(x, y, ...,
                     legend = FALSE,
                     add = FALSE,
                     voxel = FALSE,
-                    NAcol = "lightgray")
+                    NAcol = "lightgray",
+                    maxpoints = 2e6)
 {
   args <- list(...)
   if (is.null(args$size))
     args$size <- 1.5
 
   # Backward compatibility
-  #nocov start
+  # nocov start
   if (!is.null(args$colorPalette))
   {
     if (length(args$colorPalette) == 1L && args$colorPalette == "auto")
@@ -395,11 +401,15 @@ plot.LAS = function(x, y, ...,
 
   lasplot <- if (use_rgl) .plot_with_rgl else .plot_with_pcv # nocov
 
-  return(lasplot(x, bg, idcolor, pal, clear_artifacts, axis, legend, args, add, voxel, breaks))
+  return(lasplot(x, bg, idcolor, pal, clear_artifacts, axis, legend, args, add, voxel, breaks, maxpoints))
 }
 
-.plot_with_rgl = function(x, bg, idcolor, pal, clear_artifacts, axis, legend, args, add, use_voxels, breaks)
+.plot_with_rgl = function(x, bg, idcolor, pal, clear_artifacts, axis, legend, args, add, use_voxels, breaks, maxpoints)
 {
+  npoints = npoints(x)
+  use_spatial_index <- npoints > maxpoints
+  if (use_spatial_index) verbose("Spatial indexing and partial rendering enabled")
+
   # The color of the foreground  (axis actually) is the opposite of the background
   # so usually white, maybe black if bg = "white" or something fancy in other cases
   fg <- grDevices::col2rgb(bg)
@@ -445,13 +455,25 @@ plot.LAS = function(x, y, ...,
     verbose(glue::glue("Rendering {nvoxels2} voxels. {nvoxels1-nvoxels2} being hidden."))
   }
 
-  with <- c(list(x = x@data[["X"]], y = x@data[["Y"]], z = x@data[["Z"]], col = col), args)
+  if (use_spatial_index)
+  {
+    verbose("Construction of a set of core points used as layout\n")
+    corepoints = 1e4
+    corepoints <- sample(1:npoints(x), ncorepoints)
+    core <- las[corepoints]
+    with <- c(list(x = core[["X"]], y = core[["Y"]], z = core[["Z"]], col = col[corepoints]), args)
+  }
+  else
+  {
+    with <- c(list(x = x[["X"]], y = x[["Y"]], z = x[["Z"]], col = col), args)
+  }
 
   if (clear_artifacts)
   {
     with$x <- with$x - minx
     with$y <- with$y - miny
   }
+
   # If it is a new layer, open an rgl windows
   if (isFALSE(add))
   {
@@ -496,7 +518,16 @@ plot.LAS = function(x, y, ...,
     rgl::bg3d(texture = f, col = "white") # nocov
   }
 
-  .pan3d(2)
+
+  if (!use_spatial_index)
+  {
+    pan3d(2)
+  }
+  else
+  {
+    x@data[[".COLOR"]] <- col
+    spatially_indexed_pan_and_zoom(x, clear_artifacts, maxpoints)
+  }
 
   if (clear_artifacts)
     return(invisible(c(minx, miny)))
@@ -505,7 +536,7 @@ plot.LAS = function(x, y, ...,
 }
 
 # nocov start
-.plot_with_pcv = function(x, bg, idcolor, pal, clear_artifacts, axis, legend, args, add, use_voxel, breaks)
+.plot_with_pcv = function(x, bg, idcolor, pal, clear_artifacts, axis, legend, args, add, use_voxel, breaks, maxpoints)
 {
   if (!isFALSE(add)) stop("Argument 'add' is not supported with lidRviewer")
   if (!isFALSE(use_voxel)) stop("Argument 'use_voxel' is not supported with lidRviewer")
@@ -544,38 +575,5 @@ plot.LAS = function(x, y, ...,
   graphics::mtext(labels, side = 2, at = seq(yb, yt, length.out = nlab), las = 2, cex = 1.2, col = text.col)
   grDevices::dev.off()
   return(f)
-}
-# nocov end
-
-# From rgl.setMouseCallbacks man page
-# nocov start
-.pan3d <- function(button, dev = rgl::rgl.cur(), subscene = rgl::currentSubscene3d(dev))
-{
-  start <- list()
-
-  begin <- function(x, y)
-  {
-    activeSubscene <- rgl::par3d("activeSubscene", dev = dev)
-    start$listeners <<- rgl::par3d("listeners", dev = dev, subscene = activeSubscene)
-
-    for (sub in start$listeners)
-    {
-      init <- rgl::par3d(c("userProjection","viewport"), dev = dev, subscene = sub)
-      init$pos <- c(x/init$viewport[3], 1 - y/init$viewport[4], 0.5)
-      start[[as.character(sub)]] <<- init
-    }
-  }
-
-  update <- function(x, y)
-  {
-    for (sub in start$listeners)
-    {
-      init <- start[[as.character(sub)]]
-      xlat <- 2*(c(x/init$viewport[3], 1 - y/init$viewport[4], 0.5) - init$pos)
-      mouseMatrix <- rgl::translationMatrix(xlat[1], xlat[2], xlat[3])
-      rgl::par3d(userProjection = mouseMatrix %*% init$userProjection, dev = dev, subscene = sub )
-    }
-  }
-  rgl::rgl.setMouseCallbacks(button, begin, update, dev = dev, subscene = subscene)
 }
 # nocov end
