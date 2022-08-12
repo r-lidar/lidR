@@ -459,7 +459,7 @@ plot.LAS = function(x, y, ...,
   {
     verbose("Construction of a set of core points used as layout\n")
     corepoints = 1e4
-    corepoints <- sample(1:npoints(x), ncorepoints)
+    corepoints <- sample(1:npoints(x), corepoints)
     core <- las[corepoints]
     with <- c(list(x = core[["X"]], y = core[["Y"]], z = core[["Z"]], col = col[corepoints]), args)
   }
