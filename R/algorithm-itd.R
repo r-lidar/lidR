@@ -154,7 +154,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
     . <- z <- X <- Y <- Z <- treeID <- NULL
 
     stopifnotlas(las)
-    crs = sf::NA_crs_
+    crs <- sf::st_crs(las)
 
     if (!interactive())
       stop("R is not being used interactively", call. = FALSE)

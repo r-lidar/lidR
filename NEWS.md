@@ -8,7 +8,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Fix: [#587](https://github.com/r-lidar/lidR/issues/587). `crown_metrics()` now triggers a warning when invalid geometries are created and `delineate_crowns()` remove these geometries before to convert to `sp`
 - Fix: [#594](https://github.com/r-lidar/lidR/issues/594). `crown_metrics()` now works with `func = NULL` and a `LAScatalog`
 - Fix: [#608](https://github.com/r-lidar/lidR/issues/608). The C++ function used to compute the range between a point and the sensor from the sensor positions was rebased to resolve a bug when a single sensor position was found for a given flightline. New warnings were added.
-- Fix: [#609](https://github.com/r-lidar/lidR/issues/609). `*_metrics()` functions were returning NAs no matter the metric computed for `lastofmany`
+- Fix: [#609](https://github.com/r-lidar/lidR/issues/609). `*_metrics()` functions were returning `NA`s no matter the metric computed for `lastofmany`
+- Fix: [#614](https://github.com/r-lidar/lidR/issues/614). Manual tree detection preserves the CRS.
 - Doc: `dalponte2016` doc updated to use `terra`
 
 ## lidR v4.0.1 (Release date: 2022-05-03)
