@@ -66,6 +66,11 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
   assert_all_are_in_closed_range(th_cr, 0, 1)
   stopifnot(raster_is_supported(chm))
 
+  # Workaround for #622 If segment_tree is ran in parallel it will fail with
+  # SpatRaster because they are not serializable. SpatRaster are converted to RasterLayer
+  # for multicore strategies
+  chm <- convert_ondisk_spatraster_into_serializable_raster_if_necessary(chm)
+
   treetops <- check_tree_tops(treetops, ID)
   chm      <- lazyeval::uq(chm)
   treetops <- lazyeval::uq(treetops)
@@ -203,6 +208,11 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
   assert_all_are_positive(max_cr_factor)
   assert_all_are_in_open_range(exclusion, 0, 1)
 
+  # Workaround for #622 If segment_tree is ran in parallel it will fail with
+  # SpatRaster because they are not serializable. SpatRaster are converted to RasterLayer
+  # for multicore strategies
+  chm <- convert_ondisk_spatraster_into_serializable_raster_if_necessary(chm)
+
   treetops       <- check_tree_tops(treetops, ID)
   chm            <- lazyeval::uq(chm)
   treetops       <- lazyeval::uq(treetops)
@@ -322,6 +332,11 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
   assert_is_a_number(tol)
   assert_is_a_number(ext)
   assert_package_is_installed("EBImage")
+
+  # Workaround for #622 If segment_tree is ran in parallel it will fail with
+  # SpatRaster because they are not serializable. SpatRaster are converted to RasterLayer
+  # for multicore strategies
+  chm <- convert_ondisk_spatraster_into_serializable_raster_if_necessary(chm)
 
   chm     <- lazyeval::uq(chm)
   th_tree <- lazyeval::uq(th_tree)

@@ -698,3 +698,19 @@ raster_in_memory <- function(raster)
 
   raster_error()
 }
+
+
+# Workaround for #580 #622. If normalize height is ran in parallel it will fail with
+# SpatRaster because they are not serializable. SpatRaster are converted to RasterLayer
+# for multicore strategies
+convert_ondisk_spatraster_into_serializable_raster_if_necessary <- function(x)
+{
+  if (is_raster(x) && raster_pkg(x) == "terra")
+  {
+    ncores <- try_to_get_num_future_cores()
+    if (!is.null(ncores) && ncores >= 2L)
+      x <- raster::raster(x)
+  }
+
+  return(x)
+}

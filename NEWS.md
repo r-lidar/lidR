@@ -3,7 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v4.0.2
 
 - New: `dsmtin` and `pitfree` gain an argument `highest`. This option was enable by default in previous releases. There is now an option to disable it.
-- Fix: [#580](https://github.com/r-lidar/lidR/issues/580). `normalize_height()` works in parallel with `SpatRaster`.
+- Fix: [#580](https://github.com/r-lidar/lidR/issues/580) and [#622](https://github.com/r-lidar/lidR/issues/622)  `normalize_height()` and `segment_trees` work in parallel with `SpatRaster`.
 - Fix: [#586](https://github.com/r-lidar/lidR/issues/586).
 - Fix: [#587](https://github.com/r-lidar/lidR/issues/587). `crown_metrics()` now triggers a warning when invalid geometries are created and `delineate_crowns()` remove these geometries before to convert to `sp`
 - Fix: [#594](https://github.com/r-lidar/lidR/issues/594). `crown_metrics()` now works with `func = NULL` and a `LAScatalog`
