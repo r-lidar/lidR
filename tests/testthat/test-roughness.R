@@ -1,5 +1,7 @@
 context("roughness")
 
+skip_if_not_installed("geometry")
+
 test_that("Flat surfaces have a rumple index of 1. Delaunay method", {
   n = sample(10:20, 1)
   x = runif(n, 0, 100)
