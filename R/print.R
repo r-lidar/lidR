@@ -153,7 +153,7 @@ setMethod("show", "LAS", function(object)
   version   <- paste(major, minor, sep = ".")
   format    <- phb[["Point Data Format ID"]]
   units     <- st_crs(object)$units
-  units     <- if (is.na(units)) "units" else units
+  units     <- if (is.null(units) || is.na(units)) "units" else units
 
   areaprefix  <- ""
   pointprefix <- ""
