@@ -2,6 +2,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v4.0.2 (Release date: 2022-09-15)
 
+- Fix: [#638](https://github.com/r-lidar/lidR/issues/638). `unormalize_height()` removes extra_bytes in VLR.
 - Fix: [#637](https://github.com/r-lidar/lidR/issues/637). `print(las)` works even when the CRS is not recognized by `sf`.
 - New: `dsmtin` and `pitfree` gain an argument `highest`. This option was enable by default in previous releases. There is now an option to disable it.
 - Fix: [#580](https://github.com/r-lidar/lidR/issues/580) and [#622](https://github.com/r-lidar/lidR/issues/622)  `normalize_height()` and `segment_trees` work in parallel with `SpatRaster`.

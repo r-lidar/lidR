@@ -137,7 +137,7 @@ unnormalize_height = function(las)
   if ("Zref" %in% names(las))
   {
     las@data[["Z"]] <- las@data[["Zref"]]
-    las@data[["Zref"]] <- NULL
+    las <- remove_lasattribute(las, "Zref")
     las <- lasupdateheader(las)
   }
   else
