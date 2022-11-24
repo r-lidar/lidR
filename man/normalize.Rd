@@ -32,7 +32,9 @@ different than providing a DTM in \code{algorithm}. If \code{algorithm = dtm} th
 If \code{algorithm = tin()} and \code{dtm = raster} the ground points are not used and the DTM is
 interpolated as if it were made of regularly-spaced ground points.}
 
-\item{...}{ignored.}
+\item{...}{\code{normalized_height()} supports \code{add_lasattribute= TRUE} to add the elevation above
+see level as an extra byte attribute and \code{ Wdegenerated = FALSE} to silence the warning about
+degenerated ground points.}
 
 \item{e1}{a LAS object}
 

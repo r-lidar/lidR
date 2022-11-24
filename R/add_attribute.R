@@ -233,7 +233,7 @@ remove_lasattribute = function(las, name)
 
   if (is.null(eb))
   {
-    message(glue::glue("{name} is not an extrabytes attribute of the LAS object."))
+    #message(glue::glue("{name} is not an extrabytes attribute of the LAS object."))
     las@data[[name]] <- NULL
     return(las)
   }

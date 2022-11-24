@@ -1,18 +1,18 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v4.0.2 (Release date: 2022-09-15)
+## lidR v4.0.2 (Release date: 2022-11-24)
 
 - Fix: [#638](https://github.com/r-lidar/lidR/issues/638). `unormalize_height()` removes extra_bytes in VLR.
 - Fix: [#637](https://github.com/r-lidar/lidR/issues/637). `print(las)` works even when the CRS is not recognized by `sf`.
-- New: `dsmtin` and `pitfree` gain an argument `highest`. This option was enable by default in previous releases. There is now an option to disable it.
+- New: `dsmtin` and `pitfree` gain an argument `highest`. This option was enabled by default in previous releases. There is now an option to disable it.
 - Fix: [#580](https://github.com/r-lidar/lidR/issues/580) and [#622](https://github.com/r-lidar/lidR/issues/622)  `normalize_height()` and `segment_trees` work in parallel with `SpatRaster`.
 - Fix: [#586](https://github.com/r-lidar/lidR/issues/586).
-- Fix: [#587](https://github.com/r-lidar/lidR/issues/587). `crown_metrics()` now triggers a warning when invalid geometries are created and `delineate_crowns()` remove these geometries before to convert to `sp`
-- Fix: [#594](https://github.com/r-lidar/lidR/issues/594). `crown_metrics()` now works with `func = NULL` and a `LAScatalog`
+- Fix: [#587](https://github.com/r-lidar/lidR/issues/587). `crown_metrics()` now triggers a warning when invalid geometries are created and `delineate_crowns()` remove these geometries before to convert to `sp`.
+- Fix: [#594](https://github.com/r-lidar/lidR/issues/594). `crown_metrics()` now works with `func = NULL` and a `LAScatalog`.
 - Fix: [#608](https://github.com/r-lidar/lidR/issues/608). The C++ function used to compute the range between a point and the sensor from the sensor positions was re-based to resolve a bug when a single sensor position was found for a given flightline. New warnings were added.
-- Fix: [#609](https://github.com/r-lidar/lidR/issues/609). `*_metrics()` functions were returning `NA`s no matter the metric computed for `lastofmany`
+- Fix: [#609](https://github.com/r-lidar/lidR/issues/609). `*_metrics()` functions always returned `NA`s for `lastofmany`.
 - Fix: [#614](https://github.com/r-lidar/lidR/issues/614). Manual tree detection preserves the CRS.
-- Doc: `dalponte2016` doc updated to use `terra`
+- Doc: `dalponte2016` doc updated to use `terra`.
 
 ## lidR v4.0.1 (Release date: 2022-05-03)
 
