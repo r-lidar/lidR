@@ -146,49 +146,6 @@ fun1 <- ~list(maxz = max(Z))
 fun2 <- ~list(q85 = quantile(Z, probs = 0.85))
 
 # ================
-# TEMPLATE METRICS
-# ================
-
-# a raster as template
-template <- raster::raster(extent(las), nrow = 15, ncol = 15)
-raster::crs(template) <- crs(las)
-m <- template_metrics(las, fun1, template)
-plot(m, col = col)
-
-# a sfc_POLYGON as template
-sfc <- sf::st_as_sfc(st_bbox(las))
-template <- sf::st_make_grid(sfc, cellsize = 20, square = FALSE)
-m <- template_metrics(las, fun1, template)
-plot(m)
-
-# a bbox as template
-template <- st_bbox(las) + c(50,30,-50,-70)
-plot(sf::st_as_sfc(st_bbox(las)), col = "gray")
-plot(sf::st_as_sfc(template), col = "darkgreen", add = TRUE)
-m <- template_metrics(las, fun2, template)
-print(m)
-
-# ================
-# CUSTOM METRICS
-# ================
-
-# Define a function that computes custom metrics
-# in an R&D perspective.
-myMetrics = function(z, i) {
-  metrics = list(
-     zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
-     zimean  = mean(z*i),       # Mean products of z by intensity
-     zsqmean = sqrt(mean(z^2))) # Quadratic mean
-
-   return(metrics)
-}
-
-# example with a stars template
-template <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10)
-m <- template_metrics(las, myMetrics(Z, Intensity), template)
-plot(m, col = col)
-
-# ================
 # CLOUD METRICS
 # ================
 
@@ -199,9 +156,6 @@ cloud_metrics(las, .stdmetrics_z)
 # ================
 
 m <- pixel_metrics(las, fun1, 20)
-plot(m, col = col)
-
-m = pixel_metrics(las, myMetrics(Z, Intensity))
 plot(m, col = col)
 
 # ================
@@ -287,4 +241,48 @@ plot(metrics, col = heat.colors(25))
 
 cloud_metrics(las, func, by_echo = echo)
 
+\dontrun{
+# ================
+# TEMPLATE METRICS
+# ================
+
+# a raster as template
+template <- raster::raster(extent(las), nrow = 15, ncol = 15)
+raster::crs(template) <- crs(las)
+m <- template_metrics(las, fun1, template)
+plot(m, col = col)
+
+# a sfc_POLYGON as template
+sfc <- sf::st_as_sfc(st_bbox(las))
+template <- sf::st_make_grid(sfc, cellsize = 20, square = FALSE)
+m <- template_metrics(las, fun1, template)
+plot(m)
+
+# a bbox as template
+template <- st_bbox(las) + c(50,30,-50,-70)
+plot(sf::st_as_sfc(st_bbox(las)), col = "gray")
+plot(sf::st_as_sfc(template), col = "darkgreen", add = TRUE)
+m <- template_metrics(las, fun2, template)
+print(m)
+
+# ================
+# CUSTOM METRICS
+# ================
+
+# Define a function that computes custom metrics
+# in an R&D perspective.
+myMetrics = function(z, i) {
+  metrics = list(
+     zwimean = sum(z*i)/sum(i), # Mean elevation weighted by intensities
+     zimean  = mean(z*i),       # Mean products of z by intensity
+     zsqmean = sqrt(mean(z^2))) # Quadratic mean
+
+   return(metrics)
+}
+
+# example with a stars template
+template <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10)
+m <- template_metrics(las, myMetrics(Z, Intensity), template)
+plot(m, col = col)
+}
 }

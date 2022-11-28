@@ -1,6 +1,6 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v4.0.2 (Release date: 2022-11-24)
+## lidR v4.0.2 (Release date: 2022-11-28)
 
 - Fix: [#638](https://github.com/r-lidar/lidR/issues/638). `unormalize_height()` removes extra_bytes in VLR.
 - Fix: [#637](https://github.com/r-lidar/lidR/issues/637). `print(las)` works even when the CRS is not recognized by `sf`.
