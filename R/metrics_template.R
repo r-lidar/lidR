@@ -70,6 +70,8 @@
 #' fun1 <- ~list(maxz = max(Z))
 #' fun2 <- ~list(q85 = quantile(Z, probs = 0.85))
 #'
+#' set_lidr_threads(1) ; data.table::setDTthreads(1) # for cran only
+#'
 #' # ================
 #' # CLOUD METRICS
 #' # ================
@@ -81,7 +83,7 @@
 #' # ================
 #'
 #' m <- pixel_metrics(las, fun1, 20)
-#' plot(m, col = col)
+#' #plot(m, col = col)
 #'
 #' # ================
 #' # PLOT METRICS
@@ -92,16 +94,16 @@
 #' inventory # contains an ID and a Value Of Interest (VOI) per plot
 #'
 #' m <- plot_metrics(las, fun2, inventory, radius = 11.28)
-#' plot(header(las))
-#' plot(m["q85"], pch = 19, cex = 3, add = TRUE)
+#' #plot(header(las))
+#' #plot(m["q85"], pch = 19, cex = 3, add = TRUE)
 #'
 #' \donttest{
 #' # Works with polygons as well
 #' inventory <- sf::st_buffer(inventory, 11.28)
-#' plot(header(las))
-#' plot(sf::st_geometry(inventory), add = TRUE)
+#' #plot(header(las))
+#' #plot(sf::st_geometry(inventory), add = TRUE)
 #' m <- plot_metrics(las, .stdmetrics_z, inventory)
-#' plot(m["zq85"], pch = 19, cex = 3, add = TRUE)
+#' #plot(m["zq85"], pch = 19, cex = 3, add = TRUE)
 #' }
 #'
 #' # ================
@@ -122,19 +124,18 @@
 #' trees <- readLAS(LASfile, filter = "-drop_z_below 0")
 #'
 #' metrics <- crown_metrics(trees, .stdtreemetrics)
-#' plot(metrics["Z"], pch = 19)
+#' #plot(metrics["Z"], pch = 19)
 #'
 #' metrics <- crown_metrics(trees, .stdtreemetrics, geom = "convex")
-#' plot(metrics["Z"])
+#' #plot(metrics["Z"])
 #'
 #' metrics <- crown_metrics(trees, .stdtreemetrics, geom = "bbox")
-#' plot(metrics["Z"])
+#' #plot(metrics["Z"])
 #'
 #' \donttest{
 #' metrics <- crown_metrics(trees, .stdtreemetrics, geom = "concave")
-#' plot(metrics["Z"])
+#' #plot(metrics["Z"])
 #' }
-#'
 #' # ================
 #' # ARGUMENT FILTER
 #' # ================
@@ -162,7 +163,7 @@
 #' # func defines one metric but 3 are computed respectively for: (1) all echo types,
 #' # (2) for first returns only and (3) for multiple returns only
 #' metrics <- pixel_metrics(las, func, 20, by_echo = echo)
-#' plot(metrics, col = heat.colors(25))
+#' #plot(metrics, col = heat.colors(25))
 #'
 #' cloud_metrics(las, func, by_echo = echo)
 #'
@@ -175,13 +176,13 @@
 #' template <- raster::raster(extent(las), nrow = 15, ncol = 15)
 #' raster::crs(template) <- crs(las)
 #' m <- template_metrics(las, fun1, template)
-#' plot(m, col = col)
+#' #plot(m, col = col)
 #'
 #' # a sfc_POLYGON as template
 #' sfc <- sf::st_as_sfc(st_bbox(las))
 #' template <- sf::st_make_grid(sfc, cellsize = 20, square = FALSE)
 #' m <- template_metrics(las, fun1, template)
-#' plot(m)
+#' #plot(m)
 #'
 #' # a bbox as template
 #' template <- st_bbox(las) + c(50,30,-50,-70)
@@ -208,7 +209,7 @@
 #' # example with a stars template
 #' template <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10)
 #' m <- template_metrics(las, myMetrics(Z, Intensity), template)
-#' plot(m, col = col)
+#' #plot(m, col = col)
 #' }
 #' @name aggregate
 #' @rdname aggregate
