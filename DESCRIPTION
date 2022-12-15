@@ -47,7 +47,6 @@ Suggests:
     gstat,
     RCSF,
     RMCC,
-    rgdal,
     mapview,
     mapedit,
     progress,
