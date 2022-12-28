@@ -24,6 +24,7 @@
 #' Lidar Data of Forest Canopies. Photogrammetric Engineering & Remote Sensing, 77(3), 251–259.
 #' https://doi.org/10.14358/pers.77.3.251
 #' @examples
+#' \dontrun{
 #' # A valid file properly populated
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile)
@@ -39,6 +40,7 @@
 #'
 #' # This might be useful for some applications
 #' R = get_range(las, sensor)
+#' }
 range_correction = function(sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z")
 {
   assert_is_a_number(Rs)
