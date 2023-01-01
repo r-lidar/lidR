@@ -222,7 +222,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
       if (sum(i) > 0)
       {
         ii <- which(i == TRUE)
-        rgl::rgl.pop(id = apice[ii]$id)
+        rgl::pop3d(id = apice[ii]$id)
         apice <- apice[-ii]
       }
       # There is no apex in the selected region: find an apex
@@ -243,7 +243,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
       }
     }
 
-    rgl::rgl.close()
+    rgl::close3d()
 
     apice[, id := NULL]
     apice[, treeID := 1:.N]

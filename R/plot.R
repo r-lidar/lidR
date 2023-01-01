@@ -456,8 +456,8 @@ plot.LAS = function(x, y, ...,
   if (isFALSE(add))
   {
     rgl::open3d()
-    rgl::rgl.bg(color = bg)
-    rgl::rgl.material(specular = "black")
+    rgl::bg3d(color = bg)
+    rgl::material3d(specular = "black")
   }
 
   # Two modes, point-cloud rendering or voxel rendering
@@ -549,7 +549,7 @@ plot.LAS = function(x, y, ...,
 
 # From rgl.setMouseCallbacks man page
 # nocov start
-.pan3d <- function(button, dev = rgl::rgl.cur(), subscene = rgl::currentSubscene3d(dev))
+.pan3d <- function(button, dev = rgl::cur3d(), subscene = rgl::currentSubscene3d(dev))
 {
   start <- list()
 
