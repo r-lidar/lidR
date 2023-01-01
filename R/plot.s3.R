@@ -77,7 +77,7 @@ NULL
 plot_dtm3d = function(dtm, bg = "black", clear_artifacts = TRUE, ...)
 {
   rgl::open3d()
-  rgl::rgl.bg(color = bg)
+  rgl::bg3d(color = bg)
   shift = c(0,0)
 
   if (clear_artifacts)
