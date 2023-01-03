@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v4.0.3 (Release date: 2022-11-28)
+
+- Replace `rg::rgl.*` by `rgl::*3d` functions.
+
 ## lidR v4.0.2 (Release date: 2022-11-28)
 
 - Fix: [#638](https://github.com/r-lidar/lidR/issues/638). `unormalize_height()` removes extra_bytes in VLR.
