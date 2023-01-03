@@ -35,7 +35,6 @@ Using the 'gpstime' of each point, the position of the sensor is interpolated fr
 and a range correction is applied.
 }
 \examples{
-\dontrun{
 # A valid file properly populated
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile)
@@ -51,7 +50,6 @@ las <- normalize_intensity(las, range_correction(sensor, Rs = 2000))
 
 # This might be useful for some applications
 R = get_range(las, sensor)
-}
 }
 \references{
 Gatziolis, D. (2011). Dynamic Range-based Intensity Normalization for Airborne, Discrete Return
