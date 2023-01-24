@@ -261,5 +261,5 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
     }
   }
 
-  return(LAS(data, header, check = TRUE, index = LIDRDEFAULTINDEX))
+  return(LAS(data, header, check = TRUE, index = LIDRDEFAULTINDEX, no_attr_name_check = TRUE))
 }

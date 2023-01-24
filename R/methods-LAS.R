@@ -52,7 +52,8 @@ LAS <- function(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = 
   if (!data.table::is.data.table(data))
     stop("Invalid parameter data in constructor.")
 
-  names(data) <- fix_name_convention(names(data))
+  if (is.null(dots$no_attr_name_check))
+    names(data) <- fix_name_convention(names(data))
 
   rlas::is_defined_coordinates(data, "stop")
   rlas::is_valid_XYZ(data, "stop")
