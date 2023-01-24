@@ -41,7 +41,8 @@
 #' @param scale,offset numeric. The scale and offset of the data. NULL if not relevant.
 #' @param NA_value numeric or integer. NA is not a valid value in a las file. At time of writing it will
 #' be replaced by this value that will be considered as NA. NULL if not relevant.
-#' @param R,G,B integer. RGB values
+#' @param R,G,B,NIR integer. RGB and NIR values. Values are automatically scaled to 16 bits if they are
+#' coded on 8 bits (0 to 255).
 #'
 #' @return An object of class \link[=LAS-class]{LAS}
 #'
@@ -212,6 +213,25 @@ add_lasrgb <- function(las, R, G, B)
   }
 
   las@header@PHB[["Point Data Format ID"]] <- format
+  return(las)
+}
+
+#' @export
+#' @rdname add_attribute
+add_lasnir <- function(las, NIR)
+{
+  stopifnotlas(las)
+  stopifnot(is.integer(NIR))
+  assert_is_of_length(NIR, npoints(las))
+
+  maxnir <- max(NIR, na.rm = TRUE)
+
+  scale <- 1L
+  if (maxnir <= 255)
+    scale <- 257L
+
+  las@data$NIR <- NIR*scale
+  las@header@PHB[["Point Data Format ID"]] <- 8L
   return(las)
 }
 

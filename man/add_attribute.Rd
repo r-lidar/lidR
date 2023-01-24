@@ -5,6 +5,7 @@
 \alias{add_lasattribute}
 \alias{add_lasattribute_manual}
 \alias{add_lasrgb}
+\alias{add_lasnir}
 \alias{remove_lasattribute}
 \title{Add attributes into a LAS object}
 \usage{
@@ -24,6 +25,8 @@ add_lasattribute_manual(
 )
 
 add_lasrgb(las, R, G, B)
+
+add_lasnir(las, NIR)
 
 remove_lasattribute(las, name)
 }
@@ -45,7 +48,8 @@ be missing (see details).}
 \item{NA_value}{numeric or integer. NA is not a valid value in a las file. At time of writing it will
 be replaced by this value that will be considered as NA. NULL if not relevant.}
 
-\item{R, G, B}{integer. RGB values}
+\item{R, G, B, NIR}{integer. RGB and NIR values. Values are automatically scaled to 16 bits if they are
+coded on 8 bits (0 to 255).}
 }
 \value{
 An object of class \link[=LAS-class]{LAS}
