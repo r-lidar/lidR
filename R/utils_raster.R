@@ -605,14 +605,8 @@ raster_bbox <- function(raster)
 
   if (is(raster, "SpatRaster"))
   {
-    if (terra::crs(raster) != "")
-      return(sf::st_bbox(raster))
-
-    bbox <- terra::ext(raster)
-    bbox <- bbox@ptr$vector
-    names(bbox) <- c("xmin", "xmax", "ymin", "ymax")
-    bbox <- sf::st_bbox(bbox)
-    return(bbox)
+    # sf::st_bbox now works properly on SpatRaster.
+    return(sf::st_bbox(raster))
   }
 
   raster_error() # nocov
