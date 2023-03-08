@@ -3,8 +3,9 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v4.0.3 (Release date: )
 
 - Add a function `add_lasnir()`.
-- Replace `rg::rgl.*` by `rgl::*3d` functions.
-- `readLAS` no longer checks for attribute names validity as they are necessarily correct. Fix [#659](https://github.com/r-lidar/lidR/issues/659)
+- Replace `rg::rgl.*` by `rgl::*3d` functions [#651](https://github.com/r-lidar/lidR/issues/651)
+- Fix: `readLAS` no longer checks for attribute names validity as they are necessarily correct [#659](https://github.com/r-lidar/lidR/issues/659)
+- Fix: `plot_metrics()` no longer fails with a single plot [#664](https://github.com/r-lidar/lidR/issues/664)
 
 ## lidR v4.0.2 (Release date: 2022-11-28)
 

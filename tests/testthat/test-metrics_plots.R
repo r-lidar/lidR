@@ -9,3 +9,13 @@ test_that("plot_metrics works if some plot contain 0 points (#551)", {
   expect_equal(m[4,]$zmax, NA_real_)
   expect_equal(m[4,]$zq5, NA_real_)
 })
+
+test_that("plot_metrics works with 1 plot on LAScatalog (#664)", {
+
+  shpfile <- system.file("extdata", "efi_plot.shp", package="lidR")
+  inventory <- sf::st_read(shpfile, quiet = TRUE)
+  inventory <- inventory[1,]
+
+  expect_error(m <- plot_metrics(megaplot_ctg, .stdmetrics_z, inventory, radius = 11.28), NA)
+
+})
