@@ -1,6 +1,6 @@
 citHeader("To cite package lidR in publications use both:")
 
-citEntry(entry="Article",
+bibentry(bibtype="Article",
          author = "Jean-Romain Roussel and David Auty and Nicholas C. Coops and Piotr Tompalski and Tristan R.H. Goodbody and Andrew Sánchez Meador and Jean-François Bourdon and Florian de Boissieu and Alexis Achim",
          title = "lidR: An R package for analysis of Airborne Laser Scanning (ALS) data",
          journal = "Remote Sensing of Environment",
@@ -16,7 +16,7 @@ citEntry(entry="Article",
            "Remote Sensing of Environment, 251 (August), 112061. <doi:10.1016/j.rse.2020.112061>.")
 )
 
-year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
+year <- format(Sys.Date(), "%Y")
 vers <- paste("R package version", meta$Version)
 authors <- meta$`Authors@R`
 authors <- utils:::.read_authors_at_R_field(authors)
@@ -24,7 +24,7 @@ authors <- Filter(function(e) {!(is.null(e$given) && is.null(e$family)) && !is.n
 authors <- format(authors, include = c("given", "family"))
 authors <- paste(paste(head(authors, -1L), collapse = ", "), tail(authors, 1L), sep = " and ")
 
-citEntry(entry="Manual",
+bibentry(bibtype="Manual",
          title = meta$Title,
          author = authors,
          year = year,
