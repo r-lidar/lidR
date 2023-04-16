@@ -17,8 +17,10 @@
 #' @export
 #' @method plot lasmetrics3d
 #' @md
-plot.lasmetrics3d = function(x, y, ...)
-{
+#plot.lasmetrics3d = function(x, y, ...)
+
+setMethod("plot", signature(x = "lasmetrics3d", y = "missing"),
+function(x, y, ...) {
   cl <- class(x)
   on.exit(data.table::setattr(x, "class", cl))
   header = rlas::header_create(x)
@@ -26,6 +28,7 @@ plot.lasmetrics3d = function(x, y, ...)
   attr(las, "res") <- attr(x, "res")
   plot(las, ...)
 }
+)
 
 #' Add a spatial object to a point cloud scene
 #'

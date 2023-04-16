@@ -76,8 +76,9 @@
 #'
 #' @export
 #' @method plot LAS
-setGeneric("plot", function(x, y, ...)
-  standardGeneric("plot"))
+if (!isGeneric("plot")) 
+	setGeneric("plot", function(x, y, ...)
+	  standardGeneric("plot"))
 
 #' @rdname plot
 setMethod("plot", signature(x = "LAS", y = "missing"),
