@@ -71,7 +71,8 @@ p2r = function(subcircle = 0, na.fill = NULL)
       where <- sf::st_geometry(where)
       where <- sf::st_set_crs(where, sf::st_crs(hull))
       where <- sf::st_intersection(where, hull)
-      where <- sf::st_coordinates(where)[,-3]
+      where <- sf::st_coordinates(where)
+      if (ncol(where) == 3L) where = where[,-3L]
       where <- as.data.frame(where)
       data.table::setnames(where, c("X", "Y"))
 

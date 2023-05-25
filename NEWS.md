@@ -1,9 +1,13 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v4.0.3 (Release date: )
+## lidR v4.0.4 (Release date: ----------)
+
+- Fix: interpolation of NA pixels failed when a single pixel is missing [#684](https://github.com/r-lidar/lidR/issues/684)
+
+## lidR v4.0.3 (Release date: 2023-03-09)
 
 - Add a function `add_lasnir()`.
-- Replace `rg::rgl.*` by `rgl::*3d` functions [#651](https://github.com/r-lidar/lidR/issues/651)
+- Replace `rgl::rgl.*` by `rgl::*3d` functions [#651](https://github.com/r-lidar/lidR/issues/651)
 - Fix: `readLAS` no longer checks for attribute names validity as they are necessarily correct [#659](https://github.com/r-lidar/lidR/issues/659)
 - Fix: `plot_metrics()` no longer fails with a single plot [#664](https://github.com/r-lidar/lidR/issues/664)
 
