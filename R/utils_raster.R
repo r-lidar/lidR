@@ -211,7 +211,16 @@ raster_as_matrix <- function(raster, downsample = FALSE)
 #' @importFrom stats na.omit
 raster_as_dataframe <- function(raster,  xy = TRUE, na.rm = TRUE)
 {
-  if (raster_is_proxy(raster))
+  ondisk <- raster_is_proxy(raster)
+
+  # Small rasters can be loaded on the fly
+  if (ondisk & raster_fits_in_memory(raster, n = 10))
+  {
+    raster <- raster_in_memory(raster)
+    ondisk <- FALSE
+  }
+
+  if (ondisk)
     stop("On-disk rasters not supported in 'raster_as_dataframe()'", call. = FALSE) # nocov
 
   m <- raster_as_matrix(raster)
