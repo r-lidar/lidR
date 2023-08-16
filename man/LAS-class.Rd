@@ -53,11 +53,11 @@ is also standardized. Columns are named:
 }
 \section{Functions}{
 \itemize{
-\item \code{LAS}: creates objects of class LAS. The original data is updated by reference to
+\item \code{LAS()}: creates objects of class LAS. The original data is updated by reference to
 quantize the coordinates according to the scale factor of the header if no header is provided.
 In this case the scale factor is set to 0.001
-}}
 
+}}
 \section{Slots}{
 
 \describe{
