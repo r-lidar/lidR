@@ -6,6 +6,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Fix: [#694](https://github.com/r-lidar/lidR/issues/594) `silva2016` can load (not too big) ondisk chm on the fly.
 - Fix: [#690](https://github.com/r-lidar/lidR/issues/690) `rasterize_terrain()` works in parallel with `res = <SpatRaster>`.
 - Fix: [#689](https://github.com/r-lidar/lidR/issues/689) attributes are not renamed when filtering a point cloud.
+- New: [#680](https://github.com/r-lidar/lidR/issues/680) it is now possible to use `plot(las, mapview = TRUE)`.
 
 ## lidR v4.0.3 (Release date: 2023-03-09)
 

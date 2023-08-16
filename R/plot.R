@@ -41,6 +41,7 @@
 #' @param NAcol a color for NA values.
 #'
 #' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
+#' Since v4.0.4 `mapview = TRUE` is also possible with LAS objects.
 #' @param chunk_pattern logical. Display the current chunk pattern used to process the catalog.
 #' @param overlaps logical. Highlight the overlaps between files.
 #'
@@ -93,9 +94,10 @@ setMethod("plot", signature(x = "LAS", y = "missing"),
                    legend = FALSE,
                    add = FALSE,
                    voxel = FALSE,
-                   NAcol = "lightgray")
+                   NAcol = "lightgray",
+                   mapview = FALSE)
 {
-  plot.LAS(x, y, ..., color = color, pal = pal, bg = bg, breaks = breaks, nbreaks = nbreaks, backend = backend, clear_artifacts = clear_artifacts, axis = axis, legend = legend, add = add, voxel = voxel, NAcol = NAcol)
+  plot.LAS(x, y, ..., color = color, pal = pal, bg = bg, breaks = breaks, nbreaks = nbreaks, backend = backend, clear_artifacts = clear_artifacts, axis = axis, legend = legend, add = add, voxel = voxel, NAcol = NAcol, mapview = mapview)
 })
 
 #' @export
@@ -237,8 +239,14 @@ plot.LAS = function(x, y, ...,
                     legend = FALSE,
                     add = FALSE,
                     voxel = FALSE,
-                    NAcol = "lightgray")
+                    NAcol = "lightgray",
+                    mapview = FALSE)
 {
+  if (mapview)
+  {
+    return(plot(header(x), mapview = TRUE))
+  }
+
   args <- list(...)
   if (is.null(args$size))
     args$size <- 1.5
