@@ -146,6 +146,16 @@ rasterize_terrain.LAScatalog = function(las, res = 1, algorithm = tin(), use_cla
   # subset the collection to the size of the layout (if any)
   if (!is_a_number(res)) las <- catalog_intersect(las, res)
 
+  # Workaround for #690 (copied from #580). If rasterize_terrain is ran in parallel it will fail with
+  # SpatRaster because they are not serializable. SpatRaster are converted to RasterLayer
+  # for multicore strategies
+  if (is_raster(res) && raster_pkg(res) == "terra")
+  {
+    ncores <- try_to_get_num_future_cores()
+    if (!is.null(ncores) && ncores >= 2L)
+      res <- raster::raster(res)
+  }
+
   # Enforce some options
   opt_select(las) <- "xyzc"
   opt_filter(las) <-  paste("-keep_class", paste(use_class, collapse = " "), opt_filter(las))
