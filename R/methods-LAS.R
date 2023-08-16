@@ -362,7 +362,7 @@ smart_subset <- function(las, i)
   attr <- attr[!attr %in% c("X", "Y", "Z")]
   for (name in attr) new_data[[name]] <- data[[name]][i]
 
-  new_las <- LAS(new_data, las@header, st_crs(las), FALSE, las@index)
+  new_las <- LAS(new_data, las@header, st_crs(las), FALSE, las@index, no_attr_name_check = TRUE)
   new_las <- las_update(new_las)
   return(new_las)
 }
