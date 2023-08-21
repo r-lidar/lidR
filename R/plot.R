@@ -388,7 +388,7 @@ plot.LAS = function(x, y, ...,
     else
     {
       if (is.logical(colorattr)) colorattr <- as.integer(colorattr)
-      breaks    <- suppressWarnings(classInt::classIntervals(colorattr, min(nbreaks, nunique), breaks)$brk)
+      if (is.character(breaks)) breaks <- suppressWarnings(classInt::classIntervals(colorattr, min(nbreaks, nunique), breaks)$brk)
       nbreaks   <- length(breaks)
       pal       <- pal(nbreaks-1)
       idcolor   <- cut(colorattr, breaks, include.lowest = TRUE, label = FALSE)
