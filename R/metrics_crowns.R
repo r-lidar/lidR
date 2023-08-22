@@ -52,10 +52,10 @@ crown_metrics.LAS = function(las, func, geom = "point", concaveman = c(3, 0), at
     if (ninvalid > 0)
     {
       if (geom == "concave")
-        warning(glue::glue("{ninvalid} invalid polygons created. They likely correspond either to trees with aligned points or to edge cases where the convex hull converged to polygons that are not valid."), call. = FALSE)
+        warning(glue::glue("{ninvalid} invalid polygons created and removed. They likely correspond either to trees with aligned points or to edge cases where the convex hull converged to polygons that are not valid."), call. = FALSE)
 
       if (geom == "convex")
-        warning(glue::glue("{ninvalid} invalid polygons created. They likely correspond to trees with aligned points."), call. = FALSE)
+        warning(glue::glue("{ninvalid} invalid polygons created and removed. They likely correspond to trees with aligned points."), call. = FALSE)
     }
   }
 
@@ -89,6 +89,7 @@ crown_metrics.LAS = function(las, func, geom = "point", concaveman = c(3, 0), at
   }
 
   output <- sf::st_set_geometry(M2, sfgeom)
+  if (ninvalid > 0) output <- output[!invalid,]
   sf::st_crs(output) <- st_crs(las)
   return(output)
 }
@@ -118,7 +119,7 @@ crown_metrics.LAScatalog = function(las, func, geom = "point", concaveman = c(3,
   if (!is_formula && !is.null(func)) func <- lazyeval::f_capture(func)
   globals <- future::getGlobalsAndPackages(func)
 
-  options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals), automerge = TRUE)
+  options <- list(need_buffer = TRUE, drop_null = TRUE, globals = names(globals$globals), automerge = TRUE)
   output  <- catalog_apply(las, crown_metrics, func = func, geom = geom, concaveman = concaveman, attribute = attribute, ..., .options = options)
   return(output)
 }
