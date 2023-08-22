@@ -41,6 +41,7 @@ crown_metrics.LAS = function(las, func, geom = "point", concaveman = c(3, 0), at
   sfgeom <- sf::st_as_sfc(M1[["geom"]])
 
 
+  ninvalid = 0
   if (is(sfgeom, "sfc_POLYGON"))
   {
     invalid <- !sf::st_is_valid(sfgeom)
