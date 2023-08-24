@@ -1706,6 +1706,10 @@ long LAS::search_closest(const Rcpp::NumericVector& sorted_array, double x) {
     return 0;
   }
 
+  if (iter_geq == sorted_array.end()) {
+    return sorted_array.size() - 1;
+  }
+
   double a = *(iter_geq - 1);
   double b = *(iter_geq);
 
