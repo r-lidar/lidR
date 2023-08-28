@@ -497,7 +497,7 @@ rumple_index.SpatRaster <- function(x, y = NULL, z = NULL, ...)
   return(rumple_index.matrix(x, res[1], res[2]))
 }
 
-
+#' @export
 rumple_index.matrix <- function(x, y = NULL, z = NULL, ...)
 {
   area  <- sp::surfaceArea(x, y, z)

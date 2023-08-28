@@ -204,7 +204,7 @@ So for faster computation users can opt for las files instead of laz files. Obvi
 
 Another way to speed-up the total computation time is to avoid reading all 8 neighbouring tiles to load a buffer. Instead, we can read only parts of the neighbouring tiles. The gain comes from the fact that we read only a small portion of the neighbouring files to extract the buffer, skipping most of the file contents. Indeed, the buffer usually corresponds to only a very small percentage of the actual contents of a file (equivalent to a few thousands square meters).
 
-This is made possible by indexing the las or laz files with lax files. A lax file is a tiny file associated with a las or laz file that spatially indexes the points to make faster spatial queries. This file type was created by Martin Isenburg in [LAStools](https://rapidlasso.com/). For a better understanding of how it works one can refer to a talk given by Martin Isenburg about [lasindex](https://rapidlasso.com/2012/12/03/lasindex-spatial-indexing-of-lidar-data/).
+This is made possible by indexing the las or laz files with lax files. A lax file is a tiny file associated with a las or laz file that spatially indexes the points to make faster spatial queries. This file type was created by Martin Isenburg in [LAStools](https://rapidlasso.de/). For a better understanding of how it works one can refer to a talk given by Martin Isenburg about [lasindex](https://rapidlasso.de/lasindex-spatial-indexing-of-lidar-data/).
 
 By adding lax files along with your las/laz files the buffer can be added around the processing file by only partially reading the 8 neigbouring files (in red)
 
@@ -231,7 +231,7 @@ for (i in 1:nrow(neighbourg))
 }
 ```
 
-The best way to create a lax file is to use laxindex from [LAStools](https://rapidlasso.com/lastools/). It is a free and open-source part of LAStools. If you cannot or do not want to use LAStools the lidR package has an (undocumented) internal function that creates lax files using the `rlas` package:
+The best way to create a lax file is to use laxindex from [LAStools](https://rapidlasso.de/product-overview/). It is a free and open-source part of LAStools. If you cannot or do not want to use LAStools the lidR package has an (undocumented) internal function that creates lax files using the `rlas` package:
 
 ```r
 lidR:::catalog_laxindex(ctg)

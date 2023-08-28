@@ -76,7 +76,7 @@ sor = function(k = 10, m = 3, quantile = FALSE)
 #'
 #' This function is made to be used in \link{classify_noise}. It implements an
 #' algorithm for outliers (noise) segmentation based on isolated voxels filter (IVF).
-#' It is similar to \href{https://rapidlasso.com/lastools/lasnoise/}{lasnoise from lastools}.
+#' It is similar to \href{https://rapidlasso.de/lasnoise/}{lasnoise from lastools}.
 #' The algorithm finds points that have only a few other points in their surrounding
 #' 3 x 3 x 3 = 27 voxels.
 #'
