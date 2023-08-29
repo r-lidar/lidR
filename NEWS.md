@@ -9,6 +9,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - New: [#680](https://github.com/r-lidar/lidR/issues/680) it is now possible to use `plot(las, mapview = TRUE)`.
 - Fix: [#702](https://github.com/r-lidar/lidR/issues/702) `plot(las, breaks = <vector>)` now works with a vector of custom break points.
 - Fix: [#701](https://github.com/r-lidar/lidR/issues/701) `crown_metrics` now always remove invalid polygons if any.
+- Fix: [#708](https://github.com/r-lidar/lidR/issues/708) files read with `readMSLAS` can now be written properly with `writeLAS`.
 
 ## lidR v4.0.3 (Release date: 2023-03-09)
 

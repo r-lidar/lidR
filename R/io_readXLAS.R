@@ -74,6 +74,7 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
     las@data[["ScannerChannel"]][(n1+n2+1):npoints(las)] <- 3L
     las@header@PHB[["Point Data Format ID"]] <- 6L
     las@header@PHB[["Version Minor"]] <- 4L
+    las@header@PHB[["Header Size"]] <- 375L
     message("Multispectral data read from point format < 6 with no ScannerChannel attribute. The LAS object has been upgraded to LAS 1.4 prf 6 with a ScannerChannel.")
   }
   else
