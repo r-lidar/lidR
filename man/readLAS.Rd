@@ -30,7 +30,7 @@ readMSLAS(files1, files2, files3, select = "*", filter = "")
 \item{filter}{character. Read only points of interest to save memory (see details).}
 
 \item{files1, files2, files3}{characters. Path(s) to one or several a file(s). Each argument being
-one channel (see section 'Multispectral data').}
+one channel (see section 'Multispectral data'). `files2` and `files3` can be missing.}
 }
 \value{
 A LAS object

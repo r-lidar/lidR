@@ -47,7 +47,7 @@ readDAPLAS = function(files,  select = "*", filter = "")
 #' leave \code{file2} and \code{file3} missing.
 #'
 #' @param files1,files2,files3 characters. Path(s) to one or several a file(s). Each argument being
-#' one channel (see section 'Multispectral data').
+#' one channel (see section 'Multispectral data'). `files2` and `files3` can be missing.
 #'
 #' @export
 #' @rdname readLAS
@@ -60,6 +60,8 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
     return(las)
   }
 
+  if (missing(files3)) files3 <- NULL
+
   las <- readLAS(c(files1, files2, files3), select, filter)
 
   if (!"ScannerChannel" %in% names(las))
@@ -71,7 +73,9 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
 
     las@data[["ScannerChannel"]] <- 1L
     las@data[["ScannerChannel"]][(n1+1):(n1+n2)] <- 2L
-    las@data[["ScannerChannel"]][(n1+n2+1):npoints(las)] <- 3L
+    if (!is.null(files3))
+      las@data[["ScannerChannel"]][(n1+n2+1):npoints(las)] <- 3L
+
     las@header@PHB[["Point Data Format ID"]] <- 6L
     las@header@PHB[["Version Minor"]] <- 4L
     las@header@PHB[["Header Size"]] <- 375L
@@ -92,7 +96,9 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
 
       las@data[["ScannerChannel"]] <- 1L
       las@data[["ScannerChannel"]][(n1+1):(n1+n2)] <- 2L
-      las@data[["ScannerChannel"]][(n1+n2+1):npoints(las)] <- 3L
+      if (!is.null(files3))
+        las@data[["ScannerChannel"]][(n1+n2+1):npoints(las)] <- 3L
+
       message("ScannerChannel was not populated. The ScannerChannel of the LAS object has been automatically populated.")
     }
   }
