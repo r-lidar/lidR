@@ -11,6 +11,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Fix: [#701](https://github.com/r-lidar/lidR/issues/701) `crown_metrics` now always remove invalid polygons if any.
 - Fix: [#708](https://github.com/r-lidar/lidR/issues/708) files read with `readMSLAS` can now be written properly with `writeLAS`.
 - New: `readMSLAS` accepts only two files.
+- Fix: `readMSLAS` converts `ScanAngleRank` to `ScanAngle`.
 
 ## lidR v4.0.3 (Release date: 2023-03-09)
 

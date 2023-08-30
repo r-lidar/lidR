@@ -64,6 +64,12 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
 
   las <- readLAS(c(files1, files2, files3), select, filter)
 
+  if ("ScanAngleRank" %in% names(las))
+  {
+    data.table::setnames(las@data, "ScanAngleRank", "ScanAngle")
+    las@data[["ScanAngle"]] <- as.numeric(las@data[["ScanAngle"]])
+  }
+
   if (!"ScannerChannel" %in% names(las))
   {
     tmp <- readLAS(files1, "", filter)
