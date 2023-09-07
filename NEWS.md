@@ -1,6 +1,6 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v4.0.4 (Release date: ----------)
+## lidR v4.0.4 (Release date: 2023-09-07)
 
 - Fix: interpolation of NA pixels failed when a single pixel is missing [#684](https://github.com/r-lidar/lidR/issues/684)
 - Fix: [#694](https://github.com/r-lidar/lidR/issues/594) `silva2016` can load (not too big) ondisk chm on the fly.
@@ -79,7 +79,7 @@ las@data[1:10]              # Full decompression
 
 ## lidR v4.0.0 (Release date: 2022-02-17)
 
-`rgdal` and `rgeos` will be retired on Jan 1st 2024. see [twitter](), [youtube](https://www.youtube.com/watch?v=cK08bxUJn5A), or see the respective package descriptions on CRAN. Packages `raster` and `sp` are based on `rgdal`/`rgeos` and `lidR` was based on `raster` and `sp` because it was created before `sf`, `terra` and `stars`. This means that sooner or later `lidR` will run into trouble (actually it is more or less already the case). Consequently, we modernized `lidR` by moving to `sf`, `terra`/`stars` and we are no longer depending on `sp` and `raster` (see also [Older R Spatial Package](https://r-spatial.org/r/2022/04/12/evolution.html) for more insight). It is time for everybody to stop using `sp` and `raster` and to embrace `sf` and `stars/terra`.
+`rgdal` and `rgeos` will be retired on Jan 1st 2024. see twitter (https://twitter.com/RogerBivand/status/1407705212538822656), [youtube](https://www.youtube.com/watch?v=cK08bxUJn5A), or see the respective package descriptions on CRAN. Packages `raster` and `sp` are based on `rgdal`/`rgeos` and `lidR` was based on `raster` and `sp` because it was created before `sf`, `terra` and `stars`. This means that sooner or later `lidR` will run into trouble (actually it is more or less already the case). Consequently, we modernized `lidR` by moving to `sf`, `terra`/`stars` and we are no longer depending on `sp` and `raster` (see also [Older R Spatial Package](https://r-spatial.org/r/2022/04/12/evolution.html) for more insight). It is time for everybody to stop using `sp` and `raster` and to embrace `sf` and `stars/terra`.
 
 In version 4 `lidR` now no longer uses `sp`, it uses `sf` and it no longer uses `raster`. It is now raster agnostic and works transparently with rasters from `raster`, `terra` and `stars`. These two changes meant we had to rewrite a large portion of the code base, which implies few backward incompatibilities. The backward incompatibilities are very small compared to the huge internal changes we implemented in the foundations of the code and should not even be visible for most users.
 
