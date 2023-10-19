@@ -18,7 +18,7 @@
 #' is still computationally demanding.\cr\cr
 #' To help users to get an idea of how computationally demanding this function is, let's compare it to
 #' \link{pixel_metrics}. Assuming we want to apply `mean(Z)` on a 1 km² tile with 1 point/m²
-#' with a resolution of 20 m (400 m² cells), then the function `mean is called roughly 2500
+#' with a resolution of 20 m (400 m² cells), then the function `mean` is called roughly 2500
 #' times (once  per cell). On the contrary, with `point_metrics`, `mean` is called 1000000
 #' times (once per point). So the function is expected to be more than 400 times slower in this specific
 #' case (but it does not provide the same feature).\cr\cr
@@ -33,7 +33,8 @@
 #' computes with a sphere neighborhood, if k and r are given computes with the knn and a limit on the
 #' search distance.
 #' @param xyz logical. Coordinates of each point are returned in addition to each metric. Otherwise an
-#' ID refering to each point.
+#' ID referring to each point.
+#' @param coeffs logical. Principal component coefficients are returned
 #' @param filter formula of logical predicates. Enables the function to run only on points of interest
 #' in an optimized way. See examples.
 #' @param ... unused.
@@ -211,7 +212,7 @@ point_metrics.LAS <- function(las, func, k, r, xyz = FALSE, filter = NULL, ...) 
 
 #' @export
 #' @rdname point_metrics
-point_eigenvalues = function(las, k, r, xyz = FALSE, metrics = FALSE, filter = NULL)
+point_eigenvalues = function(las, k, r, xyz = FALSE, metrics = FALSE, coeffs = FALSE, filter = NULL)
 {
   pointID <- NULL
 
@@ -248,7 +249,7 @@ point_eigenvalues = function(las, k, r, xyz = FALSE, metrics = FALSE, filter = N
   assert_is_a_bool(xyz)
 
   filter <- parse_filter(las, filter)
-  M <- C_eigen_metrics(las, k, r, filter, getThreads())
+  M <- C_eigen_metrics(las, k, r, coeffs, filter, getThreads())
   data.table::setDT(M)
   data.table::setorder(M, pointID)
 
@@ -277,3 +278,4 @@ point_eigenvalues = function(las, k, r, xyz = FALSE, metrics = FALSE, filter = N
 
   return(M)
 }
+
