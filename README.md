@@ -15,8 +15,8 @@ To cite the package use `citation()` from within R:
 
 ```r
 citation("lidR")
-#> Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2020). lidR : An R package for analysis of Airborne Laser Scanning (ALS) data. Remote Sensing of Environment, 251 (August), 112061. <doi:10.1016/j.rse.2020.112061>.
-#> Jean-Romain Roussel and David Auty (2021). Airborne LiDAR Data Manipulation and Visualization for Forestry Applications. R package version 3.1.0. https://cran.r-project.org/package=lidR
+#> Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2021). lidR : An R package for analysis of Airborne Laser Scanning (ALS) data. Remote Sensing of Environment, 251 (August), 112061. <doi:10.1016/j.rse.2020.112061>.
+#> Jean-Romain Roussel and David Auty (2023). Airborne LiDAR Data Manipulation and Visualization for Forestry Applications. R package version 3.1.0. https://cran.r-project.org/package=lidR
 ```     
 
 # Key features
@@ -114,7 +114,7 @@ plot(las, color = "Amplitude", add = x)
 **lidR** is developed openly at [Laval University](https://www.ulaval.ca/en).
 
 * Development of the `lidR` package between 2015 and 2018 was made possible thanks to the financial support of the [AWARE project  (NSERC CRDPJ 462973-14)](https://awareproject.ca/); grantee [Prof Nicholas Coops](https://forestry.ubc.ca/faculty-profile/nicholas-coops/).
-* Development of the `lidR` package between 2018 and 2021 was made possible thanks to the financial support of the [Ministère des Forêts, de la Faune et des Parcs of Québec](https://mffp.gouv.qc.ca/).
+* Development of the `lidR` package between 2018 and 2021 was made possible thanks to the financial support of the [Ministère des Forêts, de la Faune et des Parcs of Québec](https://www.quebec.ca/gouvernement/ministere/forets-faune-parcs).
 
 <img src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/logos.svg" width="600" align="center">
 

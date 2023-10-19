@@ -19,7 +19,7 @@
 #' @export
 #' @name st_area
 #' @importFrom sf st_area
-#' @importFrom terra area
+#' @importFrom raster area
 #' @md
 NULL
 
@@ -92,8 +92,8 @@ area_strategy <- function(x)
   # in the good units. We do not use occupancy grid. Returning 0.
   # For low density, Occupancy grid does not makes sense
   # compute with convex hull (return a resolution of 0)
-  # For very tiny point cloud (typically plots) we do not use occupancy grid.
-  if (sf::st_is_longlat(x) | density < 0.5 | bbarea < 1000)  return(r)
+  # For very tiny point cloud (typically plots) we do not use occupancy grid
+  if (isTRUE(sf::st_is_longlat(x)) | density < 0.5 | bbarea < 1000)  return(r)
 
   # In other cases we use the occupancy grid to estimate the area. The following estimate the best resolution.
   # LAstools uses 2 m or 6 ft (1.8 m) depending of the units. For unknow units we are using 4 (between 2 and 6).

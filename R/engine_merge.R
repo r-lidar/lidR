@@ -7,6 +7,9 @@ engine_merge = function(ctg, any_list, ...)
 {
   object_are_in_files <- opt_output_files(ctg) != ""
 
+  if (!object_are_in_files & length(any_list) == 1)
+    return(any_list[[1]])
+
   # Determine the merging type to apply
   data_types <- sapply(any_list, function(x) { class(x)[1] })
   data_type  <- unique(data_types)

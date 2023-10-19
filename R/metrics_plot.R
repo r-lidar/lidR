@@ -21,6 +21,11 @@ plot_metrics <- function(las, func, geometry, ..., radius)
   }
   else
   {
+    # Fix 664: clip_roi returns inconsistently a LAS or a list depending if there is
+    # one or muliple queries. If there is only one query rois in not a list and sapply fails
+    if (is(rois, "LAS"))
+      rois = list(rois)
+
     n <- length(rois)
     empty <- sapply(rois, is.empty)
     any_empty <- any(empty)

@@ -153,7 +153,7 @@ setMethod("show", "LAS", function(object)
   version   <- paste(major, minor, sep = ".")
   format    <- phb[["Point Data Format ID"]]
   units     <- st_crs(object)$units
-  units     <- if (is.na(units)) "units" else units
+  units     <- if (is.null(units) || is.na(units)) "units" else units
 
   areaprefix  <- ""
   pointprefix <- ""
@@ -249,7 +249,7 @@ setMethod("show", "LAScatalog", function(object)
   cat("points      : ", npoints.h, " ", pointprefix, " points\n", sep = "")
   cat("density     : ", density, " points/", units, "\u00B2\n", sep = "")
   if (dpulse > 0)
-    cat("density      : ", round(dpulse, 2), " pulses/", units, "\u00B2\n", sep = "")
+    cat("density     : ", round(dpulse, 2), " pulses/", units, "\u00B2\n", sep = "")
   cat("num. files  :", dim(object@data)[1], "\n")
   return(invisible(object))
 })

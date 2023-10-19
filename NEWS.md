@@ -4,19 +4,72 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 1. New functions `head()` and `tail()` for `LAS` objects
 
-## lidR v4.0.1 (Release date: )
+## lidR v4.0.4 (Release date: 2023-09-07)
+
+- Fix: interpolation of NA pixels failed when a single pixel is missing [#684](https://github.com/r-lidar/lidR/issues/684)
+- Fix: [#694](https://github.com/r-lidar/lidR/issues/594) `silva2016` can load (not too big) ondisk chm on the fly.
+- Fix: [#690](https://github.com/r-lidar/lidR/issues/690) `rasterize_terrain()` works in parallel with `res = <SpatRaster>`.
+- Fix: [#689](https://github.com/r-lidar/lidR/issues/689) attributes are not renamed when filtering a point cloud.
+- New: [#680](https://github.com/r-lidar/lidR/issues/680) it is now possible to use `plot(las, mapview = TRUE)`.
+- Fix: [#702](https://github.com/r-lidar/lidR/issues/702) `plot(las, breaks = <vector>)` now works with a vector of custom break points.
+- Fix: [#701](https://github.com/r-lidar/lidR/issues/701) `crown_metrics` now always remove invalid polygons if any.
+- Fix: [#708](https://github.com/r-lidar/lidR/issues/708) files read with `readMSLAS` can now be written properly with `writeLAS`.
+- New: `readMSLAS` accepts only two files.
+- Fix: `readMSLAS` converts `ScanAngleRank` to `ScanAngle`.
+
+## lidR v4.0.3 (Release date: 2023-03-09)
+
+- Add a function `add_lasnir()`.
+- Replace `rgl::rgl.*` by `rgl::*3d` functions [#651](https://github.com/r-lidar/lidR/issues/651)
+- Fix: `readLAS` no longer checks for attribute names validity as they are necessarily correct [#659](https://github.com/r-lidar/lidR/issues/659)
+- Fix: `plot_metrics()` no longer fails with a single plot [#664](https://github.com/r-lidar/lidR/issues/664)
+
+## lidR v4.0.2 (Release date: 2022-11-28)
+
+- Fix: [#638](https://github.com/r-lidar/lidR/issues/638). `unormalize_height()` removes extra_bytes in VLR.
+- Fix: [#637](https://github.com/r-lidar/lidR/issues/637). `print(las)` works even when the CRS is not recognized by `sf`.
+- New: `dsmtin` and `pitfree` gain an argument `highest`. This option was enabled by default in previous releases. There is now an option to disable it.
+- Fix: [#580](https://github.com/r-lidar/lidR/issues/580) and [#622](https://github.com/r-lidar/lidR/issues/622)  `normalize_height()` and `segment_trees` work in parallel with `SpatRaster`.
+- Fix: [#586](https://github.com/r-lidar/lidR/issues/586).
+- Fix: [#587](https://github.com/r-lidar/lidR/issues/587). `crown_metrics()` now triggers a warning when invalid geometries are created and `delineate_crowns()` remove these geometries before to convert to `sp`.
+- Fix: [#594](https://github.com/r-lidar/lidR/issues/594). `crown_metrics()` now works with `func = NULL` and a `LAScatalog`.
+- Fix: [#608](https://github.com/r-lidar/lidR/issues/608). The C++ function used to compute the range between a point and the sensor from the sensor positions was re-based to resolve a bug when a single sensor position was found for a given flightline. New warnings were added.
+- Fix: [#609](https://github.com/r-lidar/lidR/issues/609). `*_metrics()` functions always returned `NA`s for `lastofmany`.
+- Fix: [#614](https://github.com/r-lidar/lidR/issues/614). Manual tree detection preserves the CRS.
+- Doc: `dalponte2016` doc updated to use `terra`.
+
+## lidR v4.0.1 (Release date: 2022-05-03)
+
+- Fix: `plot(ctg, chunk = TRUE)` does not fail if an invalid output file template is registered [#537](https://github.com/r-lidar/lidR/issues/537)
+- Enhance: `locate_trees()` throws an informative error if called with an on-disk raster. The former error was cryptic. If the raster is small enough it is loaded on-the-fly.
+- Fix: `merge_spatial()` with RGB and `SpatRaster` was not working properly [#545](https://github.com/r-lidar/lidR/issues/545)
+- Enhance: `st_area()` better estimates the area of small point-clouds and is faster
+- Fix: [#548](https://github.com/r-lidar/lidR/issues/548)
+- Enhance: Scale factors are better estimated in `interpret_waveform`  [#549](https://github.com/r-lidar/lidR/issues/549). 
+- Fix: `plot_metrics()` returns NA if 0 points available [#551](https://github.com/r-lidar/lidR/issues/551).
+- Fix: floating point accuracy error with `rasterize_canopy` may generate error or messed-up CHM [#552](https://github.com/r-lidar/lidR/issues/552).
+- Fix: `print()` and `st_area()` were not working for point cloud with no CRS
+- Fix: `track_sensor()` does not fail with a `LAScatalog` when no sensor position is found. It also triggers a warning. [#556](https://github.com/r-lidar/lidR/issues/556).
+- Fix: The LAScatalog processing engine works with a single file [#558](https://github.com/r-lidar/lidR/issues/558).
+- Fix: `rasterize_terrain()` now works with a `LAScatalog` and `shape = sfc_object` [#558](https://github.com/r-lidar/lidR/issues/558).
+- Fix: `catalog_retile()` now works when some tiles are empty [#563](https://github.com/r-lidar/lidR/issues/563).
+- Fix: `crown_metrics()` messed up tree IDs with a hull geometry [#554](https://github.com/r-lidar/lidR/issues/554).
+- Fix: `merge_spatial()` crops large vectors to the extent of the point cloud before to perform the merge. This has for consequences to sometime transform polygons into multipolygons. When polygons and multipolygons were mixed the functions stopped with an error. It now works.
+- Fix: `normalize_height()` now sets the Z offset to 0 [#571](https://github.com/r-lidar/lidR/issues/571).
+- Fix: smaller rasters stored on-disk are better handled and loaded if needed
+>>>>>>> master
 
 ### Changes related to rlas 1.6.0
 
-We are currently developing rlas 1.6.0 that uses the ALTREP framework to load compact representation of non populated attributes. For example `UserData` is usually populated with zeros (not populated). Yet it takes 32 bits per point to store each 0. With rlas 1.6.0 it will only uses 644 bits no matter the number of points loaded for not populated attributes. This optimization is enabled for `*_flags`, `UserData`, `PointSourceID`, `ScanDirectionFlag`, and `EdgeOfFlightline`. This allows for saving approximately 30% of memory usage depending on the number of non-populated attribute in the file. rlas 1.6.0 is compatible will all versions of lidR but lidR 4.0.1 introduced some internal optimization, internal fixes and new functions to fully take advantage of rlas 1.6.0. lidR v<= 4.0.0 will work with rlas 1.6.0 but won't take advantage of the new compression feature.
+We are currently developing rlas 1.6.0 that uses the ALTREP framework to load compact representation of non populated attributes. For example `UserData` is usually populated with zeros (not populated). Yet it takes 32 bits per point to store each 0. With rlas 1.6.0 it will only uses 644 bits no matter the number of points loaded for non populated attributes. This applies to each attribute populated with a single repeated value. This allows for saving approximately 30% of memory usage depending on the number of non-populated attributes that are present in the file. rlas 1.6.0 is compatible will all versions of lidR but lidR 4.0.1 introduced some internal optimization, internal fixes and new functions to fully take advantage of rlas 1.6.0. lidR v<= 4.0.0 will work with rlas 1.6.0 but won't take advantage of the new compression feature.
 
-1. the function `LAS()` no longer call `data.table::setDT()` if the input is already a `data.table`. Indeed `data.table::setDT()` materializes the compressed ALTREP vectors which is not what we want. One consequence of this change is that `readLAS()` now preserve the ALTREPness (i.e. the compression) of the output of `rlas::read.las()`.
+1. the function `LAS()` no longer call `data.table::setDT()` if the input is already a `data.table`. Indeed `data.table::setDT()` materializes the compressed ALTREP vectors and this is not what we want. One consequence of this change is that `readLAS()` now preserve the ALTREPness (i.e. the compression) of the output of `rlas::read.las()`.
 
-2. Subsetting a `LAS` object no longer call `data.table` native subset. We previously used something like `las@data[indx]` to subset the point cloud. Sadly `data.table` tries to materialized the ALTREPed vector whenever it can. We implemented internally a `smart_subset()` function that subset and preserves the compression of the vectors. One consequence of such change is that all `filter_*()` and `clip_*()` functions preserve the compression of the point cloud if any.
+2. Subsetting a `LAS` object no longer call `data.table` native subset. We previously used something like `las@data[indx]` to subset the point cloud. Sadly `data.table` tries to materialized the ALTREPed vector whenever it can. We implemented internally a `smart_subset()` function that subset and preserves the compression of the vectors. One consequence of such change is that all `filter_*()` and `clip_*()` functions preserve the compression of the point-cloud if any.
 
 3. `las_check()` has been slightly modified to ensure it does not materialize ALTREPed object. One side effect of `las_check()` was to decompress the point cloud unexpectedly. Such a pity! We also change `las_check()` to print information about the compression.
 
-4. We changed the way `*_metrics()` function evaluates the user defined expression because we found that it had the side effect to materialize all the attributes instead of materializing only those needed. For example `pixel_metrics(las, mean(Z))` only needs to consider the attribute Z. No need to allocate and copy memory for `Intensity`, `ScanAngle` and so on. In previous version all attributes where inspected with the side effect to materialize all compressed vectors. The `*_metrics()` functions now properly detect which attributes are actually necessary for the evaluation of `func`. Three consequences:  (1)`*_metrics()` functions are 20 to 40% faster, (2) the compression is preserved if no compressed attribute is used in the evaluation and e.g. `pixel_metrics(las, mean(UserData))` uncompresses only `UserData` and (3) a formula is no longer required. We can write `mean(Z)` instead of `~mean(Z)`.
+4. We changed the way `*_metrics()` functions evaluates the user defined expression because we found that it had the side effect of materializing all the attributes instead of materializing only those needed. For example `pixel_metrics(las, mean(Z))` only needs the attribute Z. No need to allocate and copy memory for `Intensity`, `ScanAngle` and so on. In previous version all attributes where inspected with the side effect to materialize all compressed vectors. The `*_metrics()` functions now properly detect which attributes are actually necessary for the evaluation of `func`. Two consequences:  (1)`*_metrics()` functions are 20 to 40% faster, (2) the compression is preserved if no compressed attribute is used in the evaluation and e.g. `pixel_metrics(las, mean(UserData))` uncompresses only `UserData`.
 
 5. New functions `las_is_compressed()` that tells which attributes are compressed and `las_size()` that returns the true size of a `LAS` objects taking into account the compression. `las_size()` should returns something similar to `pryr::object_size()` but different to `object.size()` that is not ALTREP aware. We also changed the `print` function so it uses `las_size()` instead of `object.size()`.
 
@@ -29,20 +82,9 @@ las@data[2, UserData := 1]  # Decompression of UserData
 las@data[1:10]              # Full decompression
 ```
 
-### Change not related to rlas
-
-- Fix: `plot(ctg, chunk = TRUE)` does not fail if an invalid output file template is registered [#537](https://github.com/r-lidar/lidR/issues/537)
-- Enhance: `locate_trees()` throws an informative error if called with an on-disk raster. The former error was cryptic. If the raster is small enough it is loaded on the fly.
-- Fix: `merge_spatial()` with RGB and `SpatRaster` was not working properly [#545](https://github.com/r-lidar/lidR/issues/545)
-- Enhance: `st_area()` better estimates the area of small point clouds and is faster
-- Fix: [#548](https://github.com/r-lidar/lidR/issues/548)
-- Enhance: Scale factors are better estimated in `interpret_waveform`  [#549](https://github.com/r-lidar/lidR/issues/549). 
-- Fix: `plot_metrics()` returns NA if 0 points available [#551](https://github.com/r-lidar/lidR/issues/551).
-- Fix: floating point accuracy error with `rasterize_canopy` may generate error or messed-up CHM [#552](https://github.com/r-lidar/lidR/issues/552).
-
 ## lidR v4.0.0 (Release date: 2022-02-17)
 
-`rgdal` and `rgeos` will be retired on Jan 1st 2024. see [twitter](https://twitter.com/RogerBivand/status/1407705212538822656), [youtube](https://www.youtube.com/watch?v=cK08bxUJn5A), or see the respective package descriptions on CRAN. Packages `raster` and `sp` are based on `rgdal`/`rgeos` and `lidR` was based on `raster` and `sp` because it was created before `sf`, `terra` and `stars`. This means that sooner or later `lidR` will run into trouble (actually it is more or less already the case). Consequently, we modernized `lidR` by moving to `sf`, `terra`/`stars` and we are no longer depending on `sp` and `raster` (see also [Older R Spatial Package](https://keen-swartz-3146c4.netlify.app/older.html) for more insight). It is time for everybody to stop using `sp` and `raster` and to embrace `sf` and `stars/terra`.
+`rgdal` and `rgeos` will be retired on Jan 1st 2024. see twitter (https://twitter.com/RogerBivand/status/1407705212538822656), [youtube](https://www.youtube.com/watch?v=cK08bxUJn5A), or see the respective package descriptions on CRAN. Packages `raster` and `sp` are based on `rgdal`/`rgeos` and `lidR` was based on `raster` and `sp` because it was created before `sf`, `terra` and `stars`. This means that sooner or later `lidR` will run into trouble (actually it is more or less already the case). Consequently, we modernized `lidR` by moving to `sf`, `terra`/`stars` and we are no longer depending on `sp` and `raster` (see also [Older R Spatial Package](https://r-spatial.org/r/2022/04/12/evolution.html) for more insight). It is time for everybody to stop using `sp` and `raster` and to embrace `sf` and `stars/terra`.
 
 In version 4 `lidR` now no longer uses `sp`, it uses `sf` and it no longer uses `raster`. It is now raster agnostic and works transparently with rasters from `raster`, `terra` and `stars`. These two changes meant we had to rewrite a large portion of the code base, which implies few backward incompatibilities. The backward incompatibilities are very small compared to the huge internal changes we implemented in the foundations of the code and should not even be visible for most users.
 

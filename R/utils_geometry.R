@@ -1,6 +1,6 @@
 point_in_polygons <- function(las, sfc)
 {
-  if (!is(sfc, "sfc_POLYGON") & !is(sfc, "sfc_MULTIPOLYGON"))
+  if (!all(sf::st_geometry_type(sfc) %in% c("POLYGON", "MULTIPOLYGON")))
     stop("Only spatial polygons are supported", call. = FALSE)
 
   bbox <- sf::st_as_sfc(st_bbox(las))

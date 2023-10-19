@@ -41,6 +41,7 @@
 #' @param NAcol a color for NA values.
 #'
 #' @param mapview logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
+#' Since v4.0.4 `mapview = TRUE` is also possible with LAS objects.
 #' @param chunk_pattern logical. Display the current chunk pattern used to process the catalog.
 #' @param overlaps logical. Highlight the overlaps between files.
 #'
@@ -93,9 +94,10 @@ setMethod("plot", signature(x = "LAS", y = "missing"),
                    legend = FALSE,
                    add = FALSE,
                    voxel = FALSE,
-                   NAcol = "lightgray")
+                   NAcol = "lightgray",
+                   mapview = FALSE)
 {
-  plot.LAS(x, y, ..., color = color, pal = pal, bg = bg, breaks = breaks, nbreaks = nbreaks, backend = backend, clear_artifacts = clear_artifacts, axis = axis, legend = legend, add = add, voxel = voxel, NAcol = NAcol)
+  plot.LAS(x, y, ..., color = color, pal = pal, bg = bg, breaks = breaks, nbreaks = nbreaks, backend = backend, clear_artifacts = clear_artifacts, axis = axis, legend = legend, add = add, voxel = voxel, NAcol = NAcol, mapview = mapview)
 })
 
 #' @export
@@ -237,8 +239,14 @@ plot.LAS = function(x, y, ...,
                     legend = FALSE,
                     add = FALSE,
                     voxel = FALSE,
-                    NAcol = "lightgray")
+                    NAcol = "lightgray",
+                    mapview = FALSE)
 {
+  if (mapview)
+  {
+    return(plot(header(x), mapview = TRUE))
+  }
+
   args <- list(...)
   if (is.null(args$size))
     args$size <- 1.5
@@ -380,7 +388,7 @@ plot.LAS = function(x, y, ...,
     else
     {
       if (is.logical(colorattr)) colorattr <- as.integer(colorattr)
-      breaks    <- suppressWarnings(classInt::classIntervals(colorattr, min(nbreaks, nunique), breaks)$brk)
+      if (is.character(breaks)) breaks <- suppressWarnings(classInt::classIntervals(colorattr, min(nbreaks, nunique), breaks)$brk)
       nbreaks   <- length(breaks)
       pal       <- pal(nbreaks-1)
       idcolor   <- cut(colorattr, breaks, include.lowest = TRUE, label = FALSE)
@@ -456,8 +464,8 @@ plot.LAS = function(x, y, ...,
   if (isFALSE(add))
   {
     rgl::open3d()
-    rgl::rgl.bg(color = bg)
-    rgl::rgl.material(specular = "black")
+    rgl::bg3d(color = bg)
+    rgl::material3d(specular = "black")
   }
 
   # Two modes, point-cloud rendering or voxel rendering
@@ -549,7 +557,7 @@ plot.LAS = function(x, y, ...,
 
 # From rgl.setMouseCallbacks man page
 # nocov start
-.pan3d <- function(button, dev = rgl::rgl.cur(), subscene = rgl::currentSubscene3d(dev))
+.pan3d <- function(button, dev = rgl::cur3d(), subscene = rgl::currentSubscene3d(dev))
 {
   start <- list()
 

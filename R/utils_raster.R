@@ -211,7 +211,16 @@ raster_as_matrix <- function(raster, downsample = FALSE)
 #' @importFrom stats na.omit
 raster_as_dataframe <- function(raster,  xy = TRUE, na.rm = TRUE)
 {
-  if (raster_is_proxy(raster))
+  ondisk <- raster_is_proxy(raster)
+
+  # Small rasters can be loaded on the fly
+  if (ondisk & raster_fits_in_memory(raster, n = 10))
+  {
+    raster <- raster_in_memory(raster)
+    ondisk <- FALSE
+  }
+
+  if (ondisk)
     stop("On-disk rasters not supported in 'raster_as_dataframe()'", call. = FALSE) # nocov
 
   m <- raster_as_matrix(raster)
@@ -240,7 +249,7 @@ raster_as_las <- function(raster, bbox = NULL)
   # Small rasters can be loaded on the fly
   if (ondisk & raster_fits_in_memory(raster, n = 10))
   {
-    raster <- raster_materialize(raster)
+    raster <- raster_in_memory(raster)
     ondisk <- FALSE
   }
 
@@ -605,14 +614,8 @@ raster_bbox <- function(raster)
 
   if (is(raster, "SpatRaster"))
   {
-    if (terra::crs(raster) != "")
-      return(sf::st_bbox(raster))
-
-    bbox <- terra::ext(raster)
-    bbox <- bbox@ptr$vector
-    names(bbox) <- c("xmin", "xmax", "ymin", "ymax")
-    bbox <- sf::st_bbox(bbox)
-    return(bbox)
+    # sf::st_bbox now works properly on SpatRaster.
+    return(sf::st_bbox(raster))
   }
 
   raster_error() # nocov
@@ -697,4 +700,20 @@ raster_in_memory <- function(raster)
     return(raster*1)
 
   raster_error()
+}
+
+
+# Workaround for #580 #622. If normalize height is ran in parallel it will fail with
+# SpatRaster because they are not serializable. SpatRaster are converted to RasterLayer
+# for multicore strategies
+convert_ondisk_spatraster_into_serializable_raster_if_necessary <- function(x)
+{
+  if (is_raster(x) && raster_pkg(x) == "terra")
+  {
+    ncores <- try_to_get_num_future_cores()
+    if (!is.null(ncores) && ncores >= 2L)
+      x <- raster::raster(x)
+  }
+
+  return(x)
 }

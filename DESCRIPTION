@@ -37,7 +37,7 @@ Imports:
     sp,
     stats,
     stars,
-    terra,
+    terra (>= 1.5-17),
     tools,
     utils
 Suggests:
@@ -47,14 +47,13 @@ Suggests:
     gstat,
     RCSF,
     RMCC,
-    rgdal,
     mapview,
     mapedit,
     progress,
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true

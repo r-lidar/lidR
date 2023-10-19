@@ -95,6 +95,7 @@ normalize_height.LAS = function(las, algorithm, use_class = c(2L,9L), dtm = NULL
     stop(glue::glue("Parameter 'algorithm' is a {class(algorithm)}. Expected type is 'raster' or 'function'"), call. = FALSE)
   }
 
+  las[["Z offset"]] <- 0
   zoffset <- las[["Z offset"]]
   zscale <- las[["Z scale factor"]]
 
@@ -117,6 +118,11 @@ normalize_height.LAScatalog = function(las, algorithm, use_class = c(2L,9L), dtm
 {
   opt_select(las) <- "*"
 
+  # Workaround for #580. If normalize height is ran in parallel it will fail with
+  # SpatRaster because they are not serializable. SpatRaster are converted to RasterLayer
+  # for multicore strategies
+  algorithm <- convert_ondisk_spatraster_into_serializable_raster_if_necessary(algorithm)
+
   options <- list(need_buffer = TRUE, drop_null = TRUE, need_output_file = TRUE)
   output  <- catalog_map(las, normalize_height, algorithm = algorithm, use_class = use_class, dtm = dtm, ..., .options = options)
   return(output)
@@ -131,7 +137,7 @@ unnormalize_height = function(las)
   if ("Zref" %in% names(las))
   {
     las@data[["Z"]] <- las@data[["Zref"]]
-    las@data[["Zref"]] <- NULL
+    las <- remove_lasattribute(las, "Zref")
     las <- lasupdateheader(las)
   }
   else

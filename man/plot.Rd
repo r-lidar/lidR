@@ -28,7 +28,8 @@ plot(x, y, ...)
   legend = FALSE,
   add = FALSE,
   voxel = FALSE,
-  NAcol = "lightgray"
+  NAcol = "lightgray",
+  mapview = FALSE
 )
 
 \S4method{plot}{LAScatalog,missing}(x, y, mapview = FALSE, chunk_pattern = FALSE, overlaps = FALSE, ...)
@@ -91,7 +92,8 @@ an internal optimization removes voxels that are not visible when surrounded by 
 
 \item{NAcol}{a color for NA values.}
 
-\item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.}
+\item{mapview}{logical. If \code{FALSE} the catalog is displayed in a regular plot from R base.
+Since v4.0.4 `mapview = TRUE` is also possible with LAS objects.}
 
 \item{chunk_pattern}{logical. Display the current chunk pattern used to process the catalog.}
 

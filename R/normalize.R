@@ -24,7 +24,9 @@
 #' model. (2) An algorithm for intensity normalization. \code{lidR} currently has \link{range_correction}.
 #' @param use_class integer vector. By default the terrain is computed by using ground points
 #' (class 2) and water points (class 9). Relevant only for a normalization without a raster DTM.
-#' @param ... ignored.
+#' @param ... `normalized_height()` supports `add_lasattribute= TRUE` to add the elevation above
+#' see level as an extra byte attribute and ` Wdegenerated = FALSE` to silence the warning about
+#' degenerated ground points.
 #' @param dtm raster. If `dtm` is provided, then the DTM is used in place of ground points. This is
 #' different than providing a DTM in `algorithm`. If `algorithm = dtm` the dtm is subtracted naively.
 #' If `algorithm = tin()` and `dtm = raster` the ground points are not used and the DTM is

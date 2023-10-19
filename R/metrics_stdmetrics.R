@@ -497,7 +497,7 @@ rumple_index.SpatRaster <- function(x, y = NULL, z = NULL, ...)
   return(rumple_index.matrix(x, res[1], res[2]))
 }
 
-
+#' @export
 rumple_index.matrix <- function(x, y = NULL, z = NULL, ...)
 {
   area  <- sp::surfaceArea(x, y, z)
@@ -513,6 +513,7 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
   assert_is_numeric(z)
   assert_are_same_length(x,y)
   assert_are_same_length(x,z)
+  assert_package_is_installed("geometry")
 
   if (length(x) <= 3)
     return(NA_real_)

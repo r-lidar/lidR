@@ -71,7 +71,9 @@ can be used with a \code{LAScluster} and they return the bounding box of the chu
 It must be used to clip the output and remove the buffered region (see examples).
 }
 
-A user-defined function must be templated like this:\preformatted{myfun <- function(chunk, ...) \{
+A user-defined function must be templated like this:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{myfun <- function(chunk, ...) \{
    # Load the chunk + buffer
    las <- readLAS(chunk)
    if (is.empty(las)) return(NULL)
@@ -84,7 +86,7 @@ A user-defined function must be templated like this:\preformatted{myfun <- funct
    output <- remove_buffer(output, bbox)
    return(output)
 \}
-}
+}\if{html}{\out{</div>}}
 
 The line \code{if (is.empty(las)) return(NULL)} is important because some clusters (chunks) may contain
 0 points (we can't know this before reading the file). In this case an empty point cloud with 0 points
@@ -95,12 +97,14 @@ function by returning \code{NULL} indicates to the internal engine that the chun
 and checks if the point cloud is empty. It also automatically crop the buffer. The way it crops the
 buffer suits for most cases but for some special cases it may be advised to handle this in a more
 specific way i.e. using \code{catalog_apply()}. For \code{catalog_map()} the first argument is a \code{LAS} and the
-template is:\preformatted{myfun <- function(las, ...) \{
+template is:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{myfun <- function(las, ...) \{
    # do something
    output <- do_something(las, ...)
    return(output)
 \}
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{.options}{
@@ -134,14 +138,16 @@ When the function \code{FUN} returns a raster it is important to ensure that the
 with the raster to avoid edge artifacts. Indeed, if the edge of a chunk does not correspond to the edge
 of the pixels, the output will not be strictly continuous and will have edge artifacts (that might
 not be visible). Users can check this with the options \code{raster_alignment}, that can take the
-resolution of the raster as input, as well as the starting point if needed. The following are accepted:\preformatted{# check if chunks are aligned with a raster of resolution 20
+resolution of the raster as input, as well as the starting point if needed. The following are accepted:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# check if chunks are aligned with a raster of resolution 20
 raster_alignment = 20
 raster_alignment = list(res = 20)
 
 # check if chunks are aligned with a raster of resolution 20
 # that starts at (0,10)
 raster_alignment = list(res = 20, start = c(0,10))
-}
+}\if{html}{\out{</div>}}
 }
 
 \examples{

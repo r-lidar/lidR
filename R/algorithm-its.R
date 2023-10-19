@@ -47,10 +47,9 @@
 #' las <- readLAS(LASfile, select = "xyz", filter = poi)
 #' col <- pastel.colors(200)
 #'
-#' # Using raster because focal does not exist in stars
-#' chm <- rasterize_canopy(las, 0.5, p2r(0.3), pkg = "raster")
+#' chm <- rasterize_canopy(las, 0.5, p2r(0.3))
 #' ker <- matrix(1,3,3)
-#' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
+#' chm <- terra::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 #'
 #' ttops <- locate_trees(chm, lmf(4, 2))
 #' las   <- segment_trees(las, dalponte2016(chm, ttops))
@@ -66,6 +65,11 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
   assert_all_are_in_closed_range(th_seed, 0, 1)
   assert_all_are_in_closed_range(th_cr, 0, 1)
   stopifnot(raster_is_supported(chm))
+
+  # Workaround for #622 If segment_tree is ran in parallel it will fail with
+  # SpatRaster because they are not serializable. SpatRaster are converted to RasterLayer
+  # for multicore strategies
+  chm <- convert_ondisk_spatraster_into_serializable_raster_if_necessary(chm)
 
   treetops <- check_tree_tops(treetops, ID)
   chm      <- lazyeval::uq(chm)
@@ -187,10 +191,9 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' las <- readLAS(LASfile, select = "xyz", filter = poi)
 #' col <- pastel.colors(200)
 #'
-#' # Using raster because focal does not exist in stars
-#' chm <- rasterize_canopy(las, res = 0.5, p2r(0.3), pkg = "raster")
+#' chm <- rasterize_canopy(las, res = 0.5, p2r(0.3))
 #' ker <- matrix(1,3,3)
-#' chm <- raster::focal(chm, w = ker, fun = mean, na.rm = TRUE)
+#' chm <- terra::focal(chm, w = ker, fun = mean, na.rm = TRUE)
 #'
 #' ttops <- locate_trees(chm, lmf(4, 2))
 #' las   <- segment_trees(las, silva2016(chm, ttops))
@@ -203,6 +206,11 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
   assert_is_a_number(exclusion)
   assert_all_are_positive(max_cr_factor)
   assert_all_are_in_open_range(exclusion, 0, 1)
+
+  # Workaround for #622 If segment_tree is ran in parallel it will fail with
+  # SpatRaster because they are not serializable. SpatRaster are converted to RasterLayer
+  # for multicore strategies
+  chm <- convert_ondisk_spatraster_into_serializable_raster_if_necessary(chm)
 
   treetops       <- check_tree_tops(treetops, ID)
   chm            <- lazyeval::uq(chm)
@@ -323,6 +331,11 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
   assert_is_a_number(tol)
   assert_is_a_number(ext)
   assert_package_is_installed("EBImage")
+
+  # Workaround for #622 If segment_tree is ran in parallel it will fail with
+  # SpatRaster because they are not serializable. SpatRaster are converted to RasterLayer
+  # for multicore strategies
+  chm <- convert_ondisk_spatraster_into_serializable_raster_if_necessary(chm)
 
   chm     <- lazyeval::uq(chm)
   th_tree <- lazyeval::uq(th_tree)
@@ -494,7 +507,9 @@ crop_special_its <- function (treetops, chm, bbox)
   else
   {
     sf::st_agr(treetops) <- "constant"
-    treetops <- sf::st_crop(treetops, sf::st_bbox(chm))
+    bbox = sf::st_bbox(chm)
+    sf::st_crs(bbox) <- sf::st_crs(chm)
+    treetops <- sf::st_crop(treetops, bbox)
   }
 
   return(list(treetops = treetops, chm = chm))

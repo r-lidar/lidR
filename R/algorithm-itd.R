@@ -116,7 +116,9 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"), ws_args = "Z")
 #' invited to select a rectangular region of interest in the scene using the mouse button.
 #' Within the selected region the highest point will be flagged as 'tree top' in the scene. Once all the trees
 #' are labelled the user can exit the tool by selecting an empty region. Points can also be unflagged.
-#' The goal of this tool is mainly for minor correction of automatically-detected tree outputs.
+#' The goal of this tool is mainly for minor correction of automatically-detected tree outputs. \cr
+#' **This algorithm does not preserve tree IDs from `detected` and renumber all trees. It also looses
+#' all attributes**
 #'
 #' @param detected `SpatialPoints* or `sf/sfc_POINT` with  2 or 3D points of already found tree tops
 #' that need manual correction. Can be NULL
@@ -149,10 +151,10 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
   {
     assert_is_valid_context(LIDRCONTEXTITD, "manual")
 
-    . <- X <- Y <- Z <- treeID <- NULL
+    . <- z <- X <- Y <- Z <- treeID <- NULL
 
     stopifnotlas(las)
-    crs = sf::NA_crs_
+    crs <- sf::st_crs(las)
 
     if (!interactive())
       stop("R is not being used interactively", call. = FALSE)
@@ -193,8 +195,18 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
     plot.LAS(las, ..., clear_artifacts = FALSE)
 
     id = numeric(nrow(apice))
+
+    # It's very slow to redraw after every sphere, so
+    # turn off updates for a bit
+    saveSkip = rgl::par3d(skipRedraw = TRUE)
+    on.exit(rgl::par3d(saveSkip))  # Just in case of error
+
     for (i in 1:nrow(apice))
       id[i] = rgl::spheres3d(apice$X[i], apice$Y[i], apice$Z[i], radius = radius, color = color)
+
+    # Now restore drawing mode
+    rgl::par3d(saveSkip)
+    on.exit() # exit restore no longer needed
 
     apice$id <- id
 
@@ -210,7 +222,7 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
       if (sum(i) > 0)
       {
         ii <- which(i == TRUE)
-        rgl::rgl.pop(id = apice[ii]$id)
+        rgl::pop3d(id = apice[ii]$id)
         apice <- apice[-ii]
       }
       # There is no apex in the selected region: find an apex
@@ -231,12 +243,15 @@ manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle
       }
     }
 
-    rgl::rgl.close()
+    rgl::close3d()
 
+    apice[, id := NULL]
     apice[, treeID := 1:.N]
     apice[, X := X + minx]
     apice[, Y := Y + miny]
-    output <- sf::st_as_sf(apice, coords = c("X", "Y", "Z"), crs = crs)
+    apice[, z := Z]
+    output <- sf::st_as_sf(apice, coords = c("X", "Y", "z"), crs = crs)
+    output = output[, c(2,1,3)]
     return(output)
   }
 

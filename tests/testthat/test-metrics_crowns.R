@@ -117,4 +117,23 @@ test_that("tree_metrics is backward compatible and works with a LAScatalog", {
   expect_true(sf::st_crs(metrics) == st_crs(las))
 })
 
+test_that("crown_metrics preserve tree IDs #554", {
+  skip_on_cran()
+
+  LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+  las <- readLAS(LASfile, select = "xyz0")
+  crowns <- crown_metrics(las, func = .stdmetrics_z, attribute = "treeID", geom = "concave")
+  tree <- filter_poi(las, treeID == 80)
+  tree <- st_as_sf(tree)
+  crown <- crowns[crowns$treeID == 80,]
+  res = sf::st_contains(crown, tree)
+
+  expect_true(length(res[[1]]) > 0)
+
+
+  plot(header(las))
+  plot(sf::st_geometry(crown), add = T)
+  plot(tree, add = T)
+})
+
 

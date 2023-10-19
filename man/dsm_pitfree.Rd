@@ -5,7 +5,12 @@
 \alias{pitfree}
 \title{Digital Surface Model Algorithm}
 \usage{
-pitfree(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcircle = 0)
+pitfree(
+  thresholds = c(0, 2, 5, 10, 15),
+  max_edge = c(0, 1),
+  subcircle = 0,
+  highest = TRUE
+)
 }
 \arguments{
 \item{thresholds}{numeric. Set of height thresholds according to the Khosravipour et al. (2014) algorithm
@@ -19,6 +24,9 @@ is done (see examples).}
 
 \item{subcircle}{numeric. radius of the circles. To obtain fewer empty pixels the algorithm
 can replace each return with a circle composed of 8 points (see details).}
+
+\item{highest}{bool. By default it keeps only the highest point per pixel before to triangulate to
+decrease computation time. If highest = FALSE all first returns are used.}
 }
 \description{
 This function is made to be used in \link{rasterize_canopy}. It implements the pit-free algorithm
