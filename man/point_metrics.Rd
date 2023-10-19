@@ -7,7 +7,15 @@
 \usage{
 point_metrics(las, func, k, r, xyz = FALSE, filter = NULL, ...)
 
-point_eigenvalues(las, k, r, xyz = FALSE, metrics = FALSE, filter = NULL)
+point_eigenvalues(
+  las,
+  k,
+  r,
+  xyz = FALSE,
+  metrics = FALSE,
+  coeffs = FALSE,
+  filter = NULL
+)
 }
 \arguments{
 \item{las}{An object of class LAS}
@@ -21,7 +29,7 @@ computes with a sphere neighborhood, if k and r are given computes with the knn 
 search distance.}
 
 \item{xyz}{logical. Coordinates of each point are returned in addition to each metric. Otherwise an
-ID refering to each point.}
+ID referring to each point.}
 
 \item{filter}{formula of logical predicates. Enables the function to run only on points of interest
 in an optimized way. See examples.}
@@ -29,6 +37,8 @@ in an optimized way. See examples.}
 \item{...}{unused.}
 
 \item{metrics}{logical. Compute metrics or not}
+
+\item{coeffs}{logical. Principal component coefficients are returned}
 }
 \description{
 Computes a series of user-defined descriptive statistics for a LiDAR dataset for each point based
@@ -51,7 +61,8 @@ mapping a user-defined function at the point level using optimized memory manage
 is still computationally demanding.\cr\cr
 To help users to get an idea of how computationally demanding this function is, let's compare it to
 \link{pixel_metrics}. Assuming we want to apply \code{mean(Z)} on a 1 km² tile with 1 point/m²
-with a resolution of 20 m (400 m² cells), then the function \verb{mean is called roughly 2500 times (once  per cell). On the contrary, with }point_metrics\verb{, }mean` is called 1000000
+with a resolution of 20 m (400 m² cells), then the function \code{mean} is called roughly 2500
+times (once  per cell). On the contrary, with \code{point_metrics}, \code{mean} is called 1000000
 times (once per point). So the function is expected to be more than 400 times slower in this specific
 case (but it does not provide the same feature).\cr\cr
 This is why the user-defined function is expected to be well-optimized, otherwise it might drastically
