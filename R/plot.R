@@ -287,7 +287,7 @@ plot.LAS = function(x, y, ...,
   has_col <- color %in% names(x)
   use_rgb <- color == "RGB"
   has_rgb <- all(c("R", "G", "B") %in% names(x))
-  autocol <- is.character(pal) && pal == "auto"
+  autocol <- is.character(pal) && length(pal) == 1 && pal == "auto"
 
   # Error handling
   assert_is_a_bool(clear_artifacts)
