@@ -129,7 +129,7 @@ test_that("catalog_apply use alternative directories", {
 test_that("catalog_apply return a partial ouptut and generates logs", {
 
   test <- function(cluster) {
-    if (raster::extent(cluster)@ymin > 80) stop("Test error")
+    if (st_bbox(cluster)[2] > 80) stop("Test error")
     return(data.frame(X = 1:3))
   }
 

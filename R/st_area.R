@@ -19,7 +19,6 @@
 #' @export
 #' @name st_area
 #' @importFrom sf st_area
-#' @importFrom raster area
 #' @md
 NULL
 
@@ -63,6 +62,10 @@ st_area.LAScatalog = function(x, ...)
   areas <- sf::st_area(x@data)
   return(sum(areas))
 }
+
+#' @export
+#' @rdname st_area
+setGeneric("area", function(x, ...) standardGeneric("area"))
 
 #' @export
 #' @rdname st_area

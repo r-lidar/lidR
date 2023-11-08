@@ -5,6 +5,7 @@
 \alias{st_area.LAS}
 \alias{st_area.LASheader}
 \alias{st_area.LAScatalog}
+\alias{area}
 \alias{area,LAS-method}
 \alias{area,LASheader-method}
 \alias{area,LAScatalog-method}
@@ -15,6 +16,8 @@
 \method{st_area}{LASheader}(x, ...)
 
 \method{st_area}{LAScatalog}(x, ...)
+
+area(x, ...)
 
 \S4method{area}{LAS}(x, ...)
 

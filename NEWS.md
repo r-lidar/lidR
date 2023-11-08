@@ -2,8 +2,19 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v4.1.0 (Release date: )
 
+### NEW features
+
 1. New: `point_eigenvalues` gained an argument `coeff` to return the principal component coefficients
-2. Change: remove function `bbox` inherited from `sp` to be able to remove `sp` from `Import`.
+
+### Backward incompatibilities
+
+Following the retirement of `rgdal` and `sp` we removed the dependence to `sp` and the strong dependence to `raster`:
+
+1. Change: remove function `bbox` inherited from `sp`
+2. Change: remove: `rumble_index` for rasters because `sp` is no longer a dependence of `lidR`
+3. Change: package `raster` is now only suggested and `lidR` no longer depends on it. 
+4. Change: the function `extent` was removed in consequence of (3) because it was inherited from `raster` and returned an object `Extent` from `raster`.
+5. Change: functions `crs`, `crs<-`, `projection`, `projection<-`, `wkt` and `area` inherited from `raster` are now generic. This may create clash with the `raster` package but anyway `raster` should no longer be used.
 
 ## lidR v4.0.4 (Release date: 2023-09-07)
 
@@ -58,7 +69,6 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Fix: `merge_spatial()` crops large vectors to the extent of the point cloud before to perform the merge. This has for consequences to sometime transform polygons into multipolygons. When polygons and multipolygons were mixed the functions stopped with an error. It now works.
 - Fix: `normalize_height()` now sets the Z offset to 0 [#571](https://github.com/r-lidar/lidR/issues/571).
 - Fix: smaller rasters stored on-disk are better handled and loaded if needed
->>>>>>> master
 
 ### Changes related to rlas 1.6.0
 

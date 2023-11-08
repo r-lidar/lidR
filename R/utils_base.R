@@ -4,7 +4,6 @@
 #'
 #' @param x a LAS* object
 #' @param ... LAS* objects if it is the sole argurment (e.g. in rbind())
-#' @param n A positive integer up do nrow(x).
 #' @name tools
 #' @rdname tools
 NULL

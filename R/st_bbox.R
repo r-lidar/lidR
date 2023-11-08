@@ -1,10 +1,9 @@
 #' Bounding box of a LAS* object
 #'
-#' Bounding box of a `LAS*` object. `st_bbox()` extends `sf`, `extent()` extends
-#' `raster`, and `ext()` extends `terra`. The values returned are similar to their
+#' Bounding box of a `LAS*` object. `st_bbox()` extends `sf`, and `ext()` extends `terra`. The values returned are similar to their
 #' parent functions.
 #'
-#' @return A `bbox` from sf, an `Extent` from raster, or a `SpatExtent` from `terra`.
+#' @return A `bbox` from sf, or a `SpatExtent` from `terra`.
 #'
 #' @param obj,x An object of class \code{LAS*}.
 #' @param ... unused
@@ -12,7 +11,6 @@
 #' @export
 #' @name st_bbox
 #' @importFrom sf st_bbox
-#' @importFrom raster extent
 #' @importFrom terra ext
 #' @md
 NULL
@@ -24,7 +22,6 @@ NULL
 #' las <- readLAS(f)
 #'
 #' st_bbox(las)
-#' extent(las)
 #' ext(las)
 st_bbox.LAS = function(obj, ...)
 {
@@ -75,30 +72,6 @@ st_bbox.raster_template = function(obj, ...)
   bb <- sf::st_bbox(bb)
   sf::st_crs(bb) <- obj$crs
   return(bb)
-}
-
-# ==== EXTENT =====
-
-#' @export
-#' @rdname st_bbox
-setMethod("extent", "LAS", function(x, ...) { .extent(x) })
-
-#' @export
-#' @rdname st_bbox
-setMethod("extent", "LASheader", function(x, ...) { .extent(x) })
-
-#' @export
-#' @rdname st_bbox
-setMethod("extent", "LAScatalog", function(x, ...) { .extent(x) })
-
-#' @export
-#' @rdname st_bbox
-setMethod("extent", "LAScluster", function(x, ...) { .extent(x) })
-
-.extent <- function(x)
-{
-  bb <- st_bbox(x)
-  return(raster::extent(bb$xmin, bb$xmax, bb$ymin, bb$ymax))
 }
 
 # ==== SPATEXTENT =====

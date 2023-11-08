@@ -14,6 +14,7 @@ test_that("Flat surfaces have a rumple index of 1. Delaunay method", {
 })
 
 test_that("Flat surfaces have a rumple index of 1. Jenness method", {
+  skip("No longeur using sp")
   bbox = raster::extent(0,10,0,10)
   r = raster::raster(bbox, res = 0.5)
   r[] = 2.56

@@ -95,13 +95,6 @@ rumple_index(x, y, z)
 # Measure of roughness is scale-dependent
 rumple_index(x, y, z)
 rumple_index(x/10, y/10, z)
-
-# Use with a canopy height model
-LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-las <- readLAS(LASfile)
-chm <- rasterize_canopy(las, 2, p2r())
-rumple_index(chm)
-
 z <- c(rnorm(1e4, 25, 6), rgamma(1e3, 1, 8)*6, rgamma(5e2, 5,5)*10)
 z <- z[z<45 & z>0]
 

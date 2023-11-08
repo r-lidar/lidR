@@ -64,8 +64,6 @@ density(x, ...)
 \item{...}{LAS* objects if it is the sole argurment (e.g. in rbind())}
 
 \item{object}{A \code{LAS*} object or other lidR related objects.}
-
-\item{n}{A positive integer up do nrow(x).}
 }
 \description{
 Tools inherited from base R for LAS* objects

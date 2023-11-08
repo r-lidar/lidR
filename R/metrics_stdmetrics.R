@@ -456,13 +456,6 @@ NULL
 #' # Measure of roughness is scale-dependent
 #' rumple_index(x, y, z)
 #' rumple_index(x/10, y/10, z)
-#'
-#' # Use with a canopy height model
-#' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
-#' las <- readLAS(LASfile)
-#' chm <- rasterize_canopy(las, 2, p2r())
-#' rumple_index(chm)
-#'
 #' @md
 #' @references
 #' Jenness, J. S. (2004). Calculating landscape surface area from digital elevation
@@ -473,7 +466,7 @@ rumple_index = function(x, y = NULL, z = NULL, ...)
   UseMethod("rumple_index", x)
 }
 
-#' @export
+# @export
 rumple_index.RasterLayer <- function(x, y = NULL, z = NULL, ...)
 {
   res <- raster_res(x)
@@ -481,7 +474,7 @@ rumple_index.RasterLayer <- function(x, y = NULL, z = NULL, ...)
   return(rumple_index.matrix(x, res[1], res[2]))
 }
 
-#' @export
+# @export
 rumple_index.stars <- function(x, y = NULL, z = NULL, ...)
 {
   res <- raster_res(x)
@@ -489,7 +482,7 @@ rumple_index.stars <- function(x, y = NULL, z = NULL, ...)
   return(rumple_index.matrix(x, res[1], res[2]))
 }
 
-#' @export
+# @export
 rumple_index.SpatRaster <- function(x, y = NULL, z = NULL, ...)
 {
   res <- raster_res(x)
@@ -497,12 +490,13 @@ rumple_index.SpatRaster <- function(x, y = NULL, z = NULL, ...)
   return(rumple_index.matrix(x, res[1], res[2]))
 }
 
-#' @export
+# @export
 rumple_index.matrix <- function(x, y = NULL, z = NULL, ...)
 {
-  area  <- sp::surfaceArea(x, y, z)
-  parea <- sum(!is.na(x))*y*z
-  return(area/parea)
+  stop("'Rumple_index' for raster has been removed because it was reliying on 'sp'")
+  #area  <- sp::surfaceArea(x, y, z)
+  #parea <- sum(!is.na(x))*y*z
+  #return(area/parea)
 }
 
 #' @export

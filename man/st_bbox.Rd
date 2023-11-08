@@ -6,10 +6,6 @@
 \alias{st_bbox.LASheader}
 \alias{st_bbox.LAScatalog}
 \alias{st_bbox.LAScluster}
-\alias{extent,LAS-method}
-\alias{extent,LASheader-method}
-\alias{extent,LAScatalog-method}
-\alias{extent,LAScluster-method}
 \alias{ext,LAS-method}
 \alias{ext,LASheader-method}
 \alias{ext,LAScatalog-method}
@@ -23,14 +19,6 @@
 \method{st_bbox}{LAScatalog}(obj, ...)
 
 \method{st_bbox}{LAScluster}(obj, ...)
-
-\S4method{extent}{LAS}(x, ...)
-
-\S4method{extent}{LASheader}(x, ...)
-
-\S4method{extent}{LAScatalog}(x, ...)
-
-\S4method{extent}{LAScluster}(x, ...)
 
 \S4method{ext}{LAS}(x, ...)
 
@@ -46,11 +34,10 @@
 \item{...}{unused}
 }
 \value{
-A \code{bbox} from sf, an \code{Extent} from raster, or a \code{SpatExtent} from \code{terra}.
+A \code{bbox} from sf, or a \code{SpatExtent} from \code{terra}.
 }
 \description{
-Bounding box of a \verb{LAS*} object. \code{st_bbox()} extends \code{sf}, \code{extent()} extends
-\code{raster}, and \code{ext()} extends \code{terra}. The values returned are similar to their
+Bounding box of a \verb{LAS*} object. \code{st_bbox()} extends \code{sf}, and \code{ext()} extends \code{terra}. The values returned are similar to their
 parent functions.
 }
 \examples{
@@ -58,6 +45,5 @@ f <- system.file("extdata", "example.las", package="rlas")
 las <- readLAS(f)
 
 st_bbox(las)
-extent(las)
 ext(las)
 }
