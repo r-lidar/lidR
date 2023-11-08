@@ -16,6 +16,10 @@ Following the retirement of `rgdal` and `sp` we removed the dependence to `sp` a
 4. Change: the function `extent` was removed in consequence of (3) because it was inherited from `raster` and returned an object `Extent` from `raster`.
 5. Change: functions `crs`, `crs<-`, `projection`, `projection<-`, `wkt` and `area` inherited from `raster` are now generic. This may create clash with the `raster` package but anyway `raster` should no longer be used.
 
+### Fixes
+
+- Fix: [#726](https://github.com/r-lidar/lidR/issues/726) character palette causes error in plot.
+
 ## lidR v4.0.4 (Release date: 2023-09-07)
 
 - Fix: interpolation of NA pixels failed when a single pixel is missing [#684](https://github.com/r-lidar/lidR/issues/684)

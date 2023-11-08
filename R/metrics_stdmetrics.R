@@ -550,29 +550,28 @@ rumple_index.numeric <- function(x, y = NULL, z = NULL, ...)
 #' @rdname nstdmetrics
 gap_fraction_profile = function(z, dz = 1, z0 = 2)
 {
-  bk <- seq(floor((min(z) - z0)/dz)*dz + z0, ceiling((max(z) - z0)/dz)*dz + z0, dz)
-
-  if (length(bk) <= 1)
+  zrange = range(z)
+  if (z0 < zrange[1])
+    z0 = floor((zrange[1]- z0)/dz)*dz + z0
+  
+  if (z0 >= zrange[2])
     return(data.frame(z = numeric(0), gf = numeric(0)))
-
-  histogram <- graphics::hist(z, breaks = bk, plot = F)
+  
+  bk <- seq(z0, ceiling((zrange[2] - z0)/dz)*dz + z0, dz)
+  
+  histogram <- graphics::hist(z, breaks = c(-Inf, bk), plot = F)
   h <- histogram$mids
-  p <- histogram$counts/sum(histogram$counts)
-
-  p <- c(p, 0)
-
+  p <- histogram$counts
+  
   cs <- cumsum(p)
-  i <- data.table::shift(cs)/cs
+  i <- cs[1:(length(cs)-1)]/cs[2:length(cs)]
+  
   i[is.na(i)] = 0
-
-  i[is.nan(i)] = NA
-
-  z = h #[-1]
-  i = i[-length(i)] #[-c(1, length(i))]
-
-  return(data.frame(z = z[z > z0], gf = i[z > z0]))
+  
+  z = h[-1]
+  
+  return(data.frame(z = z, gf = i))
 }
-
 
 #' @param k numeric. is the extinction coefficient
 #' @examples
@@ -588,10 +587,7 @@ LAD = function(z, dz = 1, k = 0.5, z0 = 2) # (Bouvier et al. 2015)
 {
   ld <- gap_fraction_profile(z, dz, z0)
 
-  if (nrow(ld) <= 2)
-    return(data.frame(z = numeric(0), lad = numeric(0)))
-
-  if (anyNA(ld))
+  if (nrow(ld) == 0)
     return(data.frame(z = numeric(0), lad = numeric(0)))
 
   lad <- ld$gf
