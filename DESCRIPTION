@@ -34,7 +34,6 @@ Imports:
     rgl,
     rlas (>= 1.5.0),
     sf,
-    sp,
     stats,
     stars,
     terra (>= 1.5-17),
@@ -50,6 +49,7 @@ Suggests:
     mapview,
     mapedit,
     progress,
+    sp,
     testthat (>= 2.1.0),
     knitr,
     rmarkdown

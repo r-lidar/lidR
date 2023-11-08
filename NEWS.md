@@ -2,8 +2,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v4.1.0 (Release date: )
 
-1. New functions `head()` and `tail()` for `LAS` objects
-2. New: `point_eigenvalues` gained an argument `coeff` to return the principal component coefficients
+1. New: `point_eigenvalues` gained an argument `coeff` to return the principal component coefficients
+2. Change: remove function `bbox` inherited from `sp` to be able to remove `sp` from `Import`.
 
 ## lidR v4.0.4 (Release date: 2023-09-07)
 

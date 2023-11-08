@@ -118,11 +118,3 @@ setMethod("density", "LASheader", function(x, ...) { return(npoints(x)/area(x)) 
 #' @rdname tools
 #' @export
 setMethod("density", "LAScatalog",  function(x, ...) { return(npoints(x)/area(x)) })
-
-#' @rdname tools
-#' @export
-head.LAS <- function(x, n = 6L, ...) { payload(x[1:n]) }
-
-#' @rdname tools
-#' @export
-tail.LAS <- function(x, n = 6L, ...) { payload(x[(nrow(x)-n):nrow(x)]) }
