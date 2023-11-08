@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v4.0.5 (Release date: )
+
+- Fix: [#726](https://github.com/r-lidar/lidR/issues/726) character palette causes error in plot.
+
 ## lidR v4.0.4 (Release date: 2023-09-07)
 
 - Fix: interpolation of NA pixels failed when a single pixel is missing [#684](https://github.com/r-lidar/lidR/issues/684)
