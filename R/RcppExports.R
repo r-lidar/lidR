@@ -9,6 +9,10 @@ cmpCPA <- function(pulsedt) {
     .Call(`_lidR_cmpCPA`, pulsedt)
 }
 
+C_chm_prep <- function(data, snlin, sncol, lap_size, thr_cav, thr_spk, med_size, dil_radius, nodata) {
+    .Call(`_lidR_C_chm_prep`, data, snlin, sncol, lap_size, thr_cav, thr_spk, med_size, dil_radius, nodata)
+}
+
 C_dalponte2016 <- function(Image, Seeds, th_seed, th_crown, th_tree, DIST) {
     .Call(`_lidR_C_dalponte2016`, Image, Seeds, th_seed, th_crown, th_tree, DIST)
 }
