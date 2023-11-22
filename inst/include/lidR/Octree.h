@@ -390,8 +390,14 @@ template<typename T>  Node::Ocnode* Octree::locate_region(T shape)
   double bbxmax = (shape.xmax - xmin)/(xmax-xmin);
   double bbymin = (shape.ymin - ymin)/(ymax-ymin);
   double bbymax = (shape.ymax - ymin)/(ymax-ymin);
-  double bbzmin = (shape.zmin - zmin)/(zmax-zmin);
-  double bbzmax = (shape.zmax - zmin)/(zmax-zmin);
+
+  double bbzmin = 0;
+  double bbzmax = 1;
+  if (shape.zmin > this->zmin && shape.zmax < this->zmax)
+  {
+    bbzmin = (shape.zmin - zmin)/(zmax-zmin);
+    bbzmax = (shape.zmax - zmin)/(zmax-zmin);
+  }
 
   if (bbxmax < 0 || bbxmin > 1 || bbymax < 0 || bbymin > 1 || bbzmax < 0 || bbzmin > 1)
     return 0;

@@ -3,6 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v4.0.5 (Release date: )
 
 - Fix: [#726](https://github.com/r-lidar/lidR/issues/726) character palette causes error in plot.
+- Fix: [#732](https://github.com/r-lidar/lidR/issues/732) octree spatial indexes is not working properly. lidR now use voxel partition and no longer support octree until the problem is fixed.
 
 ## lidR v4.0.4 (Release date: 2023-09-07)
 

@@ -184,8 +184,15 @@ template<typename T> void GridPartition::lookup(T& shape, std::vector<PointXYZ>&
   int colmax = std::ceil((xmax - this->xmin) / xres);
   int rowmin = std::floor((this->ymax - ymax) / yres);
   int rowmax = std::ceil((this->ymax - ymin) / yres);
-  int laymin = std::floor((zmin - this->zmin) / zres);
-  int laymax = std::ceil((zmax - this->zmin) / zres);
+
+  int laymin = 0;
+  int laymax = nlayers;
+  if (zmin > this->zmin && zmax < this->zmax)
+  {
+    laymin = std::floor((zmin - this->zmin) / zres);
+    laymax = std::ceil((zmax - this->zmin) / zres);
+  }
+
   int cell;
 
   res.clear();

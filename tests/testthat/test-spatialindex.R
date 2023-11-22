@@ -162,7 +162,7 @@ las = LAS(D)
 
 test_that("circle lookup works for each spatial index", {
 
-  for(index in 0:4)
+  for(index in 0:3)
   {
     index(las) <- index
 
@@ -183,7 +183,7 @@ test_that("circle lookup works for each spatial index", {
 
 test_that("oriented rectangle lookup works for each spatial index", {
 
-  for(index in 0:4)
+  for(index in 0:3)
   {
     index(las) <- index
 
@@ -202,7 +202,7 @@ test_that("oriented rectangle lookup works for each spatial index", {
 
 test_that("knn in 2d works for each spatial indexes", {
 
-  for(index in 0:4)
+  for(index in 0:3)
   {
     index(las) <- index
 
@@ -219,7 +219,7 @@ test_that("knn in 2d works for each spatial indexes", {
 
 test_that("knn in 3d works for each spatial indexes", {
 
-  for(index in 0:4)
+  for(index in 0:3)
   {
     index(las) <- index
 
@@ -248,8 +248,8 @@ test_that("Spatial indexes work with more points (coverage)", {
   y = runif(1, 10, 900)
   z = runif(1, 1, 19)
 
-  u = vector("list", 4)
-  for(index in 0:4)
+  u = vector("list", 3)
+  for(index in 0:3)
   {
     index(las) <- index
     id = lidR:::C_knn3d_lookup(las, x,y,z,10)
@@ -258,8 +258,8 @@ test_that("Spatial indexes work with more points (coverage)", {
 
   expect_true(all(sapply(u, identical, u[[1]])))
 
-  u = vector("list", 4)
-  for(index in 0:4)
+  u = vector("list", 3)
+  for(index in 0:3)
   {
     index(las) <- index
     id = lidR:::C_circle_lookup(las, x, y, 5)
@@ -278,8 +278,8 @@ test_that("Spatial indexes work with 0 point", {
   y = runif(1, 10, 900)
   z = runif(1, 1, 19)
 
-  u = vector("list", 4)
-  for(index in 0:4)
+  u = vector("list", 3)
+  for(index in 0:3)
   {
     index(las) <- index
     id = lidR:::C_knn3d_lookup(las, x, y, z,10)
@@ -288,8 +288,8 @@ test_that("Spatial indexes work with 0 point", {
 
   expect_true(all(sapply(u, identical, integer(0))))
 
-  u = vector("list", 4)
-  for(index in 0:4)
+  u = vector("list", 3)
+  for(index in 0:3)
   {
     index(las) <- index
     id = lidR:::C_circle_lookup(las, x, y, 5)
@@ -308,8 +308,8 @@ test_that("Spatial indexes work with 1 point", {
   y = runif(1, 10, 11)
   z = runif(1, 1, 19)
 
-  u = vector("list", 4)
-  for(index in 0:4)
+  u = vector("list", 3)
+  for(index in 0:3)
   {
     index(las) <- index
     id = lidR:::C_knn3d_lookup(las, x, y, z, 10)
@@ -318,8 +318,8 @@ test_that("Spatial indexes work with 1 point", {
 
   expect_true(all(sapply(u, identical, 1L)))
 
-  u = vector("list", 4)
-  for(index in 0:4)
+  u = vector("list", 3)
+  for(index in 0:3)
   {
     index(las) <- index
     id = lidR:::C_circle_lookup(las, x, y, 5)
@@ -338,8 +338,8 @@ test_that("Spatial indexes work no point to find", {
   y = -100
   z = 0
 
-  u = vector("list", 4)
-  for(index in 0:4)
+  u = vector("list", 3)
+  for(index in 0:3)
   {
     index(las) <- index
     id = lidR:::C_circle_lookup(las, x, y, 5)

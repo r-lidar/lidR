@@ -54,7 +54,7 @@ inline SpatialIndex::SpatialIndex(const Rcpp::S4 las)
   case GRIDPARTITION:
   case VOXELPARTITION: grid = GridPartition(las); break;
   case QUADTREE: quadtree = QuadTree(las); break;
-  case OCTREE: octree = Octree(las); break;
+  case OCTREE: Rcpp::stop("Error: octree no longer supported."); break; // # nocov
   default: Rcpp::stop("Internal error: spatial index code inccorect."); break; // # nocov
   }
 }
@@ -186,7 +186,7 @@ inline int SpatialIndex::index_selector(const Rcpp::S4 las) const
       if (sensor == UKN || sensor == ALS)
         code = GRIDPARTITION;
       else if (sensor == TLS || sensor == UAV || sensor == DAP)
-        code = OCTREE;
+        code = VOXELPARTITION;
       else
         code = QUADTREE;
     }
