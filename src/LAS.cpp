@@ -573,16 +573,26 @@ void LAS::filter_with_grid(List layout, bool max)
   return;
 }
 
-IntegerVector LAS::find_polygon_ids(CharacterVector wkts)
+SEXP LAS::find_polygon_ids(CharacterVector wkts, bool by_poly)
 {
   typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> Point;
   typedef boost::geometry::model::polygon<Point> Polygon;
   typedef boost::geometry::model::multi_polygon<Polygon> MultiPolygon;
   typedef boost::geometry::model::box<Point> Bbox;
 
+  std::vector<std::vector<int>> res;
+  std::vector<int> poly_id;
+  if (by_poly)
+  {
+    res.resize(wkts.size());
+  }
+  else
+  {
+    poly_id.resize(X.size());
+    std::fill(poly_id.begin(), poly_id.end(), NA_INTEGER);
+  }
+
   SpatialIndex tree(las);
-  IntegerVector poly_id(X.size());
-  std::fill(poly_id.begin(), poly_id.end(), NA_INTEGER);
 
   for (unsigned int j = 0 ; j < wkts.size() ; j++)
   {
@@ -612,7 +622,12 @@ IntegerVector LAS::find_polygon_ids(CharacterVector wkts)
         p.set<0>(pts[i].x);
         p.set<1>(pts[i].y);
         if (boost::geometry::covered_by(p, polygons))
-          poly_id[pts[i].id] = j;
+        {
+          if (by_poly)
+            res[j].push_back(pts[i].id+1);
+          else
+            poly_id[pts[i].id] = j+1;
+        }
       }
     }
     else if (wkt.find("POLYGON") != std::string::npos)
@@ -638,7 +653,12 @@ IntegerVector LAS::find_polygon_ids(CharacterVector wkts)
         p.set<0>(pts[i].x);
         p.set<1>(pts[i].y);
         if (boost::geometry::covered_by(p, polygon))
-          poly_id[pts[i].id] = j;
+        {
+          if (by_poly)
+            res[j].push_back(pts[i].id+1);
+          else
+            poly_id[pts[i].id] = j+1;
+        }
       }
     }
     else
@@ -646,7 +666,10 @@ IntegerVector LAS::find_polygon_ids(CharacterVector wkts)
 
   }
 
-  return poly_id;
+  if (by_poly)
+    return wrap(res);
+  else
+    return wrap(poly_id);
 }
 
 void LAS::filter_shape(int method, NumericVector th, int k)

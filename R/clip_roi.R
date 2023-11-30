@@ -338,13 +338,20 @@ clip_sf = function(las, sf)
 clip_sf.LAS = function(las, sf)
 {
   sfc <- sf::st_geometry(sf)
-  idx <- point_in_polygons(las, sfc)
+  idx <- point_in_polygons(las, sfc, TRUE)
   output <- vector(mode = "list", length(sfc))
   uid <- unique(idx)
   uid <- uid[!is.na(uid)]
-  for (i in seq_along(uid))
+  for (i in seq_along(idx))
   {
-    roi = filter_poi(las, idx == uid[i])
+    # memory optimization
+    if(length(idx[[i]])== npoints(las))
+    {
+      output[[i]] = las
+      next
+    }
+
+    roi = suppressWarnings(las[idx[[i]]])
     if (is.empty(roi)) warning(glue::glue("No point found for within {sf::st_as_text(sfc[i])}."), call. = FALSE)
     output[[i]] = roi
   }

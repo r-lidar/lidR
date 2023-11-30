@@ -45,8 +45,8 @@ C_lowest <- function(las, layout) {
     .Call(`_lidR_C_lowest`, las, layout)
 }
 
-C_in_polygon <- function(las, wkts) {
-    .Call(`_lidR_C_in_polygon`, las, wkts)
+C_in_polygon <- function(las, wkts, by_poly) {
+    .Call(`_lidR_C_in_polygon`, las, wkts, by_poly)
 }
 
 C_lasdetectshape <- function(las, method, th, k, filter, ncpu) {

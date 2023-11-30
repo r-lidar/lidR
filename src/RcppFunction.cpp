@@ -66,10 +66,10 @@ LogicalVector C_lowest(S4 las, List layout)
 }
 
 // [[Rcpp::export(rng = false)]]
-IntegerVector C_in_polygon(S4 las, CharacterVector wkts)
+SEXP C_in_polygon(S4 las, CharacterVector wkts, bool by_poly)
 {
   LAS pt(las);
-  return pt.find_polygon_ids(wkts);
+  return pt.find_polygon_ids(wkts, by_poly);
 }
 
 // [[Rcpp::export(rng = false)]]

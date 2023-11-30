@@ -154,13 +154,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_in_polygon
-IntegerVector C_in_polygon(S4 las, CharacterVector wkts);
-RcppExport SEXP _lidR_C_in_polygon(SEXP lasSEXP, SEXP wktsSEXP) {
+SEXP C_in_polygon(S4 las, CharacterVector wkts, bool by_poly);
+RcppExport SEXP _lidR_C_in_polygon(SEXP lasSEXP, SEXP wktsSEXP, SEXP by_polySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type wkts(wktsSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_in_polygon(las, wkts));
+    Rcpp::traits::input_parameter< bool >::type by_poly(by_polySEXP);
+    rcpp_result_gen = Rcpp::wrap(C_in_polygon(las, wkts, by_poly));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -597,7 +598,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_smooth", (DL_FUNC) &_lidR_C_smooth, 6},
     {"_lidR_C_highest", (DL_FUNC) &_lidR_C_highest, 2},
     {"_lidR_C_lowest", (DL_FUNC) &_lidR_C_lowest, 2},
-    {"_lidR_C_in_polygon", (DL_FUNC) &_lidR_C_in_polygon, 2},
+    {"_lidR_C_in_polygon", (DL_FUNC) &_lidR_C_in_polygon, 3},
     {"_lidR_C_lasdetectshape", (DL_FUNC) &_lidR_C_lasdetectshape, 6},
     {"_lidR_C_Wing2015", (DL_FUNC) &_lidR_C_Wing2015, 7},
     {"_lidR_C_li2012", (DL_FUNC) &_lidR_C_li2012, 7},

@@ -1,4 +1,4 @@
-point_in_polygons <- function(las, sfc)
+point_in_polygons <- function(las, sfc, by_poly = FALSE)
 {
   if (!all(sf::st_geometry_type(sfc) %in% c("POLYGON", "MULTIPOLYGON")))
     stop("Only spatial polygons are supported", call. = FALSE)
@@ -9,7 +9,6 @@ point_in_polygons <- function(las, sfc)
   sfc2 <- sfc[id]
 
   wkt <- sf::st_as_text(sfc2, digit = 10)
-  res <- C_in_polygon(las, wkt)
-  idx <- id[res+1L]
-  return(idx)
+  res <- C_in_polygon(las, wkt, by_poly)
+  return(res)
 }
