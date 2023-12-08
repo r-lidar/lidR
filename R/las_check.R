@@ -165,6 +165,20 @@ las_check.LAS = function(las, print = TRUE, ...)
 
   .h1("Checking the data")
 
+  if (npoints(las) == 0)
+  {
+    .fail(glue::glue("0 point, cannot check this object. Aborting."))
+    warnerr = list(
+      messages = infos,
+      warnings = warnings,
+      errors = errors)
+
+    if (print)
+      return(invisible(warnerr))
+    else
+      return(warnerr)
+  }
+
   .h2("Checking coordinates...")
 
   .fail(rlas::is_defined_coordinates(data, "vector"))
