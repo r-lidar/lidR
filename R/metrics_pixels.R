@@ -61,7 +61,8 @@ pixel_metrics.LAScatalog = function(las, func, res = 20, start = c(0,0), ...)
   if (opt_wall_to_wall(las)) opt_chunk_buffer(las) <- 0.1*alignment[["res"]]
 
   # Processing
-  globals <- future::getGlobalsAndPackages(func)
+  globals = NULL
+  if (engine_use_future()) globals <- future::getGlobalsAndPackages(func)
   options <- list(need_buffer = FALSE, drop_null = TRUE, globals = names(globals$globals), raster_alignment = alignment, automerge = TRUE)
   output  <- catalog_apply(las, pixel_metrics, func = func, res = res, start = start, ..., .options = options)
   return(output)
