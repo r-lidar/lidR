@@ -101,7 +101,7 @@ crown_metrics.LAScluster = function(las, func, geom = "point", concaveman = c(3,
   x <- readLAS(las)
   if (is.empty(x)) return(NULL)
   metrics <- crown_metrics(x, func, geom, concaveman, attribute, ...)
-
+  if (is.null(metrics)) return(NULL) # fix #733
   bbox <- st_bbox(las)
   sf::st_agr(metrics) <- "constant"
   centroid <- sf::st_centroid(metrics)
