@@ -47,6 +47,7 @@ Suggests:
     raster,
     RCSF,
     RMCC,
+    rjson,
     mapview,
     mapedit,
     progress,

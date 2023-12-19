@@ -5,6 +5,8 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ### NEW features
 
 1. New: `point_eigenvalues` gained an argument `coeff` to return the principal component coefficients
+2. New function `pitfill_stonge2008()`. See references.
+3. New `readLAScatalog` can read a virtual point cloud file (.vpc)
 
 ### Backward incompatibilities
 

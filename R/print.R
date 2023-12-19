@@ -208,12 +208,14 @@ setMethod("show", "LAScatalog", function(object)
   pointprefix <- ""
   major       <- sort(unique(object[["Version.Major"]]))
   minor       <- sort(unique(object[["Version.Minor"]]))
+  if (is.null(major)) major <- "?"
+  if (is.null(minor)) minor <- "?"
   version     <- paste(major, minor, sep = ".", collapse = " and ")
   format      <- paste(sort(unique(object[["Point.Data.Format.ID"]])), collapse = " and ")
+  if (format == "") format <- "?"
   density     <- round(npoints/area, 1)
-  dpulse      <- round(npulse/area, 1)
-
   if (is.nan(density)) density <- 0
+  dpulse      <- round(npulse/area, 1)
 
   if (area > 1000*1000/2)
   {
