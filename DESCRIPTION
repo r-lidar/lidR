@@ -2,7 +2,7 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 4.0.5
+Version: 4.1.0
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
@@ -11,7 +11,8 @@ Authors@R: c(
     person("Bourdon", "Jean-François", email = "", role = ("ctb"), comment = "Contributed to Roussel2020() for track_sensor()"),
     person("Gatziolis", "Demetrios", email = "", role = ("ctb"), comment = "Implemented Gatziolis2019() for track_sensor()"),
     person("Leon", "Steinmeier", email = "", role = ("ctb"), comment = "Contributed to parallelization management"),
-    person("Stanislaw", "Adaszewski", email = "", role = ("cph"), comment = "Author of the C++ concaveman code"))
+    person("Stanislaw", "Adaszewski", email = "", role = ("cph"), comment = "Author of the C++ concaveman code"),
+    person("Benoît", "St-Onge", email = "", role = "cph", comment = "Author of the 'chm_prep' function"))
 Description: Airborne LiDAR (Light Detection and Ranging) interface for data
     manipulation and visualization. Read/write 'las' and 'laz' files, computation
     of metrics in area based approach, point filtering, artificial point reduction,
@@ -29,12 +30,10 @@ Imports:
     glue,
     grDevices,
     lazyeval,
-    raster,
     Rcpp (>= 1.0.3),
     rgl,
     rlas (>= 1.5.0),
     sf,
-    sp,
     stats,
     stars,
     terra (>= 1.5-17),
@@ -45,11 +44,14 @@ Suggests:
     future,
     geometry,
     gstat,
+    raster,
     RCSF,
     RMCC,
+    rjson,
     mapview,
     mapedit,
     progress,
+    sp,
     testthat (>= 2.1.0),
     knitr,
     rmarkdown

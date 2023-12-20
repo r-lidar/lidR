@@ -1,10 +1,9 @@
 #' Bounding box of a LAS* object
 #'
-#' Bounding box of a `LAS*` object. `st_bbox()` extends `sf`, `extent()` extends
-#' `raster`, `bbox()` extends `sp`, and `ext()` extends `terra`. The values returned are similar to their
+#' Bounding box of a `LAS*` object. `st_bbox()` extends `sf`, and `ext()` extends `terra`. The values returned are similar to their
 #' parent functions.
 #'
-#' @return A `bbox` from sf, an `Extent` from raster, a `matrix` from sp, or a `SpatExtent` from `terra`.
+#' @return A `bbox` from sf, or a `SpatExtent` from `terra`.
 #'
 #' @param obj,x An object of class \code{LAS*}.
 #' @param ... unused
@@ -12,8 +11,6 @@
 #' @export
 #' @name st_bbox
 #' @importFrom sf st_bbox
-#' @importFrom sp bbox
-#' @importFrom raster extent
 #' @importFrom terra ext
 #' @md
 NULL
@@ -25,8 +22,6 @@ NULL
 #' las <- readLAS(f)
 #'
 #' st_bbox(las)
-#' bbox(las)
-#' extent(las)
 #' ext(las)
 st_bbox.LAS = function(obj, ...)
 {
@@ -79,30 +74,6 @@ st_bbox.raster_template = function(obj, ...)
   return(bb)
 }
 
-# ==== EXTENT =====
-
-#' @export
-#' @rdname st_bbox
-setMethod("extent", "LAS", function(x, ...) { .extent(x) })
-
-#' @export
-#' @rdname st_bbox
-setMethod("extent", "LASheader", function(x, ...) { .extent(x) })
-
-#' @export
-#' @rdname st_bbox
-setMethod("extent", "LAScatalog", function(x, ...) { .extent(x) })
-
-#' @export
-#' @rdname st_bbox
-setMethod("extent", "LAScluster", function(x, ...) { .extent(x) })
-
-.extent <- function(x)
-{
-  bb <- st_bbox(x)
-  return(raster::extent(bb$xmin, bb$xmax, bb$ymin, bb$ymax))
-}
-
 # ==== SPATEXTENT =====
 
 #' @export
@@ -125,28 +96,4 @@ setMethod("ext", "LAScluster", function(x, ...) { .ext(x) })
 {
   bb <- st_bbox(x)
   return(terra::ext(bb$xmin, bb$xmax, bb$ymin, bb$ymax))
-}
-
-# ==== BBOX =====
-
-#' @export
-#' @rdname st_bbox
-setMethod("bbox", "LAS", function(obj) { .bbox(obj) })
-
-#' @export
-#' @rdname st_bbox
-setMethod("bbox", "LASheader", function(obj) { .bbox(obj) })
-
-#' @export
-#' @rdname st_bbox
-setMethod("bbox", "LAScatalog", function(obj) { .bbox(obj) })
-
-#' @export
-#' @rdname st_bbox
-setMethod("bbox", "LAScluster", function(obj) { .bbox(obj) })
-
-.bbox <- function(obj)
-{
-  bb <- st_bbox(obj)
-  return(matrix(c(bb$xmin, bb$xmax, bb$ymin, bb$ymax), ncol = 2, byrow = TRUE))
 }

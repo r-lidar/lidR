@@ -4,7 +4,6 @@
 #'
 #' @param x a LAS* object
 #' @param ... LAS* objects if it is the sole argurment (e.g. in rbind())
-#'
 #' @name tools
 #' @rdname tools
 NULL

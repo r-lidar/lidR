@@ -81,51 +81,60 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
   verbose("Reading files...")
 
-  header <- LASheader(rlas::read.lasheader(files[1]))
-  crs    <- st_crs(header)
-  phblab <- make.names(names(phb(header)))
-  phblab[4] <- "GUID"
-
-  # Delayed progress bar
-  t0 <- Sys.time()
-  pb <- NULL
-  i  <- 0
-
-  headers <- lapply(files, function(x)
+  if (length(files) == 1L && tools::file_ext(files) == "vpc")
   {
-    header        <- rlas:::lasheaderreader(x)
-    header        <- LASheader(header)
-    PHB           <- header@PHB
-    names(PHB)    <- phblab
+    headers = read_vpc(files)
+    files = sapply(headers, function(x) x$filename)
+    crs = sf::st_crs(headers[[1]]$CRS)
+  }
+  else
+  {
+    header <- LASheader(rlas::read.lasheader(files[1]))
+    crs    <- st_crs(header)
+    phblab <- make.names(names(phb(header)))
+    phblab[4] <- "GUID"
 
-    if (use_wktcs(header))
-      PHB[["CRS"]] <- wkt(header)
-    else
-      PHB[["CRS"]] <- epsg(header)
+    # Delayed progress bar
+    t0 <- Sys.time()
+    pb <- NULL
+    i  <- 0
 
-    # Compatibility with rlas 1.3.0
-    if (!is.null( PHB[["Number.of.points.by.return"]]))
+    headers <- lapply(files, function(x)
     {
-      PHB[["Number.of.1st.return"]] <- PHB[["Number.of.points.by.return"]][1]
-      PHB[["Number.of.2nd.return"]] <- PHB[["Number.of.points.by.return"]][2]
-      PHB[["Number.of.3rd.return"]] <- PHB[["Number.of.points.by.return"]][3]
-      PHB[["Number.of.4th.return"]] <- PHB[["Number.of.points.by.return"]][4]
-      PHB[["Number.of.5th.return"]] <- PHB[["Number.of.points.by.return"]][5]
-      PHB[["Number.of.points.by.return"]] <- NULL
-      PHB[["Global.Encoding"]] <- NULL
-    }
+      header        <- rlas:::lasheaderreader(x)
+      header        <- LASheader(header)
+      PHB           <- header@PHB
+      names(PHB)    <- phblab
 
-    if (progress && Sys.time() - t0 > getOption("lidR.progress.delay")) {
-      if (is.null(pb))
-        pb <<- utils::txtProgressBar(min = 0, max = length(files), initial = i, style = 3)
+      if (use_wktcs(header))
+        PHB[["CRS"]] <- wkt(header)
+      else
+        PHB[["CRS"]] <- epsg(header)
 
-      utils::setTxtProgressBar(pb, i)
-    }
+      # Compatibility with rlas 1.3.0
+      if (!is.null( PHB[["Number.of.points.by.return"]]))
+      {
+        PHB[["Number.of.1st.return"]] <- PHB[["Number.of.points.by.return"]][1]
+        PHB[["Number.of.2nd.return"]] <- PHB[["Number.of.points.by.return"]][2]
+        PHB[["Number.of.3rd.return"]] <- PHB[["Number.of.points.by.return"]][3]
+        PHB[["Number.of.4th.return"]] <- PHB[["Number.of.points.by.return"]][4]
+        PHB[["Number.of.5th.return"]] <- PHB[["Number.of.points.by.return"]][5]
+        PHB[["Number.of.points.by.return"]] <- NULL
+        PHB[["Global.Encoding"]] <- NULL
+      }
 
-    i <<- i + 1
+      if (progress && Sys.time() - t0 > getOption("lidR.progress.delay")) {
+        if (is.null(pb))
+          pb <<- utils::txtProgressBar(min = 0, max = length(files), initial = i, style = 3)
 
-    return(PHB)
-  })
+        utils::setTxtProgressBar(pb, i)
+      }
+
+      i <<- i + 1
+
+      return(PHB)
+    })
+  }
 
   headers <- data.table::rbindlist(headers)
   headers$filename <- files
@@ -145,7 +154,6 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   geom <-sf::st_sfc(geom)
   sf::st_crs(geom) <- crs
   headers <- sf::st_set_geometry(headers, geom)
-
 
   res <- new("LAScatalog")
   res@data <- headers
@@ -205,3 +213,54 @@ readDAPLAScatalog = function(folder, ...)
 #' @export
 #' @name readLAScatalog
 catalog <- function(folder, ...) { readLAScatalog(folder, FALSE, ...) }
+
+read_vpc <- function(f)
+{
+  vpc = rjson::fromJSON(file = f)
+  features = vpc$features
+  headers = vector("list", length(features))
+  for (i in seq_along(features))
+  {
+    feature = features[[i]]
+    if (length(feature$properties[["proj:bbox"]]) == 6)
+    {
+      headers[[i]]$Min.X = feature$properties[["proj:bbox"]][1]
+      headers[[i]]$Min.Y = feature$properties[["proj:bbox"]][2]
+      headers[[i]]$Min.Z = feature$properties[["proj:bbox"]][3]
+      headers[[i]]$Max.X = feature$properties[["proj:bbox"]][4]
+      headers[[i]]$Max.Y = feature$properties[["proj:bbox"]][5]
+      headers[[i]]$Max.Z = feature$properties[["proj:bbox"]][6]
+    }
+    else if (length(feature$properties[["proj:bbox"]]) == 4)
+    {
+      headers[[i]]$Min.X = feature$properties[["proj:bbox"]][1]
+      headers[[i]]$Min.Y = feature$properties[["proj:bbox"]][2]
+      headers[[i]]$Max.X = feature$properties[["proj:bbox"]][3]
+      headers[[i]]$Max.Y = feature$properties[["proj:bbox"]][4]
+    }
+    else
+    {
+      stop("Invalid VPC file with no valid bbox")
+    }
+
+    headers[[i]]$Number.of.point.records = feature$properties[["pc:count"]]
+
+    relative_path <- feature$assets$data$href[1]
+    parent = dirname(f)
+    absolute_path <- file.path(parent, relative_path)
+    absolute_path <- normalizePath(absolute_path)
+    headers[[i]]$filename = absolute_path
+
+    wkt = feature$properties[["proj:wkt2"]]
+    epsg = feature$properties[["proj:epsg"]]
+
+    if (!is.null(wkt))
+      headers[[i]]$CRS = wkt
+    else if (!is.null(epsg))
+      headers[[i]]$CRS = epsg
+    else
+      headers[[i]]$CRS = 0
+  }
+
+  return (headers)
+}

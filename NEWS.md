@@ -1,6 +1,24 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v4.0.5 (Release date: )
+## lidR v4.1.0 (Release date: )
+
+### NEW features
+
+1. New: `point_eigenvalues` gained an argument `coeff` to return the principal component coefficients
+2. New function `pitfill_stonge2008()`. See references.
+3. New `readLAScatalog` can read a virtual point cloud file (.vpc)
+
+### Backward incompatibilities
+
+Following the retirement of `rgdal` and `sp` we removed the dependence to `sp` and the strong dependence to `raster`:
+
+1. Change: remove function `bbox` inherited from `sp`
+2. Change: remove: `rumble_index` for rasters because `sp` is no longer a dependence of `lidR`
+3. Change: package `raster` is now only suggested and `lidR` no longer depends on it. 
+4. Change: the function `extent` was removed in consequence of (3) because it was inherited from `raster` and returned an object `Extent` from `raster`.
+5. Change: functions `crs`, `crs<-`, `projection`, `projection<-`, `wkt` and `area` inherited from `raster` are now generic. This may create clash with the `raster` package but anyway `raster` should no longer be used.
+
+### Fixes
 
 - Fix: [#728](https://github.com/r-lidar/lidR/issues/728) fix clipping polygons when polygons overlap.
 - Fix: [#726](https://github.com/r-lidar/lidR/issues/726) character palette causes error in plot.

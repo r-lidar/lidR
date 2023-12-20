@@ -45,10 +45,6 @@
 #'
 #' @importFrom sf st_crs
 #' @importFrom sf st_crs<-
-#' @importFrom raster projection<-
-#' @importFrom raster projection
-#' @importFrom raster crs<-
-#' @importFrom raster crs
 #' @name st_crs
 #' @md
 NULL
@@ -204,8 +200,16 @@ projection <- function(x, asText = TRUE)
   return(x)
 }
 
-
 # ==== CRS ====
+
+#' @export
+#' @rdname st_crs
+setGeneric("crs", function(x, asText = FALSE) standardGeneric("crs"))
+
+#' @export
+#' @rdname st_crs
+setGeneric("crs<-", function(x, ..., value) standardGeneric("crs<-"))
+
 
 #' @export
 #' @rdname st_crs
@@ -309,7 +313,6 @@ setMethod("epsg<-", "LAS", function(object, value)
 
 #' @export
 #' @rdname st_crs
-#' @importFrom raster wkt
 setGeneric("wkt", function(obj) standardGeneric("wkt"))
 
 #' @export

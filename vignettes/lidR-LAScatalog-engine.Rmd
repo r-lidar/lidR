@@ -641,7 +641,7 @@ print(chunk)
 #> crs         : +proj=utm +zone=17 +datum=NAD83 +units=m +no_defs
 ```
 
-`raster::extent()` and `sp::bbox()` and `sf::st_bbox()` are valid functions that return the bounding box of the chunk. The bounding box of the chunk is the bounding box without the buffer.
+`raster::extent()`, `terra::ext()` and `sf::st_bbox()` are valid functions that return the bounding box of the chunk. The bounding box of the chunk is the bounding box without the buffer.
  
 ```{r, warning = FALSE, eval = FALSE}
 raster::extent(chunk)
@@ -650,10 +650,6 @@ raster::extent(chunk)
 #> xmax       : 684950 
 #> ymin       : 5017810 
 #> ymax       : 5017960
-sp::bbox(chunk)
-#>         [,1]    [,2]
-#> [1,]  684800  684950
-#> [2,] 5017810 5017960
 sf::st_bbox(chunk)
 #>    xmin    ymin    xmax    ymax 
 #>  684800 5017810  684950 5017960

@@ -20,6 +20,6 @@ test_that("catalog engine returns a valid output", {
   ctg@chunk_options$drop = 1:3
   m = grid_metrics(ctg, ~mean(Z), 20)
 
-  expect_equal(extent(m), extent(0,100,60,200))
+  expect_equivalent(st_bbox(m), st_bbox(c(xmin = 0, xmax = 100,ymin = 60,ymax = 200)))
   expect_equal(sum(is.na(m[])), 9)
 })

@@ -16,8 +16,8 @@ test_that("Datum tranformation works", {
 
 test_that("Bounding box is updated", {
 
-  expect_equivalent(bbox(las), matrix(c(684766.39, 5017773.08, 684993.29, 5018007.25), ncol = 2))
-  expect_equivalent(bbox(las2), matrix(c(214261.66, 5021517.24, 214504.91, 5021767.46), ncol = 2), tol = 0.01)
+  expect_equivalent(as.numeric(st_bbox(las)), c(684766.39, 5017773.08, 684993.29, 5018007.25))
+  expect_equivalent(as.numeric(st_bbox(las2)), c(214261.66, 5021517.24, 214504.91, 5021767.46), tol = 0.01)
 })
 
 test_that("Bounding header is updated", {

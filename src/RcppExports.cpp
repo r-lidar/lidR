@@ -33,6 +33,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_chm_prep
+Rcpp::NumericVector C_chm_prep(std::vector<float> data, int snlin, int sncol, int lap_size, float thr_cav, float thr_spk, int med_size, int dil_radius, float nodata);
+RcppExport SEXP _lidR_C_chm_prep(SEXP dataSEXP, SEXP snlinSEXP, SEXP sncolSEXP, SEXP lap_sizeSEXP, SEXP thr_cavSEXP, SEXP thr_spkSEXP, SEXP med_sizeSEXP, SEXP dil_radiusSEXP, SEXP nodataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< std::vector<float> >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< int >::type snlin(snlinSEXP);
+    Rcpp::traits::input_parameter< int >::type sncol(sncolSEXP);
+    Rcpp::traits::input_parameter< int >::type lap_size(lap_sizeSEXP);
+    Rcpp::traits::input_parameter< float >::type thr_cav(thr_cavSEXP);
+    Rcpp::traits::input_parameter< float >::type thr_spk(thr_spkSEXP);
+    Rcpp::traits::input_parameter< int >::type med_size(med_sizeSEXP);
+    Rcpp::traits::input_parameter< int >::type dil_radius(dil_radiusSEXP);
+    Rcpp::traits::input_parameter< float >::type nodata(nodataSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_chm_prep(data, snlin, sncol, lap_size, thr_cav, thr_spk, med_size, dil_radius, nodata));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_dalponte2016
 IntegerMatrix C_dalponte2016(NumericMatrix Image, IntegerMatrix Seeds, double th_seed, double th_crown, double th_tree, double DIST);
 RcppExport SEXP _lidR_C_dalponte2016(SEXP ImageSEXP, SEXP SeedsSEXP, SEXP th_seedSEXP, SEXP th_crownSEXP, SEXP th_treeSEXP, SEXP DISTSEXP) {
@@ -346,16 +364,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_eigen_metrics
-DataFrame C_eigen_metrics(S4 las, int k, double r, LogicalVector filter, int ncpu);
-RcppExport SEXP _lidR_C_eigen_metrics(SEXP lasSEXP, SEXP kSEXP, SEXP rSEXP, SEXP filterSEXP, SEXP ncpuSEXP) {
+DataFrame C_eigen_metrics(S4 las, int k, double r, bool coeffs, LogicalVector filter, int ncpu);
+RcppExport SEXP _lidR_C_eigen_metrics(SEXP lasSEXP, SEXP kSEXP, SEXP rSEXP, SEXP coeffsSEXP, SEXP filterSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< bool >::type coeffs(coeffsSEXP);
     Rcpp::traits::input_parameter< LogicalVector >::type filter(filterSEXP);
     Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_eigen_metrics(las, k, r, filter, ncpu));
+    rcpp_result_gen = Rcpp::wrap(C_eigen_metrics(las, k, r, coeffs, filter, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -589,6 +608,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_lidR_filterTimeBlockPulses", (DL_FUNC) &_lidR_filterTimeBlockPulses, 1},
     {"_lidR_cmpCPA", (DL_FUNC) &_lidR_cmpCPA, 1},
+    {"_lidR_C_chm_prep", (DL_FUNC) &_lidR_C_chm_prep, 9},
     {"_lidR_C_dalponte2016", (DL_FUNC) &_lidR_C_dalponte2016, 6},
     {"_lidR_C_delaunay", (DL_FUNC) &_lidR_C_delaunay, 4},
     {"_lidR_C_interpolate_delaunay", (DL_FUNC) &_lidR_C_interpolate_delaunay, 7},
@@ -612,7 +632,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_local_maximum", (DL_FUNC) &_lidR_C_local_maximum, 4},
     {"_lidR_C_isolated_voxel", (DL_FUNC) &_lidR_C_isolated_voxel, 3},
     {"_lidR_C_check_gpstime", (DL_FUNC) &_lidR_C_check_gpstime, 2},
-    {"_lidR_C_eigen_metrics", (DL_FUNC) &_lidR_C_eigen_metrics, 5},
+    {"_lidR_C_eigen_metrics", (DL_FUNC) &_lidR_C_eigen_metrics, 6},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},

@@ -1521,13 +1521,36 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
   return output;
 }
 
-DataFrame LAS::eigen_decomposition(int k, double r)
+DataFrame LAS::eigen_decomposition(int k, double r, bool get_coef)
 {
   int n = std::count(skip.begin(), skip.end(), true);
   IntegerVector pointID(n);
+
   NumericVector eigen_largest(n);
   NumericVector eigen_medium(n);
   NumericVector eigen_smallest(n);
+  NumericVector coeff0;
+  NumericVector coeff1;
+  NumericVector coeff2;
+  NumericVector coeff3;
+  NumericVector coeff4;
+  NumericVector coeff5;
+  NumericVector coeff6;
+  NumericVector coeff7;
+  NumericVector coeff8;
+
+  if (get_coef)
+  {
+    coeff0 = NumericVector(n);
+    coeff1 = NumericVector(n);
+    coeff2 = NumericVector(n);
+    coeff3 = NumericVector(n);
+    coeff4 = NumericVector(n);
+    coeff5 = NumericVector(n);
+    coeff6 = NumericVector(n);
+    coeff7 = NumericVector(n);
+    coeff8 = NumericVector(n);
+  }
 
   bool abort = false;
   unsigned int j = 0;
@@ -1602,9 +1625,24 @@ DataFrame LAS::eigen_decomposition(int k, double r)
     #pragma omp critical
     {
       pointID[j] = i;
+
       eigen_largest[j] = latent[0];
       eigen_medium[j] = latent[1];
       eigen_smallest[j] = latent[2];
+
+      if (get_coef)
+      {
+        coeff0[j] = coeff(0,0);
+        coeff1[j] = coeff(0,1);
+        coeff2[j] = coeff(0,2);
+        coeff3[j] = coeff(1,0);
+        coeff4[j] = coeff(1,1);
+        coeff5[j] = coeff(1,2);
+        coeff6[j] = coeff(2,0);
+        coeff7[j] = coeff(2,1);
+        coeff8[j] = coeff(2,2);
+      }
+
       j++;
     }
   }
@@ -1614,6 +1652,20 @@ DataFrame LAS::eigen_decomposition(int k, double r)
   out.push_back(eigen_largest, "eigen_largest");
   out.push_back(eigen_medium, "eigen_medium");
   out.push_back(eigen_smallest, "eigen_smallest");
+
+  if (get_coef)
+  {
+    out.push_back(coeff0, "coeff00");
+    out.push_back(coeff1, "coeff01");
+    out.push_back(coeff2, "coeff02");
+    out.push_back(coeff3, "coeff10");
+    out.push_back(coeff4, "coeff11");
+    out.push_back(coeff5, "coeff12");
+    out.push_back(coeff6, "coeff20");
+    out.push_back(coeff7, "coeff21");
+    out.push_back(coeff8, "coeff22");
+  }
+
   return out;
 }
 
