@@ -466,7 +466,7 @@ rumple_index = function(x, y = NULL, z = NULL, ...)
   UseMethod("rumple_index", x)
 }
 
-# @export
+#' @export
 rumple_index.RasterLayer <- function(x, y = NULL, z = NULL, ...)
 {
   res <- raster_res(x)
@@ -474,7 +474,7 @@ rumple_index.RasterLayer <- function(x, y = NULL, z = NULL, ...)
   return(rumple_index.matrix(x, res[1], res[2]))
 }
 
-# @export
+#' @export
 rumple_index.stars <- function(x, y = NULL, z = NULL, ...)
 {
   res <- raster_res(x)
@@ -482,7 +482,7 @@ rumple_index.stars <- function(x, y = NULL, z = NULL, ...)
   return(rumple_index.matrix(x, res[1], res[2]))
 }
 
-# @export
+#' @export
 rumple_index.SpatRaster <- function(x, y = NULL, z = NULL, ...)
 {
   res <- raster_res(x)
@@ -490,13 +490,12 @@ rumple_index.SpatRaster <- function(x, y = NULL, z = NULL, ...)
   return(rumple_index.matrix(x, res[1], res[2]))
 }
 
-# @export
+#' @export
 rumple_index.matrix <- function(x, y = NULL, z = NULL, ...)
 {
-  stop("'Rumple_index' for raster has been removed because it was reliying on 'sp'")
-  #area  <- sp::surfaceArea(x, y, z)
-  #parea <- sum(!is.na(x))*y*z
-  #return(area/parea)
+  area  <- sp::surfaceArea(x, y, z)
+  parea <- sum(!is.na(x))*y*z
+  return(area/parea)
 }
 
 #' @export
@@ -553,23 +552,23 @@ gap_fraction_profile = function(z, dz = 1, z0 = 2)
   zrange = range(z)
   if (z0 < zrange[1])
     z0 = floor((zrange[1]- z0)/dz)*dz + z0
-  
+
   if (z0 >= zrange[2])
     return(data.frame(z = numeric(0), gf = numeric(0)))
-  
+
   bk <- seq(z0, ceiling((zrange[2] - z0)/dz)*dz + z0, dz)
-  
+
   histogram <- graphics::hist(z, breaks = c(-Inf, bk), plot = F)
   h <- histogram$mids
   p <- histogram$counts
-  
+
   cs <- cumsum(p)
   i <- cs[1:(length(cs)-1)]/cs[2:length(cs)]
-  
+
   i[is.na(i)] = 0
-  
+
   z = h[-1]
-  
+
   return(data.frame(z = z, gf = i))
 }
 

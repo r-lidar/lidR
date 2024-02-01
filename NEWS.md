@@ -13,10 +13,9 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 Following the retirement of `rgdal` and `sp` we removed the dependence to `sp` and the strong dependence to `raster`:
 
 1. Change: remove function `bbox` inherited from `sp`
-2. Change: remove: `rumble_index` for rasters because `sp` is no longer a dependence of `lidR`
-3. Change: package `raster` is now only suggested and `lidR` no longer depends on it. 
-4. Change: the function `extent` was removed in consequence of (3) because it was inherited from `raster` and returned an object `Extent` from `raster`.
-5. Change: functions `crs`, `crs<-`, `projection`, `projection<-`, `wkt` and `area` inherited from `raster` are now generic. This may create clash with the `raster` package but anyway `raster` should no longer be used.
+2. Change: package `raster` is now only suggested and `lidR` no longer depends on it. 
+3. Change: the function `extent` was removed in consequence of (3) because it was inherited from `raster` and returned an object `Extent` from `raster`.
+4. Change: functions `crs`, `crs<-`, `projection`, `projection<-`, `wkt` and `area` inherited from `raster` are now generic. This may create clash with the `raster` package but anyway `raster` should no longer be used.
 
 ### Fixes
 

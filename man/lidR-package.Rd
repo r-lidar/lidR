@@ -59,6 +59,7 @@ Other contributors:
   \item Gatziolis Demetrios (Implemented Gatziolis2019() for track_sensor()) [contributor]
   \item Leon Steinmeier (Contributed to parallelization management) [contributor]
   \item Stanislaw Adaszewski (Author of the C++ concaveman code) [copyright holder]
+  \item Benoît St-Onge (Author of the 'chm_prep' function) [copyright holder]
 }
 
 }
