@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v4.1.1 (Release date: )
+
+Fix: `readLAScatalog()` was not working if package `raster` was not installed.
+
 ## lidR v4.1.0 (Release date: 2024-01-31)
 
 ### NEW features

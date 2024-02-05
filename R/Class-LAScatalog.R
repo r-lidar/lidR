@@ -178,21 +178,32 @@ setClass(
 
 setMethod("initialize", "LAScatalog", function(.Object)
 {
-  drivers = list(
+  Raster = NULL
+  stars = NULL
+
+  if (system.file(package='raster') != "")
+  {
     Raster = list(
       write = raster::writeRaster,
       extension = ".tif",
       object = "x",
       path = "filename",
-      param = list(format = "GTiff", NAflag = -999999)
-    ),
+      param = list(format = "GTiff", NAflag = -999999))
+  }
+
+  if (system.file(package='stars') != "")
+  {
     stars = list(
       write = stars::write_stars,
       extension = ".tif",
       object = "obj",
       path = "dsn",
-      param = list(NA_value = -999999)
-    ),
+      param = list(NA_value = -999999))
+  }
+
+  drivers = list(
+    Raster = Raster,
+    stars = stars,
     SpatRaster = list(
       write = terra::writeRaster,
       extension = ".tif",
