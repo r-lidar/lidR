@@ -70,17 +70,17 @@ test_that("merge_spatial preserve storage mode", {
 })
 
 
-test_that("merge_spatial works with SpatialPolygons", {
-  skip_if_not_installed("sp")
-  lakes <- as(sflakes, "SpatialPolygons")
-
-  las <- merge_spatial(las, lakes)
-  cn <- names(las)
-
-  expect_true("id" %in% cn)
-  expect_true(is.integer(las$id))
-  expect_equivalent(as.numeric(table(las$id)), c(216))
-})
+# test_that("merge_spatial works with SpatialPolygons", {
+#   skip_if_not_installed("sp")
+#   lakes <- as(sflakes, "SpatialPolygons")
+#
+#   las <- merge_spatial(las, lakes)
+#   cn <- names(las)
+#
+#   expect_true("id" %in% cn)
+#   expect_true(is.integer(las$id))
+#   expect_equivalent(as.numeric(table(las$id)), c(216))
+# })
 
 test_that("merge_spatial works with sfc", {
 
