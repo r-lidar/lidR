@@ -50,8 +50,9 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), use_class = c(
   # It creates a stars object no matter the input which might be a number
   # a Raster, a stars or a SpatRaster
   layout <- if (!is_a_number(res)) raster_template(res) else raster_layout(las, res, format = "template")
-  layout <- raster_materialize(layout, values = 0, pkg = "stars")
-  sf::st_crs(layout) <- st_crs(las) # Fix #517 because if res is a RasterLayer the crs is proj4 and it mess up everything
+  layout <- raster_materialize(layout, values = 0, pkg = "terra")
+
+  if (inherits(layout, "Raster")) sf::st_crs(layout) <- st_crs(las) # Fix #517 because if res is a RasterLayer the crs is proj4 and it mess up everything
 
   if (is.character(shape) && shape %in% c("convex", "concave"))
   {
@@ -64,7 +65,10 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), use_class = c(
   }
 
   if (is(shape, "sfc"))
-    layout <- layout[shape]
+  {
+    shape = terra::vect(shape)
+    layout <- terra::mask(layout, shape)
+  }
 
   grid <- raster_as_dataframe(layout, xy = TRUE, na.rm = TRUE)
 
