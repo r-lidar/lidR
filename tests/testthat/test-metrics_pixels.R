@@ -187,6 +187,7 @@ test_that("pixel_metric works with a RasterLayer as input instead of a resolutio
   expect_equal(sum(is.na(m[])), 150L)
 
   # --- no matching bbox
+  raster2 <- as(stars2, "Raster")
 
   expect_warning(m <- pixel_metrics(las, f1, raster2), "Bounding boxes are not intersecting")
   expect_true(is(m, "RasterLayer"))

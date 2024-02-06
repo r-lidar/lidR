@@ -72,7 +72,7 @@ test_that("merge_spatial preserve storage mode", {
 
 test_that("merge_spatial works with SpatialPolygons", {
   skip_if_not_installed("sp")
-  lakes <- as(splakes, "SpatialPolygons")
+  lakes <- as(sflakes, "SpatialPolygons")
 
   las <- merge_spatial(las, lakes)
   cn <- names(las)
