@@ -93,6 +93,8 @@ test_that("clip_roi clips multipolygon with hole", {
 
 test_that("clip_roi clips polygon works from sp polygons both on a LAS and LAScatalog", {
 
+  skip_if_not_installed("sp")
+
   wkt1 <- "MULTIPOLYGON (((339010.5 5248000, 339012 5248000, 339010.5 5248002, 339010.5 5248000)), ((339008 5248000, 339010 5248000, 339010 5248002, 339008 5248000), (339008.5 5248000.2, 339009.5 5248000.2, 339009.5 5248001, 339008.5 5248000.2)))"
   wkt2 <- "POLYGON ((339008 5248000, 339010 5248000, 339010 5248002, 339008 5248000))"
 
@@ -121,16 +123,16 @@ test_that("clip_roi clips point with SpatialPoints and sfc on LAS and LAScatalog
   p <- sf::st_as_sf(xy, coords = c("X", "Y"))
   p <- sf::st_geometry(p)
 
-  discs1 <- clip_roi(las, sf::as_Spatial(p), radius = r)
+  #discs1 <- clip_roi(las, sf::as_Spatial(p), radius = r)
   discs2 <- clip_roi(las, p, radius = r)
   discs3 <- clip_roi(ctg, p, radius = r)
   discs4 <- clip_roi(ctg, p, radius = c(r,2))
 
-  expect_is(discs1, "list")
-  expect_equal(length(discs1), 2L)
-  expect_equal(discs1, discs2)
-  expect_equal(discs1, discs3)
-  expect_equal(discs1, discs4)
+  expect_is(discs2, "list")
+  expect_equal(length(discs2), 2L)
+  #expect_equal(discs1, discs2)
+  expect_equal(discs2, discs3)
+  expect_equal(discs2, discs4)
 })
 
 test_that("clip_transect clips a transect on LAS and LAScatalog", {

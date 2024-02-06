@@ -27,6 +27,7 @@ test_that("locate_trees LMF works with a LAS", {
 })
 
 test_that("find_trees is backward compatible", {
+  skip_if_not_installed("sp")
 
   ttops = find_trees(las, lmf(5))
 
@@ -46,7 +47,7 @@ test_that("find_trees is backward compatible", {
 
 
 test_that("locate_trees LMF works with a RasterLayer ", {
-
+  skip_if_not_installed("raster")
   chm = grid_canopy(las, 1, p2r(0.15))
 
   ttops = locate_trees(chm, lmf(5))
@@ -107,3 +108,4 @@ test_that("locate_trees supports different unicity strategies", {
   expect_true(is.double(ttops$treeID))
   expect_equal(mean(ttops$treeID), 2.067186e17, tolerance = 1e-5)
 })
+

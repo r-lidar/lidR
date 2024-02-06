@@ -326,7 +326,7 @@ raster_is_supported <- function(raster)
 raster_build_vrt = function(file_list, vrt)
 {
   file_list <- unlist(file_list)
-  layers    <- names(raster::stack(file_list[1]))
+  layers    <- names(terra::rast(file_list[1]))
   folder    <- dirname(file_list[1])
   file      <- paste0("/", vrt, ".vrt")
   vrt       <- paste0(folder, file)

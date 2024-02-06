@@ -6,8 +6,7 @@ test_that("catalog_apply autoread works", {
   opt_progress(ctg) = FALSE
 
   test <- function(las, bbox, layers = 1L) {
-    sp <- as.spatial(las[1:10])
-    sf <- sf::st_as_sf(sp)
+    sf <- sf::st_as_sf(las[1:10])
     sf::st_agr(sf) <- "constant"
     sp <- sf::st_crop(sf, bbox)
     return(sp)

@@ -41,7 +41,7 @@ locate_localmaxima = function(las, w, filter = NULL)
 
   if (no_maxima) maxima <- las@data[1,]
 
-  output <- sf::st_as_sf(maxima, coords = c("X", "Y"), crs = sf::st_crs(lidR::crs(las)))
+  output <- sf::st_as_sf(maxima, coords = c("X", "Y"), crs = sf::st_crs(las))
 
   if (no_maxima) output <- output[0,]
 

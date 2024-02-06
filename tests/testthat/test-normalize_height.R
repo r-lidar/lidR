@@ -2,7 +2,7 @@ context("normalize_height")
 
 las = clip_rectangle(topography, 273450, 5274350, 273550, 5274450)
 ctg = topography_ctg
-dtm = grid_terrain(las, 1, tin())
+dtm = rasterize_terrain(las, 1, tin())
 
 opt_chunk_size(ctg) <- 300
 ctg@chunk_options$alignment = c(50, 200)
@@ -77,7 +77,7 @@ test_that("normalize_height works with a LAScatalog", {
 })
 
 test_that("normalize_height works with minus symbol", {
-  dtm = grid_terrain(las, 2, tin())
+  dtm = rasterize_terrain(las, 2, tin())
   expect_error(las-dtm, NA)
   expect_error(las-tin(), NA)
 })

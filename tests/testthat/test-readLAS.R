@@ -67,7 +67,7 @@ test_that("readLAS can read a file with invalid CRS", {
   las  <- suppressWarnings(readLAS(f))
 
   expect_equal(epsg(las), 22022)
-  expect_equal(projection(las), NA_character_)
+  expect_equal(st_crs(las), sf::NA_crs_)
 })
 
 test_that("readLAS LAScluster throw warning when select/filter is used", {

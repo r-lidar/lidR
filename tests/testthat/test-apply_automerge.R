@@ -76,6 +76,8 @@ terratest <- function(cluster, DataFrame = FALSE) {
 expected_bbox <- sf::st_bbox(c(xmin = 0,xmax = 100, ymin =  0, ymax = 200))
 
 test_that("catalog_apply automerge works with in memory RasterLayer", {
+  skip_if_not_installed("raster")
+
   # No automerge option
   req1 <- catalog_apply(ctg, rtest)
 
@@ -93,7 +95,7 @@ test_that("catalog_apply automerge works with in memory RasterLayer", {
 })
 
 test_that("catalog_apply automerge works with in memory RastersBrick", {
-
+  skip_if_not_installed("raster")
   skip_on_cran()
 
   # No automerge option
@@ -112,6 +114,7 @@ test_that("catalog_apply automerge works with in memory RastersBrick", {
 })
 
 test_that("catalog_apply automerge works with on disk rasters as Raster* (VRT)", {
+    skip_if_not_installed("raster")
 
     opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}_{lidR:::uuid()}")
     option <- list(automerge = T)
@@ -156,7 +159,7 @@ test_that("catalog_apply automerge works with on disk rasters as stars (VRT)", {
 })
 
 test_that("catalog_apply automerge works with in memory SpatialPoints*", {
-
+  skip_if_not_installed("sp")
   skip_on_cran()
 
   option <- list(automerge = TRUE)
@@ -176,6 +179,7 @@ test_that("catalog_apply automerge works with in memory SpatialPoints*", {
 
 test_that("catalog_apply automerge works with on disk SpatialPoints*", {
 
+  skip_if_not_installed("sp")
   skip_on_cran()
 
   opt_output_files(ctg) <- paste0(tempdir(), "/{ORIGINALFILENAME}_{lidR:::uuid()}")
@@ -312,6 +316,7 @@ test_that("catalog_apply automerge does not fail with unsupported objects output
 
 test_that("catalog_sapply is the same than apply with automerge", {
 
+  skip_if_not_installed("raster")
   skip_on_cran()
 
   option <- list(automerge = FALSE)
@@ -326,6 +331,7 @@ test_that("catalog_sapply is the same than apply with automerge", {
 
 test_that("catalog_apply automerge disabled with opt_merge = FALSE", {
 
+  skip_if_not_installed("raster")
   skip_on_cran()
 
   opt_merge(ctg) <- FALSE

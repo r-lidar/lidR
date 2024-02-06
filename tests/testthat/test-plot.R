@@ -84,14 +84,14 @@ test_that("plot lasmetrics3d works", {
 
 test_that("plot dtm3 works", {
   skip_on_cran()
-  x = grid_terrain(las, 1, knnidw())
+  x = rasterize_terrain(las, 1, knnidw())
   expect_error(plot_dtm3d(x), NA)
   rgl::close3d()
 })
 
 test_that("add dtm3d works", {
   skip_on_cran()
-  x = grid_terrain(las, 1, knnidw())
+  x = rasterize_terrain(las, 1, knnidw())
   expect_error({y = plot(las) ; add_dtm3d(y, x)}, NA)
   rgl::close3d()
 })

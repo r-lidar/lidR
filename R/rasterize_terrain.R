@@ -61,12 +61,12 @@ rasterize_terrain.LAS = function(las, res = 1, algorithm = tin(), use_class = c(
     else
       hull <- st_convex_hull(las)
 
-    shape <- sf::st_buffer(hull, dist = raster_res(layout)[1])
+    shape <- sf::st_buffer(hull, dist = raster_res(layout)[1]/2)
   }
 
   if (is(shape, "sfc"))
   {
-    shape = terra::vect(shape)
+    shape <- terra::vect(shape)
     layout <- terra::mask(layout, shape)
   }
 

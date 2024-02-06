@@ -5,21 +5,21 @@ ctg = megaplot_ctg
 
 test_that("decimate_points homogenize algorithm works", {
   lasdec = decimate_points(las, homogenize(0.5,5))
-  xdec = grid_density(lasdec, res = 5)
+  xdec = rasterize_density(lasdec, res = 5)
 
   expect_true(data.table::between(median(xdec[], na.rm = TRUE), 0.5-sd(xdec[], na.rm = TRUE), 0.5+sd(xdec[], na.rm = TRUE) ))
 })
 
 test_that("decimate_points random algorithm works", {
   lasdec = decimate_points(las, random(0.5))
-  xdec = grid_density(lasdec, res = 5)
+  xdec = rasterize_density(lasdec, res = 5)
 
   expect_true(data.table::between(median(xdec[], na.rm = TRUE), 0.5-sd(xdec[], na.rm = TRUE), 0.5+sd(xdec[], na.rm = TRUE) ))
 })
 
 test_that("decimate_points highest algorithm works", {
   lasdec = decimate_points(las, highest(2))
-  xdec = grid_density(lasdec, res = 5)
+  xdec = rasterize_density(lasdec, res = 5)
   zmean = mean(lasdec$Z)
 
   expect_true(data.table::between(median(xdec[], na.rm = TRUE), 0.23, 0.25))
@@ -28,7 +28,7 @@ test_that("decimate_points highest algorithm works", {
 
 test_that("decimate_points lowest algorithm works", {
   lasdec = decimate_points(las, lowest(2))
-  xdec = grid_density(lasdec, res = 5)
+  xdec = rasterize_density(lasdec, res = 5)
   zmean = mean(lasdec$Z)
 
   expect_true(data.table::between(median(xdec[], na.rm = TRUE), 0.23, 0.25))
@@ -49,3 +49,4 @@ test_that("decimate_points works with a LAScatalog", {
   expect_is(ctg2, "LAScatalog")
   expect_gt(npoints(ctg), npoints(ctg2))
 })
+

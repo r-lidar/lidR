@@ -5,12 +5,15 @@ sflakes <- sf::st_read(system.file("extdata", "", package="lidR"), "lake_polygon
 sf::st_agr(sflakes) <- "constant"
 sflakes <- sf::st_crop(sflakes, st_bbox(las))
 sflakes$ID <- 1L
-splakes <- sf::as_Spatial(sflakes)
-zmean   <- pixel_metrics(las, mean(Z))
+
+zmean   <- pixel_metrics(las, ~mean(Z))
 rgb     <- stars::st_as_stars(st_bbox(las), dx = 10, dy = 10, nz = 3L, values = runif(300, 0, 255))
 rgbi    <- stars::st_as_stars(st_bbox(las), dx = 20, dy = 20, nz = 4L, values = 10)
 
 test_that("merge_spatial works with SpatialPolygonsDataFrame", {
+
+  skip_if_not_installed("sp")
+  splakes <- sf::as_Spatial(sflakes)
 
   las <- merge_spatial(las, splakes, "inlakes")
   cn <- names(las)
@@ -68,7 +71,7 @@ test_that("merge_spatial preserve storage mode", {
 
 
 test_that("merge_spatial works with SpatialPolygons", {
-
+  skip_if_not_installed("sp")
   lakes <- as(splakes, "SpatialPolygons")
 
   las <- merge_spatial(las, lakes)
@@ -110,7 +113,7 @@ test_that("merge_spatial does not fail if no polygon encompass the points", {
 })
 
 test_that("merge_spatial works with raster", {
-
+  skip_if_not_installed("raster")
   las <- merge_spatial(las, as(zmean, "Raster"), "Zmean")
   cn  <- names(las)
 
@@ -130,7 +133,7 @@ test_that("merge_spatial works with stars", {
 })
 
 test_that("merge_spatial works a RGB RasterBrick", {
-
+  skip_if_not_installed("raster")
   las <- merge_spatial(las, as(rgb, "Raster"))
   cn  <- names(las)
 
@@ -163,7 +166,6 @@ test_that("merge_spatial works a RGB SpatRaster", {
 test_that("merge_spatial fails with too much bands", {
 
   expect_error(merge_spatial(las, rgbi), "rasters must have 1 or 3 bands")
-  expect_error(merge_spatial(las, as(rgbi, "Raster")), "rasters must have 1 or 3 bands")
 })
 
 test_that("merge_spatial fails with unknown input type", {
@@ -176,11 +178,11 @@ test_that("merge_spatial do not fail with 1 point (#347)", {
   one_in <- filter_poi(las, Intensity == 105)
 
   res1 <- merge_spatial(one_in, sflakes)
-  res2 <- merge_spatial(one_in, splakes)
+  #res2 <- merge_spatial(one_in, splakes)
   res3 <- merge_spatial(one_in, sf::st_geometry(sflakes))
 
   expect_equal(res1$id, 1L)
-  expect_equal(res2$id, 1L)
+  #expect_equal(res2$id, 1L)
   expect_equal(res3$id, 1L)
 })
 

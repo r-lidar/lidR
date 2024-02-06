@@ -7,9 +7,9 @@ opt_chunk_size(ctg) = 100
 opt_chunk_buffer(ctg) = 20
 opt_chunk_alignment(ctg) <- c(0, 20)
 
-chm   <- grid_canopy(las, 0.5, pitfree())
+chm   <- rasterize_canopy(las, 0.5, pitfree())
 ker   <- matrix(1,3,3)
-chm   <- raster::focal(chm, w = ker, fun = mean)
+chm   <- terra::focal(chm, w = ker, fun = mean)
 chm   <- stars::st_as_stars(chm)
 ttops <- locate_trees(chm, lmf(3, 2))
 n     <- nrow(ttops)
@@ -225,7 +225,7 @@ test_that("Watershed algorithm works standalone", {
 })
 
 test_that("Dalponte algorithm works standalone and is backward compatible", {
-
+  skip_if_not_installed("raster")
   ttops <- locate_trees(chm, lmf(3, 2))
   chm   <- as(chm, "Raster")
   trees <- dalponte2016(chm, ttops)()
@@ -234,7 +234,7 @@ test_that("Dalponte algorithm works standalone and is backward compatible", {
 })
 
 test_that("Silva algorithm works standalone and is backward compatible", {
-
+  skip_if_not_installed("raster")
   ttops <- locate_trees(chm, lmf(3, 2))
   chm   <- as(chm, "Raster")
   trees <- silva2016(chm, ttops)()
@@ -245,6 +245,7 @@ test_that("Silva algorithm works standalone and is backward compatible", {
 test_that("Watershed algorithm works standalone and is backward compatible", {
 
   skip_if_not_installed("EBImage")
+  skip_if_not_installed("raster")
 
   chm   <- as(chm, "Raster")
   trees <- watershed(chm)()

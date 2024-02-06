@@ -77,6 +77,7 @@ test_that("crown_metrics throw an error if no treeID", {
 
 
 test_that("delineate_crowns is backward compatible", {
+  skip_if_not_installed("sp")
   hulls <- delineate_crowns(las)
 
   expect_is(hulls, "SpatialPolygonsDataFrame")
@@ -84,7 +85,7 @@ test_that("delineate_crowns is backward compatible", {
 })
 
 test_that("tree_metrics is backward compatible", {
-
+  skip_if_not_installed("sp")
   metrics = tree_metrics(las, ~list(Z = max(Z), MeanZ = mean(Z), MaxI = max(Intensity)))
 
   expect_is(metrics, "SpatialPointsDataFrame")
@@ -100,7 +101,7 @@ test_that("tree_metrics is backward compatible", {
 })
 
 test_that("tree_metrics is backward compatible and works with a LAScatalog", {
-
+  skip_if_not_installed("sp")
   metrics = tree_metrics(ctg, ~list(Z = max(Z), MeanZ = mean(Z), MaxI = max(Intensity)))
 
   expect_is(metrics, "SpatialPointsDataFrame")

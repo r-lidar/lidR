@@ -17,7 +17,7 @@ test_that("rasterize_canopy with p2r() returns a georeferenced RasterLayer", {
 })
 
 test_that("grid_canopy with p2r() is backward compatible", {
-
+  skip_if_not_installed("raster")
   las <- lidR:::generate_las(2000)
   x   <- grid_canopy(las, 4, p2r())
 

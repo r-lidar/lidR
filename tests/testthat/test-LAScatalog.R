@@ -24,7 +24,7 @@ test_that("LAScatalog redefined behavior of $, [, and [[", {
 })
 
 test_that("LAScatalog conversion to SpatialPolygonsDataFrame works", {
-
+  skip_if_not_installed("sp")
   spctg <- as.spatial(ctg)
 
   expect_true(is(spctg, "SpatialPolygonsDataFrame"))

@@ -67,16 +67,18 @@ test_that("#323 do not segfault", {
 })
 
 test_that("legacy crs works", {
+   skip_if_not_installed("sp")
    expect_is(crs(las), "CRS")
 })
 
 test_that("legacy projection works", {
+  skip_if_not_installed("sp")
   expect_is(projection(las), "character")
 })
 
 
 test_that("legacy crs<- works", {
-
+  skip_if_not_installed("sp")
   skip_on_cran() # For solaris old GDAL/PROJ
 
   las@header@PHB[["Global Encoding"]][["WKT"]] <- TRUE
@@ -101,7 +103,7 @@ test_that("legacy crs<- works", {
 })
 
 test_that("legacy projection<- works with CRS and crs", {
-
+  skip_if_not_installed("sp")
   skip_on_cran() # For solaris old GDAL/PROJ
 
   projection(las) <- as(sf::st_crs(26917), "CRS")

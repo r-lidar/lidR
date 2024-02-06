@@ -33,8 +33,8 @@ test_that("pixel_metrics returns a named multilayers raster", {
 
 test_that("pixel_metrics return raster terra or stars", {
 
-  x <- pixel_metrics(las, f2, pkg = "raster")
-  expect_true(is(x, "RasterBrick"))
+  #x <- pixel_metrics(las, f2, pkg = "raster")
+  #expect_true(is(x, "RasterBrick"))
 
   x <- pixel_metrics(las, f2, pkg = "terra")
   expect_true(is(x, "SpatRaster"))
@@ -100,14 +100,6 @@ test_that("pixel_metrics return a raster -- tricky case", {
   expect_equal(lidR:::raster_res(out), c(10, 10))
 })
 
-test_that("pixel_metrics accepts both an expression or a formula", {
-
-  x <- pixel_metrics(las,  list(mean(Z), max(Z)), 20)
-  y <- pixel_metrics(las, ~list(mean(Z), max(Z)), 20)
-
-  expect_equal(x, y)
-})
-
 test_that("pixel_metrics splits by echo type", {
 
   x <- pixel_metrics(las, f1, by_echo = c("first"))
@@ -157,14 +149,12 @@ bb$xmin <- bb$xmin - 160
 bb$xmax <- bb$xmax - 160
 bb <- sf::st_bbox(unlist(bb), crs <- st_crs(las))
 stars1  <- stars::st_as_stars(bb, dx = 15, inside = TRUE)
-raster1 <- as(stars1, "Raster")
 
 bb <- as.list(st_bbox(las))
 bb$xmin <- bb$xmin - 360
 bb$xmax <- bb$xmax - 360
 bb <- sf::st_bbox(unlist(bb), crs <- st_crs(las))
 stars2  <- stars::st_as_stars(bb, dx = 15, inside = TRUE)
-raster2 <- as(stars2, "Raster")
 
 test_that("pixel_metric returns the same both with LAScatalog and LAS", {
 
@@ -185,6 +175,8 @@ test_that("pixel_metric returns the same both with LAScatalog and LAS", {
 
 test_that("pixel_metric works with a RasterLayer as input instead of a resolution", {
 
+  skip_if_not_installed("raster")
+  raster1 <- as(stars1, "Raster")
   # --- partially matching bbox
 
   m <- pixel_metrics(las, f1, raster1)
@@ -209,14 +201,14 @@ test_that("pixel_metric works with a stars as input instead of a resolution", {
   m <- pixel_metrics(las, f1, stars1)
 
   expect_true(is(m, "stars"))
-  expect_equal(sf::st_bbox(m), sf::st_bbox(raster1))
+  #expect_equal(sf::st_bbox(m), sf::st_bbox(raster1))
   expect_equal(sum(!is.na(m[[1]])), 75L)
   expect_equal(sum(is.na(m[[1]])), 150L)
 
   # --- no matching bbox
 
   expect_warning(m <- pixel_metrics(las, f1, stars2), "Bounding boxes are not intersecting")
-  expect_equal(sf::st_bbox(m), sf::st_bbox(raster2))
+  #expect_equal(sf::st_bbox(m), sf::st_bbox(raster2))
   expect_equal(sum(is.na(m[[1]])), 225)
 })
 
@@ -238,13 +230,13 @@ test_that("Using a non empty layout return correct output (#318)", {
   ref <- lidR:::raster_layout(ldr, 20, format = "stars")
   ref[[1]][] <- 10
 
-  m <- pixel_metrics(ldr, mean(Z), ref)
+  m <- pixel_metrics(ldr, ~mean(Z), ref)
 
   expect_equal(sum(is.na(m[[1]])), 52L)
 })
 
 test_that("grid_metrics is backward compatible", {
-
+  skip_if_not_installed("raster")
   x <- grid_metrics(las, f1)
 
   expect_true(is(x, "RasterLayer"))

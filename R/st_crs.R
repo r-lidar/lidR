@@ -114,11 +114,11 @@ NULL
   x <- las_v3_repair(x)
 
   all   <- all_crs_formats(value)
-  CRS   <- all[["CRS"]]
+  #CRS   <- all[["CRS"]]
   crs   <- all[["crs"]]
   wkt   <- all[["wkt"]]
   epsg  <- all[["epsg"]]
-  proj4 <- all[["proj4"]]
+  #proj4 <- all[["proj4"]]
 
   if (is.na(crs)) stop("Invalid CRS as input", call. = FALSE)
 
@@ -386,36 +386,37 @@ all_crs_formats = function(value)
 
   if (is(value, "CRS"))
   {
-    proj4 <- value@projargs
-    CRS <- as(crs, "CRS")
+    #proj4 <- value@projargs
+    #CRS <- as(crs, "CRS")
     wkt <- crs$wkt
     epsg <- crs$epsg
   }
   else if (is(value, "crs"))
   {
     wkt <- value$wkt
-    CRS <- as(value, "CRS")
-    proj4 <- CRS@projargs
+    #CRS <- as(value, "CRS")
+    #proj4 <- CRS@projargs
     epsg <- crs$epsg
   }
   else if (is.character(value))
   {
-    CRS <- as(crs, "CRS")
-    proj4 <- CRS@projargs
+    #CRS <- as(crs, "CRS")
+    #proj4 <- CRS@projargs
     wkt <- crs$wkt
     epsg <- crs$epsg
   }
   else if (is.numeric(value))
   {
     epsg <- value
-    CRS <- as(crs, "CRS")
-    proj4 <- CRS@projargs
+    #CRS <- as(crs, "CRS")
+    #proj4 <- CRS@projargs
     wkt <- crs$wkt
   }
   else
     stop("'value' is not a CRS, a crs or a string or a number.", call. = FALSE)
 
-  return(list(epsg = epsg, CRS = CRS, crs = crs, proj4 = proj4, wkt = wkt))
+  return(list(epsg = epsg, crs = crs, wkt = wkt))
+  #return(list(epsg = epsg, CRS = CRS, crs = crs, proj4 = proj4, wkt = wkt))
 }
 
 epsg2crs <- function(epsg, fail = FALSE)

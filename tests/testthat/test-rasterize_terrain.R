@@ -31,7 +31,7 @@ test_that("rasterize_terrain works with knnidw", {
 })
 
 test_that("grid_terrain is backward compatible", {
-
+  skip_if_not_installed("raster")
   dtm <- grid_terrain(las, 1, knnidw(k = 10L))
 
   expect_true(is(dtm, "RasterLayer"))
@@ -54,7 +54,7 @@ test_that("rasterize_terrain works with delaunay", {
   expect_equal(sum(is.na(lidR:::raster_values(dtm))), 1L)
 
   error <- abs(dtm - tdtm)
-  expect_equal(mean(lidR:::raster_values(error), na.rm = TRUE), 0.0739, tolerance = 0.0001)
+  expect_equal(mean(lidR:::raster_values(error), na.rm = TRUE), 0.074, tolerance = 0.0001)
 
   z <- lidR:::raster_value_from_xy(dtm, las$X, las$Y)
   expect_true(!anyNA(z))

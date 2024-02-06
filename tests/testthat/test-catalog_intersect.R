@@ -54,8 +54,8 @@ polygon <- sf::st_geometry(polygon)
 polygon <- sf::st_set_crs(polygon, st_crs(ctg))
 
 # Build a Raster
-r <- raster::raster(raster::extent(sf::st_bbox(polygon)))
-projection(r) <- projection(ctg)
+r <- terra::rast(terra::ext(sf::st_bbox(polygon)))
+terra::crs(r) <- st_crs(ctg)$wkt
 
 # Build a SpatialPoints
 pts <- structure(
@@ -81,7 +81,7 @@ test_that("catalog_intersect extract the tiles that lie in a SpatialPolygons", {
 test_that("catalog_intersect extracts the tiles that lie in the bbox of a Raster", {
 
   ctg2 <- suppressWarnings(catalog_intersect(ctg, r))
-  ctg22 <- suppressWarnings(catalog_intersect(ctg, raster::extent(r)))
+  ctg22 <- suppressWarnings(catalog_intersect(ctg, terra::ext(r)))
 
   expect_equal(ctg2$filename, c("abc11", "abc12", "abc15", "abc17", "abc18", "abc19", "abc20", "abc21", "abc23"))
   expect_equal(ctg2, ctg22)

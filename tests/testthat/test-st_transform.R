@@ -3,7 +3,7 @@ context("spTransform")
 LASfile <- system.file("extdata", "Megaplot.laz", package = "lidR")
 las <- readLAS(LASfile, select = "xyz")
 
-crs  <- as(sf::st_crs(26918), 'CRS')
+crs  <- sf::st_crs(26918)
 las2 <- sf::st_transform(las, crs)
 
 test_that("Datum tranformation works", {

@@ -32,6 +32,7 @@ test_that("rasterize_density returns pulse density", {
 })
 
 test_that("grid_density is backward compatible", {
+  skip_if_not_installed("raster")
   las <- retrieve_pulses(las)
   d1 <- grid_density(las)
 

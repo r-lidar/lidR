@@ -242,6 +242,7 @@ test_that("LAS operator[[ and $ throw error for not storable coordinates", {
 
 
 test_that("LAS conversion to SpatialPointsDataFrame works", {
+  skip_if_not_installed("sp")
   las <- random_10_points
   splas <- as.spatial(las)
 

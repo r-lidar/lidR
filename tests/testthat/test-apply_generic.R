@@ -68,7 +68,7 @@ test_that("catalog_apply fixes chunk alignment even by file", {
   {
     las <- readLAS(cluster)
     if (is.empty(las)) return(NULL)
-    r = grid_metrics(las, ~max(Z), res, align)
+    r = pixel_metrics(las, ~max(Z), res, align)
     return(r)
   }
 
@@ -79,7 +79,7 @@ test_that("catalog_apply fixes chunk alignment even by file", {
   las = readLAS(ctg)
 
   # Reference
-  R0 = grid_metrics(las, ~max(Z), res = res, start = sta)
+  R0 = pixel_metrics(las, ~max(Z), res = res, start = sta)
 
   # Without option
   R1 <- catalog_sapply(ctg, test, res = res, align = sta)

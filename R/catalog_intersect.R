@@ -15,6 +15,12 @@ catalog_intersect = function(ctg, y, ..., subset = c("subset", "flag_unprocessed
     sf::st_crs(y) <- st_crs(ctg)
   }
 
+  if (is(y, "SpatExtent"))
+  {
+    y <- sf::st_bbox(y)
+    sf::st_crs(y) <- st_crs(ctg)
+  }
+
   if (is_raster(y))
     y <- raster_bbox(y)
 

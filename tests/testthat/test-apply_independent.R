@@ -16,8 +16,8 @@ test_that("opt_independent_files built several DTMs without error", {
   opt_merge(ctg) <- FALSE
   opt_output_files(ctg) <- ""
 
-  dtms = grid_terrain(ctg, 1, tin())
+  dtms = rasterize_terrain(ctg, 1, tin())
 
   expect_true(is.list(dtms))
-  expect_true(is(dtms[[1]], "RasterLayer"))
+  expect_true(is(dtms[[1]], "SpatRaster"))
 })
