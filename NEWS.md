@@ -6,6 +6,7 @@ Fix: `readLAScatalog()` was not working if package `raster` was not installed.
 Fix: regression of the `stars` package makes `rasterize_terrain()` extremely slow and blow up the RAM memory
 New: `catalog_intersects()` support a `SpatExtent`
 Fix: `lidR` can fully works without `raster` ans `sp`
+Fix: [#742](https://github.com/r-lidar/lidR/discussions/742)
 
 ## lidR v4.1.0 (Release date: 2024-01-31)
 

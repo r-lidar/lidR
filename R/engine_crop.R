@@ -11,7 +11,9 @@ engine_crop <- function(x, bbox)
 engine_crop.LAS <- function(x, bbox)
 {
   buffer <- NULL
-  return(filter_poi(x, buffer == LIDRNOBUFFER))
+  x <- filter_poi(x, buffer == LIDRNOBUFFER)
+  if (is.empty(x)) return(NULL)
+  return(x)
 }
 
 #' @export
