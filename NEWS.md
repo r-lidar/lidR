@@ -7,6 +7,7 @@ Fix: regression of the `stars` package makes `rasterize_terrain()` extremely slo
 New: `catalog_intersects()` support a `SpatExtent`
 Fix: `lidR` can fully works without `raster` ans `sp`
 Fix: [#742](https://github.com/r-lidar/lidR/discussions/742)
+Fix: local maximum filter `lmf()` with a fixed windows is now 20 times faster.
 
 ## lidR v4.1.0 (Release date: 2024-01-31)
 

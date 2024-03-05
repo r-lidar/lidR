@@ -358,11 +358,19 @@ NumericVector LAS::compute_range(DataFrame flightlines)
 
 void LAS::filter_local_maxima(NumericVector ws, double min_height, bool circular)
 {
+  char UKN = 0;
+  char NLM = 1;
+  char LMX = 2;
+
   bool abort = false;
   bool vws = ws.length() > 1;
 
   SpatialIndex tree(las);
   Progress pb(npoints, "Local maximum filter: ");
+
+  std::vector<char> state(npoints);
+  std::fill(state.begin(), state.end(), 0);
+  for (int i = 0 ; i < npoints ; i++) { if (Z[i] < min_height) state[i] = NLM; }
 
   #pragma omp parallel for num_threads(ncpu)
   for (unsigned int i = 0 ; i < npoints ; i++)
@@ -373,8 +381,7 @@ void LAS::filter_local_maxima(NumericVector ws, double min_height, bool circular
 
     double hws = (vws) ? ws[i]/2 : ws[0]/2;
 
-    if (Z[i] < min_height)
-      continue;
+    if (state[i] == NLM) continue;
 
     // Get the points within a windows centered on the current point
     std::vector<PointXYZ> pts;
@@ -403,7 +410,13 @@ void LAS::filter_local_maxima(NumericVector ws, double min_height, bool circular
       if(z > zmax)
       {
         is_lm = false;
-        break;
+      }
+
+      // If the windows size is fixed, then, if a point is below the central point
+      // we are sure it is not a LM
+      if (!vws && z < Z[i])
+      {
+        state[pt.id] = NLM;
       }
 
       // Found one equal. If this one was already tagged LM we can't have two lm
@@ -455,6 +468,10 @@ void LAS::filter_local_maxima(NumericVector ws)
   }
   else
     Rcpp::stop("C++ unexpected internal error in 'filter_local_maxima': invalid windows."); // # nocov
+
+  std::vector<char> state(npoints);
+  std::fill(state.begin(), state.end(), 0);
+  for (int i = 0 ; i < npoints ; i++) { if (Z[i] < min_height) state[i] = NLM; }
 
   SpatialIndex tree(las, skip);
   Progress pb(npoints, "Local maximum filter: ");
