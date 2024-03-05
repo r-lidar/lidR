@@ -469,10 +469,6 @@ void LAS::filter_local_maxima(NumericVector ws)
   else
     Rcpp::stop("C++ unexpected internal error in 'filter_local_maxima': invalid windows."); // # nocov
 
-  std::vector<char> state(npoints);
-  std::fill(state.begin(), state.end(), 0);
-  for (int i = 0 ; i < npoints ; i++) { if (Z[i] < min_height) state[i] = NLM; }
-
   SpatialIndex tree(las, skip);
   Progress pb(npoints, "Local maximum filter: ");
 
