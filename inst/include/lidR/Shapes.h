@@ -6,7 +6,7 @@
 namespace lidR
 {
 
-#define EPSILON 2e-8
+#define EPSILON 1e-8
 #define XYINF 99999999999;
 #define ZINF 2147483640;
 #define MAX(a,b,c) ((a>b)?((a>c)?a:c):((b>c)?b:c));
@@ -207,27 +207,31 @@ inline Triangle::Triangle(Point& A, Point& B, Point& C)
 }
 
 template<typename T>
-bool Triangle::contains(const T& p)
+bool Triangle::contains(const T& P)
 {
-  if (p.x < xmin - EPSILON || p.x > xmax + EPSILON || p.y < ymin - EPSILON || p.y > ymax + EPSILON)
+  if (P.x < xmin - EPSILON || P.x > xmax + EPSILON || P.y < ymin - EPSILON || P.y > ymax + EPSILON)
     return false;
 
-  double denominator = (A.x*(B.y - C.y) + A.y*(C.x - B.x) + B.x*C.y - B.y*C.x);
-  double t1 = (p.x*(C.y - A.y) + p.y*(A.x - C.x) - A.x*C.y + A.y*C.x) / denominator;
-  double t2 = (p.x*(B.y - A.y) + p.y*(A.x - B.x) - A.x*B.y + A.y*B.x) / -denominator;
+  // move to (0,0) to gain arithmetic precision
+  double x_offset = xmin;
+  double y_offset = ymin;
+  PointXY a(A.x - x_offset, A.y - y_offset);
+  PointXY b(B.x - x_offset, B.y - y_offset);
+  PointXY c(C.x - x_offset, C.y - y_offset);
+  PointXY p(P.x - x_offset, P.y - y_offset);
+
+  double denominator = (a.x*(b.y - c.y) + a.y*(c.x - b.x) + b.x*c.y - b.y*c.x);
+  double t1 = (p.x*(c.y - a.y) + p.y*(a.x - c.x) - a.x*c.y + a.y*c.x) / denominator;
+  double t2 = (p.x*(b.y - a.y) + p.y*(a.x - b.x) - a.x*b.y + a.y*b.x) / -denominator;
   double s = t1 + t2;
 
   if (0 <= t1 && t1 <= 1 && 0 <= t2 && t2 <= 1 && s <= 1)
     return true;
 
   // see http://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html
-
-  if (distanceSquarePointToSegment(A, B, p) <= EPSILON)
-    return true;
-  if (distanceSquarePointToSegment(B, C, p) <= EPSILON)
-    return true;
-  if (distanceSquarePointToSegment(C, A, p) <= EPSILON)
-    return true;
+  if (distanceSquarePointToSegment(a, b, p) <= EPSILON) return true;
+  if (distanceSquarePointToSegment(b, c, p) <= EPSILON) return true;
+  if (distanceSquarePointToSegment(c, a, p) <= EPSILON) return true;
 
   return false;
 }

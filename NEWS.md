@@ -1,5 +1,10 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v4.1.2 (Release date: )
+
+- Fix: strongly improved arithmetic accuracy in `point_in_triangle` to improve the quality of delaunay triangulation interpolations and avoid local NAs
+
+
 ## lidR v4.1.1 (Release date: 2024-02-03)
 
 Fix: `readLAScatalog()` was not working if package `raster` was not installed.
