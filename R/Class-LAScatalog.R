@@ -100,7 +100,7 @@
 #' }
 #' This option will generate as many filenames as needed with custom names for each file. The allowed
 #' templates are \code{{XLEFT}, {XRIGHT}, {YBOTTOM}, {YTOP}, {ID}, {XCENTER},
-#' {YCENTER}, {ORIGNALFILENAME}}. See \link{opt_output_files}.
+#' {YCENTER}, {ORIGINALFILENAME}}. See \link{opt_output_files}.
 #' - **drivers**: list. This contains all the drivers required to seamlessly write `Raster*`,
 #' `SpatRaster`, `stars`, `Spatial*`, `sf`, and `LAS` objects. It is recommended that only advanced
 #' users change this option. A dedicated page describes the drivers in \link{lidR-LAScatalog-drivers}.
