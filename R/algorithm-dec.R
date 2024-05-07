@@ -48,7 +48,11 @@ random = function(density, use_pulse = FALSE)
     else
     {
       if (nrow(las@data) > n)
-        return(sample(1:nrow(las@data), n))
+      {
+        idx = sample(1:nrow(las@data), n)
+        idx = sort(idx)
+        return(idx)
+      }
       else
         return(1:nrow(las@data))
     }
@@ -237,6 +241,7 @@ random_per_voxel = function(res = 1, n = 1)
 
   selectedPulses <- sample(p, n)
   selectedPulses <- pulseID %in% selectedPulses
+  selectedPulses <- sort(selectedPulses)
 
   return(selectedPulses)
 }

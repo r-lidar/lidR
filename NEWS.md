@@ -3,7 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v4.1.2 (Release date: )
 
 - Fix: strongly improved arithmetic accuracy in `point_in_triangle` to improve the quality of delaunay triangulation interpolations and avoid local NAs
-
+- Enhance: `decimate_points()` with `random()` now preserves the point ordering.
 
 ## lidR v4.1.1 (Release date: 2024-02-03)
 
