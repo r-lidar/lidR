@@ -7,12 +7,12 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v4.1.1 (Release date: 2024-02-03)
 
-Fix: `readLAScatalog()` was not working if package `raster` was not installed.
-Fix: regression of the `stars` package makes `rasterize_terrain()` extremely slow and blow up the RAM memory
-New: `catalog_intersects()` support a `SpatExtent`
-Fix: `lidR` can fully works without `raster` ans `sp`
-Fix: [#742](https://github.com/r-lidar/lidR/discussions/742)
-Fix: local maximum filter `lmf()` with a fixed windows is now 20 times faster.
+- Fix: `readLAScatalog()` was not working if package `raster` was not installed.
+- Fix: regression of the `stars` package makes `rasterize_terrain()` extremely slow and blow up the RAM memory
+- New: `catalog_intersects()` support a `SpatExtent`
+- Fix: `lidR` can fully works without `raster` ans `sp`
+- Fix: [#742](https://github.com/r-lidar/lidR/discussions/742)
+- Fix: local maximum filter `lmf()` with a fixed windows is now 20 times faster.
 
 ## lidR v4.1.0 (Release date: 2024-01-31)
 
