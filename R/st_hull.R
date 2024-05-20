@@ -69,6 +69,11 @@ st_concave_hull.LAS = function(x, method = "concaveman",  ...)
     chull <- sf::st_polygon(list(as.matrix(chull)))
     chull <- sf::st_sfc(chull, crs = st_crs(x))
     if (!sf::st_is_valid(chull)) chull <- sf::st_make_valid(chull)
+    if (sf::st_geometry_type(chull) == "MULTIPOLYGON")
+    {
+      chull = sf::st_cast(chull, "POLYGON")
+      warning("The output of 'st_concave_hull' was a MULTIPOLYGON converted into multiple POLYGON(s)")
+    }
     return(chull)
   }
 
