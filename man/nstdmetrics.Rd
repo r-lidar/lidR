@@ -80,6 +80,8 @@ et al. (2011) (see references)}
 x <- runif(20, 0, 100)
 y <- runif(20, 0, 100)
 
+if (require(geometry, quietly = TRUE))
+{
 # Perfectly flat surface, rumple_index = 1
 z <- rep(10, 20)
 rumple_index(x, y, z)
@@ -95,6 +97,7 @@ rumple_index(x, y, z)
 # Measure of roughness is scale-dependent
 rumple_index(x, y, z)
 rumple_index(x/10, y/10, z)
+}
 z <- c(rnorm(1e4, 25, 6), rgamma(1e3, 1, 8)*6, rgamma(5e2, 5,5)*10)
 z <- z[z<45 & z>0]
 

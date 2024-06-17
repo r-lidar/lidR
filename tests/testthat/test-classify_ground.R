@@ -41,6 +41,9 @@ test_that("classify_ground pmf works with LAScatalog", {
 })
 
 test_that("classify_ground csf works with LAS", {
+
+  skip_if_not_installed("RCSF")
+
   las <- classify_ground(las, mycsf)
 
   n = names(las)
@@ -51,6 +54,8 @@ test_that("classify_ground csf works with LAS", {
 })
 
 test_that("classify_ground csf works with LAScatalog", {
+
+  skip_if_not_installed("RCSF")
   skip_on_cran()
 
   opt_output_files(ctg) <- paste0(tempdir(), "/file_{XLEFT}_{YBOTTOM}_ground")
@@ -63,6 +68,9 @@ test_that("classify_ground csf works with LAScatalog", {
 })
 
 test_that("classify_ground csf works with last_returns = FALSE", {
+
+  skip_if_not_installed("RCSF")
+
   las <- lidR:::generate_las(500)
   las <- classify_ground(las, csf(), last_returns = FALSE)
 
@@ -74,6 +82,9 @@ test_that("classify_ground csf works with last_returns = FALSE", {
 })
 
 test_that("classify_ground works with last_returns = TRUE but attribute not properly populated", {
+
+  skip_if_not_installed("RCSF")
+
   las <- lidR:::generate_las(500)
   las@data$ReturnNumber <- 0
   las@data$Classification <- NULL

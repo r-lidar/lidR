@@ -40,12 +40,15 @@ the CSF algorithm made by Zhang et al. (2016) (see references) that relies on th
 source code written and exposed to R via the the \code{RCSF} package.
 }
 \examples{
+if (require(RCSF, quietly = TRUE))
+{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyzrn")
 
 mycsf <- csf(TRUE, 1, 1, time_step = 1)
 las <- classify_ground(las, mycsf)
 #plot(las, color = "Classification")
+}
 }
 \references{
 W. Zhang, J. Qi*, P. Wan, H. Wang, D. Xie, X. Wang, and G. Yan, “An Easy-to-Use Airborne LiDAR Data

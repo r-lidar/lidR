@@ -73,6 +73,8 @@ and all the attributes. \code{select = "*"} is imposed internally.
 # Classify ground
 # ===============
 
+if (require(RCSF, quietly = TRUE))
+{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyzrn", filter = "-inside 273450 5274350 273550 5274450")
 
@@ -80,6 +82,7 @@ las <- readLAS(LASfile, select = "xyzrn", filter = "-inside 273450 5274350 27355
 mycsf <- csf(TRUE, 1, 1, time_step = 1)
 las <- classify_ground(las, mycsf)
 #plot(las, color = "Classification")
+}
 
 # ===============
 # Classify noise

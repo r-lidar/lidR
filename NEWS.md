@@ -6,6 +6,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Enhance: `decimate_points()` with `random()` now preserves the point ordering.
 - Fix: #757
 - Fix: algorithm `random_per_voxel` that was not working
+- Fix: `readLAScatalog` if `sp` is missing
 
 ## lidR v4.1.1 (Release date: 2024-02-03)
 

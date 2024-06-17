@@ -51,11 +51,14 @@ than a scale parameter of 0.3 m (1 ft), even if the pulse density is 0.3 m
 up or down by 0.1 m increments (if data are in meters; 0.3 if data are in feet).
 }
 \examples{
+if (require(RMCC, quietly = TRUE))
+{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyzrn", filter = "-inside 273450 5274350 273550 5274450")
 
 las <- classify_ground(las, mcc(1.5,0.3))
 #plot(las, color = "Classification")
+}
 }
 \references{
 Evans, Jeffrey S.; Hudak, Andrew T. 2007. A multiscale curvature

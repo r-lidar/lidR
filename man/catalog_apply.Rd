@@ -66,7 +66,7 @@ this class:
 \itemize{
 \item It represents a chunk of the file collection
 \item The function \link{readLAS} can be used with a \code{LAScluster}
-\item The function \link[raster:extent]{extent} or \link[sp:bbox]{bbox} or \link[sf:st_bbox]{st_bbox}
+\item The function \link[raster:extent]{extent} or \link[sf:st_bbox]{st_bbox}
 can be used with a \code{LAScluster} and they return the bounding box of the chunk without the buffer.
 It must be used to clip the output and remove the buffered region (see examples).
 }
@@ -234,7 +234,9 @@ opt_filter(ctg)       <- "-keep_first"  # Read only first returns.
 # 4. Apply a user-defined function to take advantage of the internal engine
 opt    <- list(need_buffer = TRUE)   # catalog_apply will throw an error if buffer = 0
 output <- catalog_map(ctg, my_tree_detection_method, ws = 5, .options = opt)
+}
 
+\dontrun{
 ## ===================================================
 ## Example 2: compute a rumple index on surface points
 ## ===================================================

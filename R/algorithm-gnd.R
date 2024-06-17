@@ -46,11 +46,14 @@
 #' @family ground segmentation algorithms
 #'
 #' @examples
+#' if (require(RMCC, quietly = TRUE))
+#' {
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyzrn", filter = "-inside 273450 5274350 273550 5274450")
 #'
 #' las <- classify_ground(las, mcc(1.5,0.3))
 #' #plot(las, color = "Classification")
+#' }
 #' @export
 #' @name gnd_mcc
 mcc <- function(s = 1.5, t = 0.3)
@@ -180,12 +183,15 @@ pmf = function(ws, th)
 #' @family ground segmentation algorithms
 #'
 #' @examples
+#' if (require(RCSF, quietly = TRUE))
+#' {
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyzrn")
 #'
 #' mycsf <- csf(TRUE, 1, 1, time_step = 1)
 #' las <- classify_ground(las, mycsf)
 #' #plot(las, color = "Classification")
+#' }
 #' @name gnd_csf
 csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65)
 {

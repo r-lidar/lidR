@@ -199,6 +199,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
     if (is.null(param$ylab)) param$ylab <- ""
     if (is.null(param$asp))  param$asp  <- 1
     if (!is.null(param$col)) col <- param$col
+    param$map.types = NULL
 
     param$col <- "white"
     param$x   <- xcenter
@@ -215,7 +216,7 @@ plot.LAScatalog = function(x, y, mapview = FALSE, chunk_pattern = FALSE, overlap
     }
     else
     {
-      plot(as.spatial(x), col = col)
+      plot(sf::st_geometry(sf::st_as_sf(x)), axes = TRUE)
       graphics::par(op)
     }
 

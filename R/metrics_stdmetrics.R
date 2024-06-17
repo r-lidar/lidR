@@ -441,6 +441,8 @@ NULL
 #' x <- runif(20, 0, 100)
 #' y <- runif(20, 0, 100)
 #'
+#' if (require(geometry, quietly = TRUE))
+#' {
 #' # Perfectly flat surface, rumple_index = 1
 #' z <- rep(10, 20)
 #' rumple_index(x, y, z)
@@ -456,6 +458,7 @@ NULL
 #' # Measure of roughness is scale-dependent
 #' rumple_index(x, y, z)
 #' rumple_index(x/10, y/10, z)
+#' }
 #' @md
 #' @references
 #' Jenness, J. S. (2004). Calculating landscape surface area from digital elevation
