@@ -189,6 +189,17 @@ streamLAS.LAScluster = function(x, ofile, select = "*", filter = "", filter_wkt 
 
 streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt = "")
 {
+  # Compatibility with rlas that no longer supports WKT string to filter polygons
+  geom = list()
+  if (packageVersion("rlas") > "1.7.0")
+  {
+    if (is.character(filter_wkt) && filter_wkt[1] != "")
+    {
+      geom = sf::st_as_sfc(filter_wkt)
+      geom = extract_polygons(geom)
+    }
+  }
+
   assert_all_are_existing_files(x)
 
   islas <- tools::file_ext(x) %in% c("las", "laz", "ply", "LAS", "LAZ", "PLY")
@@ -229,7 +240,10 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
     }
   }
 
-  data <- rlas:::stream.las(ifiles, ofile, select, filter, filter_wkt)
+  if (packageVersion("rlas") > "1.7.0")
+    data <- rlas:::stream.las(ifiles, ofile, select, filter, geom)
+  else
+    data <- rlas:::stream.las(ifiles, ofile, select, filter, filter_wkt)
 
   if (is.null(data))
     return(invisible())

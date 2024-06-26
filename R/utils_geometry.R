@@ -19,6 +19,7 @@ extract_polygons = function(sfc)
   # Fix #763. Complex code to avoid using boost
   coordinates = lapply(sfc, sf::st_coordinates)
   rings = lapply(coordinates, extract_rings)
+  return(rings)
 }
 
 extract_rings = function(coordinates)
