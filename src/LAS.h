@@ -41,7 +41,7 @@ class LAS
 
     NumericVector rasterize(List layout, double subcircle, int method);
     NumericVector compute_range(DataFrame flightlines);
-    SEXP find_polygon_ids(CharacterVector wkts, bool by_poly);
+    SEXP find_polygon_ids(Rcpp::List polygons, bool by_poly);
     IntegerVector segment_snags(NumericVector neigh_radii, double low_int_thrsh, double uppr_int_thrsh, int pt_den_req, NumericMatrix BBPRthrsh_mat);
     IntegerVector segment_trees(double dt1, double dt2, double Zu, double R, double th_tree, double radius);
     List point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SEXP call, SEXP env);

@@ -172,14 +172,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_in_polygon
-SEXP C_in_polygon(S4 las, CharacterVector wkts, bool by_poly);
-RcppExport SEXP _lidR_C_in_polygon(SEXP lasSEXP, SEXP wktsSEXP, SEXP by_polySEXP) {
+SEXP C_in_polygon(S4 las, Rcpp::List polygons, bool by_poly);
+RcppExport SEXP _lidR_C_in_polygon(SEXP lasSEXP, SEXP polygonsSEXP, SEXP by_polySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< CharacterVector >::type wkts(wktsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type polygons(polygonsSEXP);
     Rcpp::traits::input_parameter< bool >::type by_poly(by_polySEXP);
-    rcpp_result_gen = Rcpp::wrap(C_in_polygon(las, wkts, by_poly));
+    rcpp_result_gen = Rcpp::wrap(C_in_polygon(las, polygons, by_poly));
     return rcpp_result_gen;
 END_RCPP
 }

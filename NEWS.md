@@ -7,6 +7,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Fix: #757
 - Fix: algorithm `random_per_voxel` that was not working
 - Fix: `readLAScatalog` if `sp` is missing
+- Internal: remove dependency to `boost` for `point_in_polygon` #763
 
 ## lidR v4.1.1 (Release date: 2024-02-03)
 

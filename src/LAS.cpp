@@ -3,9 +3,23 @@
 #include "myomp.h"
 #include "SpatialIndex.h"
 #include <limits>
-#include <boost/geometry.hpp>
 
 using namespace lidR;
+
+bool pnpoly(NumericMatrix polygon, double x, double y)
+{
+  int nvert = polygon.nrow();
+  bool c = false;
+  int i, j;
+  for (i = 0, j = nvert - 1; i < nvert; j = i++)
+  {
+    if (((polygon(i, 1) > y) != (polygon(j, 1) > y)) &&
+        (x < (polygon(j, 0) - polygon(i, 0)) * (y - polygon(i, 1)) / (polygon(j, 1) - polygon(i, 1)) + polygon(i, 0))) {
+      c = !c;
+    }
+  }
+  return c;
+}
 
 LAS::LAS(S4 las, int ncpu)
 {
@@ -586,18 +600,13 @@ void LAS::filter_with_grid(List layout, bool max)
   return;
 }
 
-SEXP LAS::find_polygon_ids(CharacterVector wkts, bool by_poly)
+SEXP LAS::find_polygon_ids(Rcpp::List polygons, bool by_poly)
 {
-  typedef boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> Point;
-  typedef boost::geometry::model::polygon<Point> Polygon;
-  typedef boost::geometry::model::multi_polygon<Polygon> MultiPolygon;
-  typedef boost::geometry::model::box<Point> Bbox;
-
   std::vector<std::vector<int>> res;
   std::vector<int> poly_id;
   if (by_poly)
   {
-    res.resize(wkts.size());
+    res.resize(polygons.size());
   }
   else
   {
@@ -607,76 +616,77 @@ SEXP LAS::find_polygon_ids(CharacterVector wkts, bool by_poly)
 
   SpatialIndex tree(las);
 
-  for (unsigned int j = 0 ; j < wkts.size() ; j++)
+  for (unsigned int i = 0 ; i < polygons.size() ; i++)
   {
     bool is_in_polygon = false;
-    std::string wkt = as<std::string>(wkts[j]);
 
-    if (wkt.find("MULTIPOLYGON") != std::string::npos)
+    // This list can be made of several rings (MULTIPOLYGON) and interior rings
+    Rcpp::List rings = polygons[i];
+
+    // Find the bbox of the polygons
+    double min_x = INFINITY;
+    double min_y = INFINITY;
+    double max_x = -INFINITY;
+    double max_y = -INFINITY;
+    for (int j = 0 ; j < rings.size() ; j++)
     {
-      Point p;
-      Bbox bbox;
-      MultiPolygon polygons;
+      Rcpp::NumericMatrix ring = rings[j];
+      Rcpp::NumericVector x = ring(_, 0);
+      Rcpp::NumericVector y = ring(_, 1);
 
-      boost::geometry::read_wkt(wkt, polygons);
-      boost::geometry::envelope(polygons, bbox);
+      double maxx = max(x);
+      double maxy = max(y);
+      double minx = min(x);
+      double miny = min(y);
 
-      double min_x = bbox.min_corner().get<0>();
-      double min_y = bbox.min_corner().get<1>();
-      double max_x = bbox.max_corner().get<0>();
-      double max_y = bbox.max_corner().get<1>();
+      if (min_x > minx) min_x = minx;
+      if (min_y > miny) min_y = miny;
+      if (max_x < maxx) max_x = maxx;
+      if (max_y < maxy) max_y = maxy;
+    }
 
-      lidR::Rectangle rect(min_x, max_x, min_y, max_y);
-      std::vector<PointXYZ> pts;
-      tree.lookup(rect, pts);
+    // Spatial query of the point that are in the bounding box of the polygon
+    lidR::Rectangle rect(min_x, max_x, min_y, max_y);
+    std::vector<PointXYZ> pts;
+    tree.lookup(rect, pts);
 
-      for(unsigned int i = 0 ; i < pts.size() ; i++)
+    // For each point we check if it is in the potential multi part polygon
+    for (unsigned int k = 0 ; k < pts.size() ; k++)
+    {
+      bool inpoly = false;
+
+      // Loop through sub polygons (ring)
+      for (int j = 0 ; j < rings.size() ; j++)
       {
-        p.set<0>(pts[i].x);
-        p.set<1>(pts[i].y);
-        if (boost::geometry::covered_by(p, polygons))
+        Rcpp::NumericMatrix ring = rings[j];
+
+        // We need to know if the ring is an exterior/interior ring (hole)
+        bool exterior_ring = ring(0,2) == 1;
+
+        bool b = pnpoly(ring, pts[k].x, pts[k].y);
+
+        if (b)
         {
-          if (by_poly)
-            res[j].push_back(pts[i].id+1);
+          if (exterior_ring)
+          {
+            inpoly = true;
+          }
           else
-            poly_id[pts[i].id] = j+1;
+          {
+            inpoly = false;
+            break;
+          }
         }
       }
-    }
-    else if (wkt.find("POLYGON") != std::string::npos)
-    {
-      Point p;
-      Bbox bbox;
-      Polygon polygon;
 
-      boost::geometry::read_wkt(wkt, polygon);
-      boost::geometry::envelope(polygon, bbox);
-
-      double min_x = bbox.min_corner().get<0>();
-      double min_y = bbox.min_corner().get<1>();
-      double max_x = bbox.max_corner().get<0>();
-      double max_y = bbox.max_corner().get<1>();
-
-      lidR::Rectangle rect(min_x, max_x, min_y, max_y);
-      std::vector<PointXYZ> pts;
-      tree.lookup(rect, pts);
-
-      for(unsigned int i = 0 ; i < pts.size() ; i++)
+      if (inpoly)
       {
-        p.set<0>(pts[i].x);
-        p.set<1>(pts[i].y);
-        if (boost::geometry::covered_by(p, polygon))
-        {
-          if (by_poly)
-            res[j].push_back(pts[i].id+1);
-          else
-            poly_id[pts[i].id] = j+1;
-        }
+        if (by_poly)
+          res[i].push_back(pts[k].id+1);
+        else
+          poly_id[pts[k].id] = i+1;
       }
     }
-    else
-      Rcpp::stop("Unexpected error in point_in_polygon: WKT is not a POLYGON or MULTIPOLYGON"); // # nocov
-
   }
 
   if (by_poly)
