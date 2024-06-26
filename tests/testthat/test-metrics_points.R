@@ -6,6 +6,8 @@ J = rep(TRUE, 6)
 D = data.table::data.table(X,Y,Z,I,J)
 las = LAS(D)
 
+skip_if(lidR:::is_disable_point_metrics(), "Point metrics disabled")
+
 test_that("points_metrics works with a single metric (knn)", {
 
   m = point_metrics(las, ~mean(Z), k = 3L)

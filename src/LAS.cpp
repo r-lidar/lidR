@@ -1295,6 +1295,7 @@ NumericVector LAS::rasterize(List layout, double subcircle, int method)
   return raster;
 }
 
+#ifdef WITHSETLENGTH
 List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SEXP call, SEXP env)
 {
   // @k is the k of knn
@@ -1543,6 +1544,7 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
 
   return output;
 }
+#endif
 
 DataFrame LAS::eigen_decomposition(int k, double r, bool get_coef)
 {

@@ -442,7 +442,7 @@ plot.LAS = function(x, y, ...,
     stop("Internal error in color attribution. Please report.") # nocov
 
   # Optimize the rendering of the voxels by removing voxels than can't be seen
-  if(!isFALSE(use_voxels))
+  if(!isFALSE(use_voxels) && !is_disable_point_metrics())
   {
     nvoxels1 <- npoints(x)
     res <- as.numeric(use_voxels)

@@ -77,10 +77,6 @@ C_knnidw <- function(las, x, y, k, p, rmax, ncpu) {
     .Call(`_lidR_C_knnidw`, las, x, y, k, p, rmax, ncpu)
 }
 
-C_point_metrics <- function(las, k, r, nalloc, call, env, filter) {
-    .Call(`_lidR_C_point_metrics`, las, k, r, nalloc, call, env, filter)
-}
-
 C_fast_knn_metrics <- function(las, k, metrics, cpu) {
     .Call(`_lidR_C_fast_knn_metrics`, las, k, metrics, cpu)
 }

@@ -48,6 +48,8 @@ test_that("filter argument works", {
 
 
 test_that("point_eigenvalue works", {
+  skip_if(lidR:::is_disable_point_metrics(), "Point metrics disable")
+
   res1 <- point_eigenvalues(las, k = 5, metrics = TRUE)
   res2 <- point_metrics(las, .stdshapemetrics, k = 5)
   res2[["horizontality"]] = NULL

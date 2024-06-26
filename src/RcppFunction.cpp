@@ -118,7 +118,8 @@ NumericVector C_knnidw(S4 las, NumericVector x, NumericVector y, int k, double p
   return pt.interpolate_knnidw(x,y,k,p,rmax);
 }
 
-// [[Rcpp::export]]
+#ifdef WITHSETLENGTH
+/* [[Rcpp::export(rng = false)]] */
 List C_point_metrics(S4 las, unsigned int k, double r, int nalloc, SEXP call, SEXP env, LogicalVector filter)
 {
   LAS pt(las);
@@ -126,6 +127,7 @@ List C_point_metrics(S4 las, unsigned int k, double r, int nalloc, SEXP call, SE
   DataFrame data = as<DataFrame>(las.slot("data"));
   return pt.point_metrics(k, r, data, nalloc, call, env);
 }
+#endif
 
 // [[Rcpp::export]]
 NumericVector C_fast_knn_metrics(S4 las, unsigned int k, IntegerVector metrics, int cpu)

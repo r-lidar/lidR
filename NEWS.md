@@ -8,6 +8,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Fix: algorithm `random_per_voxel` that was not working
 - Fix: `readLAScatalog` if `sp` is missing
 - Internal: remove dependency to `boost` for `point_in_polygon` #763
+- Breaking change: we temporarily removed the function `point_metrics()` because the CRAN policies changed and we are no longer allows to use some internal functions that are crucial for this function #764
 
 ## lidR v4.1.1 (Release date: 2024-02-03)
 

@@ -272,23 +272,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_point_metrics
-List C_point_metrics(S4 las, unsigned int k, double r, int nalloc, SEXP call, SEXP env, LogicalVector filter);
-RcppExport SEXP _lidR_C_point_metrics(SEXP lasSEXP, SEXP kSEXP, SEXP rSEXP, SEXP nallocSEXP, SEXP callSEXP, SEXP envSEXP, SEXP filterSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< double >::type r(rSEXP);
-    Rcpp::traits::input_parameter< int >::type nalloc(nallocSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type call(callSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type env(envSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type filter(filterSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_point_metrics(las, k, r, nalloc, call, env, filter));
-    return rcpp_result_gen;
-END_RCPP
-}
 // C_fast_knn_metrics
 NumericVector C_fast_knn_metrics(S4 las, unsigned int k, IntegerVector metrics, int cpu);
 RcppExport SEXP _lidR_C_fast_knn_metrics(SEXP lasSEXP, SEXP kSEXP, SEXP metricsSEXP, SEXP cpuSEXP) {
@@ -625,7 +608,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_pmf", (DL_FUNC) &_lidR_C_pmf, 4},
     {"_lidR_C_rasterize", (DL_FUNC) &_lidR_C_rasterize, 4},
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
-    {"_lidR_C_point_metrics", (DL_FUNC) &_lidR_C_point_metrics, 7},
     {"_lidR_C_fast_knn_metrics", (DL_FUNC) &_lidR_C_fast_knn_metrics, 4},
     {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
     {"_lidR_C_lasrange", (DL_FUNC) &_lidR_C_lasrange, 2},

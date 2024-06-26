@@ -44,7 +44,9 @@ class LAS
     SEXP find_polygon_ids(Rcpp::List polygons, bool by_poly);
     IntegerVector segment_snags(NumericVector neigh_radii, double low_int_thrsh, double uppr_int_thrsh, int pt_den_req, NumericMatrix BBPRthrsh_mat);
     IntegerVector segment_trees(double dt1, double dt2, double Zu, double R, double th_tree, double radius);
+#ifdef WITHSETLENGTH
     List point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SEXP call, SEXP env);
+#endif
     NumericVector fast_knn_metrics(unsigned int k, IntegerVector metrics);
     NumericVector interpolate_knnidw(NumericVector x, NumericVector y, int k, double p, double rmax);
     DataFrame eigen_decomposition(int k, double r, bool get_coef);
