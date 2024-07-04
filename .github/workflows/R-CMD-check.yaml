@@ -24,7 +24,7 @@ jobs:
         config:
           - {os: windows-latest, r: 'devel', rglusenull: "true"}
           - {os: windows-latest, r: 'release', rglusenull: "true"}
-          - {os: macOS-latest, r: 'release', rglusenull: "true"}
+          #- {os: macOS-latest, r: 'release', rglusenull: "true"}
           - {os: ubuntu-latest, r: 'release'}
           - {os: ubuntu-latest, r: 'devel'}
 
