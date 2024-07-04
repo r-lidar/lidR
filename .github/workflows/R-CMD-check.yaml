@@ -22,12 +22,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          #- {os: windows-latest, r: 'devel', rglusenull: "true"}
+          - {os: windows-latest, r: 'devel', rglusenull: "true"}
           - {os: windows-latest, r: 'release', rglusenull: "true"}
-          #- {os: windows-latest, r: '3.6', rglusenull: "true"}
-          #- {os: macOS-latest, r: 'release', rglusenull: "true"}
+          - {os: windows-latest, r: '3.6', rglusenull: "true"}
+          - {os: macOS-latest, r: 'release', rglusenull: "true"}
           - {os: ubuntu-latest, r: 'release'}
-          #- {os: ubuntu-latest, r: 'devel'}
+          - {os: ubuntu-latest, r: 'devel'}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
