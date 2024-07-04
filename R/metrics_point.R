@@ -120,6 +120,11 @@ To get a version of the packge with this function enabled please contact us.", c
 #' @export
 point_metrics.LAS <- function(las, func, k, r, xyz = FALSE, filter = NULL, ...) {
 
+  if (is_disable_point_metrics())
+  {
+    C_point_metrics = function(a, b, c, d, e, f) {}
+  }
+
   if (missing(k) && missing(r))  stop("'k' or 'r' is missing", call. = FALSE)
 
   # knn + radius

@@ -191,7 +191,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
 {
   # Compatibility with rlas that no longer supports WKT string to filter polygons
   geom = list()
-  if (packageVersion("rlas") > "1.7.0")
+  if (utils::packageVersion("rlas") >= "1.8.0")
   {
     if (is.character(filter_wkt) && filter_wkt[1] != "")
     {
@@ -240,10 +240,11 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
     }
   }
 
-  if (packageVersion("rlas") > "1.7.0")
+  if (utils::packageVersion("rlas") >= "1.8.0") {
     data <- rlas:::stream.las(ifiles, ofile, select, filter, geom)
-  else
+  } else {
     data <- rlas:::stream.las(ifiles, ofile, select, filter, filter_wkt)
+  }
 
   if (is.null(data))
     return(invisible())
