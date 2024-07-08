@@ -500,7 +500,7 @@ inline void Octree::harvest_knn(Node::Ocnode* node, Bucket::KnnBucket& bucket, u
   double d[8];
   std::vector<unsigned char> idx = {0,1,2,3,4,5,6,7};
   for(auto i : idx) d[i] = distance(&heap[node->firstChild + i], bucket.pref);
-  std::stable_sort(idx.begin(), idx.end(), [&d](size_t i1, size_t i2) {return d[i1] < d[i2];});
+  std::sort(idx.begin(), idx.end(), [&d](size_t i1, size_t i2) {return d[i1] < d[i2];});
 
   for(auto i : idx)
   {
