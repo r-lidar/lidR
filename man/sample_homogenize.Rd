@@ -32,7 +32,7 @@ las = readLAS(LASfile, select = "xyz")
 
 # Select points randomly to reach an homogeneous density of 1
 thinned <- decimate_points(las, homogenize(1,5))
-plot(grid_density(thinned, 10))
+plot(rasterize_density(thinned, 10))
 }
 \seealso{
 Other point cloud decimation algorithms: 

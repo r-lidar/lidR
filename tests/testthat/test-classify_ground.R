@@ -11,10 +11,9 @@ opt_progress(ctg) <- FALSE
 ws = seq(3,21, 5)
 th = seq(0.1, 2, length.out = length(ws))
 
-mypmf = pmf(ws, th)
-mycsf = csf(TRUE, 1, 1, time_step = 1)
-
 test_that("classify_ground pmf works with LAS", {
+
+  mypmf = pmf(ws, th)
 
   las <- classify_ground(las, mypmf)
 
@@ -30,6 +29,8 @@ test_that("classify_ground pmf works with LAS", {
 test_that("classify_ground pmf works with LAScatalog", {
   opt_chunk_buffer(ctg) <- 30
 
+  mypmf = pmf(ws, th)
+
   expect_error(classify_ground(ctg, mypmf), "output file")
 
   opt_output_files(ctg) <- paste0(tempdir(), "/file_{XLEFT}_{YBOTTOM}")
@@ -44,6 +45,8 @@ test_that("classify_ground csf works with LAS", {
 
   skip_if_not_installed("RCSF")
 
+  mycsf = csf(TRUE, 1, 1, time_step = 1)
+
   las <- classify_ground(las, mycsf)
 
   n = names(las)
@@ -57,6 +60,8 @@ test_that("classify_ground csf works with LAScatalog", {
 
   skip_if_not_installed("RCSF")
   skip_on_cran()
+
+  mycsf = csf(TRUE, 1, 1, time_step = 1)
 
   opt_output_files(ctg) <- paste0(tempdir(), "/file_{XLEFT}_{YBOTTOM}_ground")
   opt_chunk_buffer(ctg) <- 30
@@ -102,7 +107,7 @@ test_that("makeZhangParam works", {
 })
 
 test_that("classify_ground does not erase former classification (but new ground points)", {
-
+  mypmf = pmf(ws, th)
   las <- topography
   las <- filter_poi(las, X < mean(X), Y < mean(Y))
   las$Classification[las$Classification == LASGROUND] <- LASUNCLASSIFIED

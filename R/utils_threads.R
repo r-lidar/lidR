@@ -86,7 +86,7 @@ get_lidr_threads = function()
 #' @noRd
 try_to_get_num_future_cores = function()
 {
-  if (!"future" %in% rownames(installed.packages()))
+  if (!"future" %in% rownames(utils::installed.packages()))
     return(1L)
 
   # nocov start

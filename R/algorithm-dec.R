@@ -19,8 +19,8 @@
 #'
 #' # Reach a pulse density of 1 on the overall dataset
 #' thinned1 = decimate_points(las, random(1))
-#' plot(grid_density(las))
-#' plot(grid_density(thinned1))
+#' plot(rasterize_density(las))
+#' plot(rasterize_density(thinned1))
 #' @name sample_random
 random = function(density, use_pulse = FALSE)
 {
@@ -91,7 +91,7 @@ random = function(density, use_pulse = FALSE)
 #'
 #' # Select points randomly to reach an homogeneous density of 1
 #' thinned <- decimate_points(las, homogenize(1,5))
-#' plot(grid_density(thinned, 10))
+#' plot(rasterize_density(thinned, 10))
 #' @name sample_homogenize
 homogenize = function(density, res = 5, use_pulse = FALSE)
 {

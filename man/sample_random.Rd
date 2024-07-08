@@ -24,8 +24,8 @@ las = readLAS(LASfile, select = "xyz")
 
 # Reach a pulse density of 1 on the overall dataset
 thinned1 = decimate_points(las, random(1))
-plot(grid_density(las))
-plot(grid_density(thinned1))
+plot(rasterize_density(las))
+plot(rasterize_density(thinned1))
 }
 \seealso{
 Other point cloud decimation algorithms: 

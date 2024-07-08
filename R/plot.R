@@ -2,7 +2,7 @@
 #'
 #' Plot displays a 3D interactive windows based on rgl for \link{LAS} objects\cr\cr
 #' Plot displays an interactive view for \link[=LAScatalog-class]{LAScatalog} objects with pan and
-#' zoom capabilities based on \link[mapview:mapview-package]{mapview}. If the coordinate reference
+#' zoom capabilities based on `mapview()` from package `mapview`. If the coordinate reference
 #' system (CRS) of the \code{LAScatalog} is non empty, the plot can be displayed on top of base maps
 #' (satellite data, elevation, street, and so on).\cr\cr
 #' Plot displays a \link[=LASheader-class]{LASheader} object exactly like it displays a LAScatalog
@@ -46,7 +46,7 @@
 #' @param overlaps logical. Highlight the overlaps between files.
 #'
 #' @param ... Will be passed to \link[rgl:3dobjects]{points3d} (LAS) or \link[graphics:plot.default]{plot}
-#' if \code{mapview = FALSE} or to \link[mapview:mapView]{mapview} if \code{mapview = TRUE} (LAScatalog).
+#' if \code{mapview = FALSE} or to `mapview()` if \code{mapview = TRUE} (LAScatalog).
 #'
 #' @examples
 #' \dontrun{

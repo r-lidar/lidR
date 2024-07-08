@@ -99,13 +99,13 @@ knnidw = function(k = 10, p = 2, rmax = 50)
 #'
 #' This function is made to be used in \link{rasterize_terrain} or \link{normalize_height}. It
 #' implements an algorithm for spatial interpolation. Spatial interpolation is based on universal
-#' kriging using the \link[gstat:krige]{krige} function from \code{gstat}. This method combines the
+#' kriging using the `krige()` function from \code{gstat}. This method combines the
 #' KNN approach with the kriging approach. For each point of interest it kriges the terrain using
 #' the k-nearest neighbour ground points. This method is more difficult to manipulate but it is also
 #' the most advanced method for interpolating spatial data.
 #'
 #' @param k numeric. Number of k-nearest neighbours. Default 10.
-#' @param model A variogram model computed with \link[gstat:vgm]{vgm}. If NULL it performs an ordinary
+#' @param model A variogram model computed with `vgm()` from package `gstat`. If NULL it performs an ordinary
 #' or weighted least squares prediction.
 #'
 #' @export
@@ -125,6 +125,7 @@ knnidw = function(k = 10, p = 2, rmax = 50)
 #' plot_dtm3d(dtm)
 #' }
 #' @name dtm_kriging
+#' @md
 kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)
 {
   assert_package_is_installed("gstat")

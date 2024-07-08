@@ -66,7 +66,7 @@ test_that("print works with lidR algorithms ", {
   k <- tin()
   j <- p2r(2)
   l <- random(2)
-  m <- csf()
+  m <- pmf(3,4)
   #o <- wing2015()
   p <- Roussel2020()
 

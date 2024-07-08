@@ -8,7 +8,7 @@
 kriging(model = gstat::vgm(0.59, "Sph", 874), k = 10L)
 }
 \arguments{
-\item{model}{A variogram model computed with \link[gstat:vgm]{vgm}. If NULL it performs an ordinary
+\item{model}{A variogram model computed with \code{vgm()} from package \code{gstat}. If NULL it performs an ordinary
 or weighted least squares prediction.}
 
 \item{k}{numeric. Number of k-nearest neighbours. Default 10.}
@@ -16,7 +16,7 @@ or weighted least squares prediction.}
 \description{
 This function is made to be used in \link{rasterize_terrain} or \link{normalize_height}. It
 implements an algorithm for spatial interpolation. Spatial interpolation is based on universal
-kriging using the \link[gstat:krige]{krige} function from \code{gstat}. This method combines the
+kriging using the \code{krige()} function from \code{gstat}. This method combines the
 KNN approach with the kriging approach. For each point of interest it kriges the terrain using
 the k-nearest neighbour ground points. This method is more difficult to manipulate but it is also
 the most advanced method for interpolating spatial data.
