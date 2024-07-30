@@ -245,10 +245,16 @@ read_vpc <- function(f)
 
     headers[[i]]$Number.of.point.records = feature$properties[["pc:count"]]
 
-    relative_path <- feature$assets$data$href[1]
-    parent = dirname(f)
-    absolute_path <- file.path(parent, relative_path)
-    absolute_path <- normalizePath(absolute_path)
+    absolute_path = feature$assets$data$href[1]
+
+    if (tools::file_path_as_absolute(absolute_path) != absolute_path) #771
+    {
+      relative_path <- absolute_path
+      parent = dirname(f)
+      absolute_path <- file.path(parent, relative_path)
+      absolute_path <- normalizePath(absolute_path)
+    }
+
     headers[[i]]$filename = absolute_path
 
     wkt = feature$properties[["proj:wkt2"]]

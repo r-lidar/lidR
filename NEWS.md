@@ -1,6 +1,10 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v4.1.2 (Release date: )
+## lidR v4.1.3 (Release date: )
+
+- Fix: #771 read VPC files with absolute path
+
+## lidR v4.1.2 (Release date: 2024-07-09)
 
 - Fix: strongly improved arithmetic accuracy in `point_in_triangle` to improve the quality of delaunay triangulation interpolations and avoid local NAs
 - Enhance: `decimate_points()` with `random()` now preserves the point ordering.
