@@ -44,7 +44,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Jean-Romain Roussel \email{jean-romain.roussel.1@ulaval.ca} [copyright holder]
+\strong{Maintainer}: Jean-Romain Roussel \email{info@r-lidar.com} [copyright holder]
 
 Authors:
 \itemize{
