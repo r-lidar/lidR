@@ -289,8 +289,3 @@ point_eigenvalues = function(las, k, r, xyz = FALSE, metrics = FALSE, coeffs = F
   return(M)
 }
 
-is_disable_point_metrics = function()
-{
-  return(!methods::existsFunction("C_point_metrics"))
-}
-

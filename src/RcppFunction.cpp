@@ -119,7 +119,7 @@ NumericVector C_knnidw(S4 las, NumericVector x, NumericVector y, int k, double p
 }
 
 #ifdef WITHSETLENGTH
-/* [[Rcpp::export(rng = false)]] */
+// [[Rcpp::export(rng = false)]]
 List C_point_metrics(S4 las, unsigned int k, double r, int nalloc, SEXP call, SEXP env, LogicalVector filter)
 {
   LAS pt(las);
@@ -127,7 +127,23 @@ List C_point_metrics(S4 las, unsigned int k, double r, int nalloc, SEXP call, SE
   DataFrame data = as<DataFrame>(las.slot("data"));
   return pt.point_metrics(k, r, data, nalloc, call, env);
 }
+#else
+List C_point_metrics(S4 las, unsigned int k, double r, int nalloc, SEXP call, SEXP env, LogicalVector filter)
+{
+  Rcpp::stop("Because of a new CRAN policy that affects numerous packages, we temporarily removed this function to give us time to find a workaround and prevent the package from being removed from CRAN. To get a version of the packge with this function enabled please contact us.");
+}
 #endif
+
+// [[Rcpp::export(rng = false)]]
+bool is_disable_point_metrics()
+{
+  #ifdef WITHSETLENGTH
+  return false;
+  #else
+  return true;
+  #endif
+}
+
 
 // [[Rcpp::export]]
 NumericVector C_fast_knn_metrics(S4 las, unsigned int k, IntegerVector metrics, int cpu)
