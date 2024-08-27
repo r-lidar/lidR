@@ -8,8 +8,7 @@
 #' Returns TRUE if the algorithm is at least partially parallelised i.e. if some portion of the code is
 #' computed in parallel.
 #'
-#' @param las A \code{LAS} object.
-#' @param x Any R object.
+#' @param x  \code{LAS} object or any R object.
 #' @param catalog A \code{LAScatalog} object.
 #' @param algorithm An \code{algorithm} object.
 #'
@@ -36,13 +35,14 @@
 #' @name is
 NULL
 
+#' @importFrom terra is.empty
 #' @rdname is
 #' @export
-is.empty <- function(las)
+setMethod("is.empty", "LAS", function(x)
 {
-  stopifnotlas(las)
-  return(nrow(las@data) == 0L)
-}
+  stopifnotlas(x)
+  return(nrow(x@data) == 0L)
+})
 
 #' @rdname is
 #' @export

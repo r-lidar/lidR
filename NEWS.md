@@ -3,6 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v4.1.3 (Release date: )
 
 - Fix: #771 read VPC files with absolute path
+- Enhance: `crs()` `is.empty()` and `area()` are now inherits from `terra` and no longer clash with `terra`.
 
 ## lidR v4.1.2 (Release date: 2024-07-09)
 

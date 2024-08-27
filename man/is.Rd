@@ -2,14 +2,14 @@
 % Please edit documentation in R/utils_is.R
 \name{is}
 \alias{is}
-\alias{is.empty}
+\alias{is.empty,LAS-method}
 \alias{is.overlapping}
 \alias{is.indexed}
 \alias{is.algorithm}
 \alias{is.parallelised}
 \title{A set of boolean tests on objects}
 \usage{
-is.empty(las)
+\S4method{is.empty}{LAS}(x)
 
 is.overlapping(catalog)
 
@@ -20,11 +20,9 @@ is.algorithm(x)
 is.parallelised(algorithm)
 }
 \arguments{
-\item{las}{A \code{LAS} object.}
+\item{x}{\code{LAS} object or any R object.}
 
 \item{catalog}{A \code{LAScatalog} object.}
-
-\item{x}{Any R object.}
 
 \item{algorithm}{An \code{algorithm} object.}
 }

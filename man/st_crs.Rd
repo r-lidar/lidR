@@ -12,8 +12,6 @@
 \alias{st_crs<-.LAScatalog}
 \alias{projection}
 \alias{projection<-}
-\alias{crs}
-\alias{crs<-}
 \alias{crs,LASheader-method}
 \alias{crs,LAS-method}
 \alias{crs<-,LAS-method}
@@ -53,13 +51,9 @@ projection(x, asText = TRUE)
 
 projection(x) <- value
 
-crs(x, asText = FALSE)
+\S4method{crs}{LASheader}(x)
 
-crs(x, ...) <- value
-
-\S4method{crs}{LASheader}(x, asText = FALSE)
-
-\S4method{crs}{LAS}(x, asText = FALSE)
+\S4method{crs}{LAS}(x)
 
 \S4method{crs}{LAS}(x, ...) <- value
 

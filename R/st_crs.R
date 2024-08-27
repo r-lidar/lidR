@@ -202,27 +202,19 @@ projection <- function(x, asText = TRUE)
 
 # ==== CRS ====
 
-#' @export
+#' @importMethodsFrom terra crs
+#' @importMethodsFrom terra crs<-
 #' @rdname st_crs
-setGeneric("crs", function(x, asText = FALSE) standardGeneric("crs"))
-
-#' @export
-#' @rdname st_crs
-setGeneric("crs<-", function(x, ..., value) standardGeneric("crs<-"))
-
-
-#' @export
-#' @rdname st_crs
-setMethod("crs", "LASheader", function(x, asText = FALSE)
+setMethod("crs", "LASheader", function(x)
 {
-  return(projection(x, asText))
+  return(projection(x, FALSE))
 })
 
 #' @export
 #' @rdname st_crs
-setMethod("crs", "LAS", function(x, asText = FALSE)
+setMethod("crs", "LAS", function(x)
 {
-  return(projection(x, asText))
+  return(projection(x, FALSE))
 })
 
 #' @export

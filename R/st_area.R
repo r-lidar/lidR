@@ -63,10 +63,7 @@ st_area.LAScatalog = function(x, ...)
   return(sum(areas))
 }
 
-#' @export
-#' @rdname st_area
-setGeneric("area", function(x, ...) standardGeneric("area"))
-
+#' @importFrom terra area
 #' @export
 #' @rdname st_area
 setMethod("area", "LAS", function(x, ...) { as.numeric(st_area(x)) })
