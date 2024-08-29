@@ -5,13 +5,13 @@ lidR <img src="https://raw.githubusercontent.com/r-lidar/lidR/master/man/figures
 [![R build status](https://github.com/r-lidar/lidR/workflows/R-CMD-check/badge.svg)](https://github.com/r-lidar/lidR/actions)
 [![Codecov test coverage](https://codecov.io/gh/r-lidar/lidR/branch/master/graph/badge.svg)](https://app.codecov.io/gh/r-lidar/lidR?branch=master)
 
-R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications
+**R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications**
 
-The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin LiDAR data, manage a collection of LAS/LAZ files, automatically extract ground inventories, process a collection of tiles using multicore processing, segment individual trees, classify points from geographic data, and provides other tools to manipulate LiDAR data in a research and development context.
+The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin LiDAR data, manage a collection of LAS/LAZ files, automatically extract ground inventories, process a collection of tiles using multicore processing, segment individual trees, classify points from geographic data, and provides other tools to manipulate LiDAR data in a **research and development context.**
 
-- 📖 Read [the book](https://r-lidar.github.io/lidRbook/index.html) to get started with the lidR package. See changelogs on [NEW.md](https://github.com/r-lidar/lidR/blob/master/NEWS.md)
+- 📖 Read [the book](https://r-lidar.github.io/lidRbook/index.html) to get started with the lidR package.
 - 💻 Install `lidR` from R with: `install.packages("lidR")`
-- 💵 [Sponsor `lidR`](https://github.com/sponsors/Jean-Romain)
+- 💵 [Sponsor `lidR`](https://github.com/sponsors/Jean-Romain). It is free and open source, but requires time and effort to develop and maintain.
 
 `lidR` has been cited by more than 1,000 scientific papers. To cite the package use `citation()` from within R:
 
@@ -19,7 +19,9 @@ The lidR package provides functions to read and write `.las` and `.laz` files, p
 citation("lidR")
 #> Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2021). lidR : An R package for analysis of Airborne Laser Scanning (ALS) data. Remote Sensing of Environment, 251 (August), 112061. <doi:10.1016/j.rse.2020.112061>.
 #> Jean-Romain Roussel and David Auty (2023). Airborne LiDAR Data Manipulation and Visualization for Forestry Applications. R package version 3.1.0. https://cran.r-project.org/package=lidR
-```     
+```   
+
+You may also be interested by our new [`lasR`](https://github.com/r-lidar/lasR) package.
 
 # Key features
 
@@ -117,16 +119,11 @@ plot(las, color = "Amplitude", add = x)
 
 # About
 
-**lidR** is developed openly by [r-lidar](https://www.r-lidar.com/).
+`lidR` is developed openly by [r-lidar](https://www.r-lidar.com/).
 
-The development of the `lidR` package was made possible in the past thanks to the financial support of:
-* 2015-2018: the [AWARE project  (NSERC CRDPJ 462973-14)](https://awareproject.ca/); grantee [Prof Nicholas Coops](https://forestry.ubc.ca/faculty-profile/nicholas-coops/).
-* 2018-2021: the [Ministère des Ressources naturelles et des Forêts](https://www.quebec.ca/en/government/ministere/ressources-naturelles-forets).
-* 2021-2024: the [Laval University](https://www.ulaval.ca/en).
+The initial development of `lidR` was made possible through the financial support of [Laval University](https://www.ulaval.ca/en), the [AWARE project](https://awareproject.ca/) and [Ministry of Natural Ressources and Forests]((https://www.quebec.ca/en/government/ministere/ressources-naturelles-forets) of Québec. To continue the development of this free software, we now offer consulting, programming, and training services. For more information, please visit [our website](https://www.r-lidar.com/).
 
-<img src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/logos.svg" width="600" align="center">
-
-# Install `lidR` dependencies on GNU/Linux
+# Install dependencies on GNU/Linux
 
 ```
 # Ubuntu
