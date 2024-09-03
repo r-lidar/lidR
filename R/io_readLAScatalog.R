@@ -62,7 +62,7 @@
 #' @md
 readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
-  #assert_is_character(folder)
+  assert_is_character(folder)
 
   finfo <- file.info(folder)
 
