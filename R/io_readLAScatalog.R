@@ -62,7 +62,7 @@
 #' @md
 readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", chunk_size = 0, chunk_buffer = 30, ...)
 {
-  assert_is_character(folder)
+  #assert_is_character(folder)
 
   finfo <- file.info(folder)
 
@@ -79,41 +79,108 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
     files <- do.call(list.files, p)
   }
 
-  verbose("Reading files...")
+  #verbose("Reading files...")
 
   if (length(files) == 1L && tools::file_ext(files) == "vpc")
   {
     headers = read_vpc(files)
     files = sapply(headers, function(x) x$filename)
     crs = sf::st_crs(headers[[1]]$CRS)
-  }
-  else
-  {
+
+  }else{
+
     header <- LASheader(rlas::read.lasheader(files[1]))
     crs    <- st_crs(header)
     phblab <- make.names(names(phb(header)))
     phblab[4] <- "GUID"
 
-    # Delayed progress bar
+    #set up progress bar
+    N = length(files)
     t0 <- Sys.time()
     pb <- NULL
-    i  <- 0
+    i <- 0
+    if(progress) pb <- utils::txtProgressBar(min = 0, max = length(files), initial = 0, style = 3)
 
-    headers <- lapply(files, function(x)
-    {
-      header        <- rlas:::lasheaderreader(x)
-      header        <- LASheader(header)
-      PHB           <- header@PHB
-      names(PHB)    <- phblab
+    #get all headers - catch errors
+    headers_list <- mapply(.fn_progress_headers, files, i=1:N, MoreArgs = list( phblab=phblab,progress=progress,t0=t0,pb=pb, N=N), SIMPLIFY =F)
+    #identify errors
+    headers_err = sapply(headers_list,class) == "try-error"
+    #warn errors
+    if(sum(headers_err)>0) warning(paste("there were errors in", sum (headers_err)," files:", paste(files[headers_err],collapse=" ")))
+    #combine remaining headers
+    headers <- data.table::rbindlist(headers_list[!headers_err])
+
+  }
+
+    #get overall attributes
+    data.table::setDF(headers)
+    xmin <- headers$Min.X
+    xmax <- headers$Max.X
+    ymin <- headers$Min.Y
+    ymax <- headers$Max.Y
+    ids <- as.character(seq_along(headers$filename))
+
+    #create closed polygonsfrom headers
+    geom <- lapply(seq_along(ids), function(xi) {
+      mtx <- matrix(c(xmin[xi], xmax[xi], ymin[xi], ymax[xi])[c(1,1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
+      sf::st_polygon(list(mtx))
+    })
+    #create sf vectors from polygons
+    geom <- sf::st_sfc(geom)
+    #assign CRS
+    sf::st_crs(geom) <- crs
+    headers <- sf::st_set_geometry(headers, geom)
+
+    #initiate LAScatalog object
+    res <- new("LAScatalog")
+    res@data <- headers
+
+    #assign filters
+    opt_filter(res) <- filter
+    opt_select(res) <- select
+    opt_chunk_size(res) <- chunk_size
+    opt_chunk_buffer(res) <- chunk_buffer
+    opt_progress(res) <- progress
+
+    #warn about overlap
+    if (is.overlapping(res))
+      message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")
+
+    return(res)
+}
+
+#not export
+#wrapper for: read one file, and update progress bar
+#fails gracefully
+.fn_progress_headers=function(progress,pb,i,N,t0,...){
+
+  #update progress bar
+  if (progress && (Sys.time() - t0 > getOption("lidR.progress.delay"))) {
+    utils::setTxtProgressBar(pb, i)
+  }
+
+  #run one file - fail gracefully
+  try(.fn_one_header(...), silent=T)
+
+}
+
+#not export
+#read one file header
+.fn_one_header = function(x,phblab){
+
+      header <- rlas:::lasheaderreader(x)
+      header <- LASheader(header)
+      PHB <- header@PHB
+      names(PHB) <- phblab
 
       if (use_wktcs(header))
+      #if (T)
         PHB[["CRS"]] <- wkt(header)
       else
         PHB[["CRS"]] <- epsg(header)
 
       # Compatibility with rlas 1.3.0
-      if (!is.null( PHB[["Number.of.points.by.return"]]))
-      {
+      if (!is.null(PHB[["Number.of.points.by.return"]])) {
         PHB[["Number.of.1st.return"]] <- PHB[["Number.of.points.by.return"]][1]
         PHB[["Number.of.2nd.return"]] <- PHB[["Number.of.points.by.return"]][2]
         PHB[["Number.of.3rd.return"]] <- PHB[["Number.of.points.by.return"]][3]
@@ -123,55 +190,10 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
         PHB[["Global.Encoding"]] <- NULL
       }
 
-      if (progress && Sys.time() - t0 > getOption("lidR.progress.delay")) {
-        if (is.null(pb))
-          pb <<- utils::txtProgressBar(min = 0, max = length(files), initial = i, style = 3)
-
-        utils::setTxtProgressBar(pb, i)
-      }
-
-      i <<- i + 1
-
+      PHB$filename = x
       return(PHB)
-    })
-  }
-
-  headers <- data.table::rbindlist(headers)
-  headers$filename <- files
-  data.table::setDF(headers)
-
-  xmin <- headers$Min.X
-  xmax <- headers$Max.X
-  ymin <- headers$Min.Y
-  ymax <- headers$Max.Y
-  ids  <- as.character(seq_along(files))
-
-  geom <- lapply(seq_along(ids), function(xi) {
-    mtx <- matrix(c(xmin[xi], xmax[xi], ymin[xi], ymax[xi])[c(1, 1, 2, 2, 1, 3, 4, 4, 3, 3)], ncol = 2)
-    sf::st_polygon(list(mtx))
-  })
-
-  geom <-sf::st_sfc(geom)
-  sf::st_crs(geom) <- crs
-  headers <- sf::st_set_geometry(headers, geom)
-
-  res <- new("LAScatalog")
-  res@data <- headers
-
-  opt_filter(res) <- filter
-  opt_select(res) <- select
-  opt_chunk_size(res) <- chunk_size
-  opt_chunk_buffer(res) <- chunk_buffer
-  opt_progress(res) <- progress
-
-  if (is.overlapping(res))
-    message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")
-
-  # if (!is.indexed(res))
-  # message("las or laz files are not associated with lax files. This is not mandatory but may greatly speed up some computations. See help('writelax', 'rlas').")
-
-  return(res)
 }
+
 
 #' @export
 #' @rdname readLAScatalog
