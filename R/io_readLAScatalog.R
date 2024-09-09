@@ -101,7 +101,13 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
     headers <- lapply(files, function(x)
     {
-      header        <- rlas:::lasheaderreader(x)
+      header <- rlas:::lasheaderreader(x)
+      if (length(header) == 0)
+      {
+        warning(paste0("Corrupted file ", x, " is not readable and was skipped in the LAScatalog"))
+        return(NULL)
+      }
+
       header        <- LASheader(header)
       PHB           <- header@PHB
       names(PHB)    <- phblab
@@ -136,6 +142,8 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
     })
   }
 
+  rm = sapply(headers, is.null)
+  files = files[!rm]
   headers <- data.table::rbindlist(headers)
   headers$filename <- files
   data.table::setDF(headers)
