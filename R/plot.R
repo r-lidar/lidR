@@ -334,7 +334,7 @@ plot.LAS = function(x, y, ...,
   }
 
   # Create a colour scheme for each point as a function of the attribute plotted
-  nbreaks <- if (nbreaks == "auto") 25 else nbreaks
+  nbreaks <- if (nbreaks == "auto") 50 else nbreaks
   idcolor <- NULL
 
   if (autocol)
