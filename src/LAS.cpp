@@ -352,8 +352,9 @@ NumericVector LAS::compute_range(DataFrame flightlines)
   // Compute the median sensor elevation then average range for this sensor
   // elevation. This gives a rough idea of the expected range and allows for
   // detecting failure and bad computations
-  double median_z_sensor = Rcpp::median(z);
-  double R_control = mean(median_z_sensor - Z);
+  //double median_z_sensor = Rcpp::median(z);
+  //double R_control = mean(median_z_sensor - Z);
+  double R_control = DBL_MAX;
 
   NumericVector R(npoints);
 
