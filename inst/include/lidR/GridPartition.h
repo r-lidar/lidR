@@ -356,8 +356,6 @@ inline void GridPartition::build(const Rcpp::NumericVector x, const Rcpp::Numeri
   // The depth is still used to compute the number of cells
   unsigned int n = x.size();
   unsigned int depth = (n > 0) ? std::floor(std::log(n)/std::log(4)) : 0;
-  depth = (depth >= 0) ? depth : 0;
-  depth = (depth >= 8) ? 8 : depth;
   ncells = (1 << depth) * (1 << depth);
 
   // Compute some indicator of shape
