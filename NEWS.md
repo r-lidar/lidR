@@ -2,28 +2,29 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v4.2.0 (Release date: )
 
-v4.2.0 bring new tools for terrestrial data (TLS, MLS)
+v4.2.0 brings new tools for terrestrial data (TLS, MLS):
 
-- New: new function `connected_components()` to perform clustering
-- New: new function `knn_distance()` to measure average distance between a point and its neighborhood
-- New: new C++ spatial indexing class `SparsePartition3D` for TLS data which is memory optimized
-- New: new functions `readALS` and `readTLS` that replace overly complex and unused `readALSLAS`, `readTLSLAS`, `readUAVLAS` and co.
-- New: new functions `readALScatalog` and `readTLScatalog` that replace overly complex and unused `readALSLAScatalog`, `readTLSLAScatalog`, `readUAVLAScatalog` and co.
-- New: new function `fit_circle` using RANSAC approach.
-- Fix: #771 read VPC files with absolute path
-- Enhance: `crs()` `is.empty()` and `area()` are now inherits from `terra` and no longer clash with `terra`.
-- Enhance: #776 `readLAScatalog` can skip corrupted files
-- Enhance: many operation are now faster on TLS data
+- New: Added the function `connected_components()` to perform clustering.
+- New: Introduced the function `knn_distance()` to measure the average distance between a point and its neighborhood.
+- New: Added a C++ spatial indexing class `SparsePartition3D` for TLS data, optimized for memory usage.
+- New: Introduced the functions `readALS()` and `readTLS()`, which replace the overly complex and rarely used `readALSLAS()`, `readTLSLAS()`, `readUAVLAS()`, and related functions.
+- New: Added the functions `readALScatalog()` and `readTLScatalog()` to replace the complex and less-used `readALSLAScatalog()`, `readTLSLAScatalog()`, `readUAVLAScatalog()`, and related functions.
+- New: Added the function `fit_circle()` using a RANSAC-based approach.
+- Fix: Resolved issue #771 to allow reading VPC files with absolute paths.
+- Enhance: Improved the `crs()`, `is.empty()`, and `area()` functions, which now inherit from `terra`, avoiding conflicts with `terra`.
+- Enhance: Addressed issue #776 to allow `readLAScatalog()` to skip corrupted files.
+- Enhance: Optimized performance for many operations on TLS data.
 
 ## lidR v4.1.2 (Release date: 2024-07-09)
 
-- Fix: strongly improved arithmetic accuracy in `point_in_triangle` to improve the quality of delaunay triangulation interpolations and avoid local NAs
-- Enhance: `decimate_points()` with `random()` now preserves the point ordering.
-- Fix: #757
-- Fix: algorithm `random_per_voxel` that was not working
-- Fix: `readLAScatalog` if `sp` is missing
-- Internal: remove dependency to `boost` for `point_in_polygon` #763
-- Breaking change: we temporarily removed the function `point_metrics()` because the CRAN policies changed and we are no longer allows to use some internal functions that are crucial for this function #764
+- Fix: Significantly improved arithmetic accuracy in `point_in_triangle()` to enhance the quality of Delaunay triangulation interpolations and prevent local NAs.
+- Enhance: The `decimate_points()` function with the `random()` method now preserves the original point order.
+- Fix: Resolved issue #757.
+- Fix: Corrected the `random_per_voxel` algorithm, which was previously not functioning as intended.
+- Fix: Resolved an issue in `readLAScatalog()` when `sp` was missing.
+- Internal: Removed the dependency on `boost` for `point_in_polygon()` (issue #763).
+- Breaking change: Temporarily removed the `point_metrics()` function due to CRAN policy changes that no longer permit the use of some internal functions critical to this function (issue #764).
+
 
 ## lidR v4.1.1 (Release date: 2024-02-03)
 
