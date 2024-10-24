@@ -51,6 +51,7 @@ plot.lasmetrics3d = function(x, y, ...)
 #' the rendering may look false or weird. This is because `rgl` computes with single precision `float`.
 #' To fix this, the objects are shifted to (0,0) to reduce the number of digits needed to represent
 #' their coordinates. The drawback is that the objects are not plotted at their actual coordinates.
+#' @param center_x,center_y,radius,height horizontal circle parameters
 #'
 #' @name plot_3d
 #' @examples
@@ -165,5 +166,19 @@ add_flightlines3d = function(x, flightlines, z = "Z", ...)
 {
   return(add_treetops3d(x,flightlines, z = "Z", ...))
 }
+
+#' @rdname plot_3d
+#' @export
+add_circle3d <- function(x, center_x, center_y, radius, height)
+{
+  theta <- seq(0, 2 * pi, length.out = 50)
+  xx <- center_x - x[1] + radius * cos(theta)
+  yy <- center_y - x[2] + radius * sin(theta)
+  zz <- rep(height, 50)
+
+  # Plot the circle in 3D
+  rgl::lines3d(xx, yy, zz, lwd = 5, col = "red")
+}
+
 
 

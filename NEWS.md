@@ -12,6 +12,7 @@ v4.2.0 brings new tools for terrestrial data (TLS, MLS):
 - New: Added the function `fit_circle()` using a RANSAC-based approach.
 - New: Added the function `height_above_ground()`
 - New: Added function `remove_noise()`
+- New: Added function `add_circle3d()`
 - Fix: Resolved issue #771 to allow reading VPC files with absolute paths.
 - Enhance: Improved the `crs()`, `is.empty()`, and `area()` functions, which now inherit from `terra`, avoiding conflicts with `terra`.
 - Enhance: Addressed issue #776 to allow `readLAScatalog()` to skip corrupted files.
