@@ -9,6 +9,7 @@ v4.2.0 bring new tools for terrestrial data (TLS, MLS)
 - New: new C++ spatial indexing class `SparsePartition3D` for TLS data which is memory optimized
 - New: new functions `readALS` and `readTLS` that replace overly complex and unused `readALSLAS`, `readTLSLAS`, `readUAVLAS` and co.
 - New: new functions `readALScatalog` and `readTLScatalog` that replace overly complex and unused `readALSLAScatalog`, `readTLSLAScatalog`, `readUAVLAScatalog` and co.
+- New: new function `fit_circle` using RANSAC approach.
 - Fix: #771 read VPC files with absolute path
 - Enhance: `crs()` `is.empty()` and `area()` are now inherits from `terra` and no longer clash with `terra`.
 - Enhance: #776 `readLAScatalog` can skip corrupted files
