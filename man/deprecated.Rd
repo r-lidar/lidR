@@ -40,6 +40,8 @@ filter_surfacepoints(las, res)
 \arguments{
 \item{files, select, filter, sort}{See the new functions that replace the old ones}
 
+\item{folder, ...}{See the new functions that replace the old ones}
+
 \item{las, res}{See the new functions that replace the old ones}
 }
 \description{
