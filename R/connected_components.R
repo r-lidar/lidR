@@ -16,7 +16,7 @@
 #' @export
 connected_components = function(las, res, min_pts, name = "clusterID")
 {
-  .N <- N <- cluster <- gpstime <- NULL
+  .N <- N <- clusterID <- gpstime <- NULL
 
   u = C_connected_component(las, res)
   las = add_lasattribute(las, u, name, "connected component ID")

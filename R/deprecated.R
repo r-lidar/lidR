@@ -1,24 +1,9 @@
 #' Deprecated functions in lidR
 #'
-#' These functions are provided for compatibility with older versions of lidR but are deprecated. They
-#' will progressively print a message, throw a warning and eventually be removed. The links below point
-#' to the documentation of the new names. In version 4 they now throw an error. In version 4.1 they
-#' ill be removed definitively.\cr\cr
-#' \link[=add_attribute]{lasadd} \link[=las_check]{lascheck} \link[=clip]{lasclip}
-#' \link[=segment_shapes]{lasdetectshape} \link[=filter_poi]{lasfilter}
-#' \link[=filter_surfacepoints]{lasfiltersurfacepoints} \link[=retrieve_flightlines]{lasflightline}
-#' \link[=classify_ground]{lasground} \link[=merge_spatial]{lasmergespatial}
-#' \link[=normalize_height]{lasnormalize} \link[=retrieve_pulses]{laspulse}
-#' \link[=normalize_intensity]{lasrangecorrection} \link[=retrieve_flightlines]{lasflightline}
-#' \link[=las_reoffset]{lasreoffset} \link[=las_rescale]{lasrescale}
-#' \link[=retrieve_scanlines]{lasscanlines} \link[=smooth_height]{lassmooth}
-#' \link[=segment_snags]{lassnags}
-#' \link[=segment_trees]{lastrees} \link[=voxelize_points]{lasvoxelize}
-#' \link[=track_sensor]{sensor_tracking} \link[=locate_trees]{tree_detection}
-#' \link[=crown_metrics]{tree_hull}
+#' These functions are provided for compatibility with older versions of lidR but are deprecated.
 #'
 #' @param las,res See the new functions that replace the old ones
-#' @param files,select,sort See the new functions that replace the old ones
+#' @param files,select,filter,sort See the new functions that replace the old ones
 #'
 #' @rdname deprecated
 #' @name deprecated
@@ -42,31 +27,24 @@ readTLSLAS = readTLS
 readUAVLAS = readTLS
 
 #' @export
-#' @rdname readLAS
+#' @rdname deprecated
 readDAPLAS = readTLS
 
 #' @export
-#' @rdname readLAScatalog
+#' @rdname deprecated
 readALSLAScatalog = readALScatalog
 
 #' @export
-#' @rdname readLAScatalog
+#' @rdname deprecated
 readTLSLAScatalog = readTLScatalog
 
 #' @export
-#' @rdname readLAScatalog
+#' @rdname deprecated
 readUAVLAScatalog = readTLScatalog
 
 #' @export
-#' @rdname readLAScatalog
-readDAPLAScatalog = readTLScatalog
-
-#' @export
 #' @rdname deprecated
-hexbin_metrics = function(...)
-{
-  .lidr3depreciation("hexagon_metrics")
-}
+readDAPLAScatalog = readTLScatalog
 
 #' @export
 #' @rdname deprecated

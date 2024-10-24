@@ -17,7 +17,7 @@ add_treetops3d(x, ttops, z = "Z", ...)
 
 add_flightlines3d(x, flightlines, z = "Z", ...)
 
-add_circle3d(center_x, center_y, radius, height)
+add_circle3d(x, center_x, center_y, radius, height)
 }
 \arguments{
 \item{dtm}{An object of the class `RasterLayer` or `stars` or `SpatRaster`}

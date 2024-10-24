@@ -5,7 +5,11 @@
 \alias{readALSLAS}
 \alias{readTLSLAS}
 \alias{readUAVLAS}
-\alias{hexbin_metrics}
+\alias{readDAPLAS}
+\alias{readALSLAScatalog}
+\alias{readTLSLAScatalog}
+\alias{readUAVLAScatalog}
+\alias{readDAPLAScatalog}
 \alias{filter_surfacepoints}
 \alias{filter_surfacepoints.LAS}
 \alias{filter_surfacepoints.LAScatalog}
@@ -17,7 +21,15 @@ readTLSLAS(files, select = "*", filter = "", sort = TRUE)
 
 readUAVLAS(files, select = "*", filter = "", sort = TRUE)
 
-hexbin_metrics(...)
+readDAPLAS(files, select = "*", filter = "", sort = TRUE)
+
+readALSLAScatalog(folder, ...)
+
+readTLSLAScatalog(folder, ...)
+
+readUAVLAScatalog(folder, ...)
+
+readDAPLAScatalog(folder, ...)
 
 filter_surfacepoints(las, res)
 
@@ -26,25 +38,10 @@ filter_surfacepoints(las, res)
 \method{filter_surfacepoints}{LAScatalog}(las, res)
 }
 \arguments{
-\item{files, select, sort}{See the new functions that replace the old ones}
+\item{files, select, filter, sort}{See the new functions that replace the old ones}
 
 \item{las, res}{See the new functions that replace the old ones}
 }
 \description{
-These functions are provided for compatibility with older versions of lidR but are deprecated. They
-will progressively print a message, throw a warning and eventually be removed. The links below point
-to the documentation of the new names. In version 4 they now throw an error. In version 4.1 they
-ill be removed definitively.\cr\cr
-\link[=add_attribute]{lasadd} \link[=las_check]{lascheck} \link[=clip]{lasclip}
-\link[=segment_shapes]{lasdetectshape} \link[=filter_poi]{lasfilter}
-\link[=filter_surfacepoints]{lasfiltersurfacepoints} \link[=retrieve_flightlines]{lasflightline}
-\link[=classify_ground]{lasground} \link[=merge_spatial]{lasmergespatial}
-\link[=normalize_height]{lasnormalize} \link[=retrieve_pulses]{laspulse}
-\link[=normalize_intensity]{lasrangecorrection} \link[=retrieve_flightlines]{lasflightline}
-\link[=las_reoffset]{lasreoffset} \link[=las_rescale]{lasrescale}
-\link[=retrieve_scanlines]{lasscanlines} \link[=smooth_height]{lassmooth}
-\link[=segment_snags]{lassnags}
-\link[=segment_trees]{lastrees} \link[=voxelize_points]{lasvoxelize}
-\link[=track_sensor]{sensor_tracking} \link[=locate_trees]{tree_detection}
-\link[=crown_metrics]{tree_hull}
+These functions are provided for compatibility with older versions of lidR but are deprecated.
 }

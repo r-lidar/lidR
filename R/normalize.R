@@ -12,8 +12,8 @@
 #' \item{normalize_intensity}{Normalize intensity values using multiple methods. The attribute 'Intensity'
 #' records the normalized intensity. An extra attribute named 'RawIntensity' records the original
 #' intensities.}
-#' \item{height_above_ground} instead of normalizing the point cloud, records the height above ground (HAG)
-#' in a new attribute named 'hag'
+#' \item{height_above_ground}{instead of normalizing the point cloud, records the height above ground (HAG)
+#' in a new attribute named 'hag'}
 #' }
 #'
 #' @section Non-supported LAScatalog options:

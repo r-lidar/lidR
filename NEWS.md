@@ -8,6 +8,7 @@ v4.2.0 brings new tools for terrestrial data (TLS, MLS):
 - New: Introduced the function `knn_distance()` to measure the average distance between a point and its neighborhood.
 - New: Added a C++ spatial indexing class `SparsePartition3D` for TLS data, optimized for memory usage.
 - New: Introduced the functions `readALS()` and `readTLS()`, which replace the overly complex and rarely used `readALSLAS()`, `readTLSLAS()`, `readUAVLAS()`, and related functions.
+- New: `readLAS()` automatically detects if the point cloud is TLS or ALS. `readALS()` and `readTLS()` should be preferred in order to avoid false positive. The print function was updated to display what lidar type is registered.
 - New: Added the functions `readALScatalog()` and `readTLScatalog()` to replace the complex and less-used `readALSLAScatalog()`, `readTLSLAScatalog()`, `readUAVLAScatalog()`, and related functions.
 - New: Added the function `fit_circle()` using a RANSAC-based approach.
 - New: Added the function `height_above_ground()`
