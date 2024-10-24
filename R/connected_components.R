@@ -20,9 +20,10 @@ connected_components = function(las, res, min_pts, name = "clusterID")
 
   u = C_connected_component(las, res)
   las = add_lasattribute(las, u, name, "connected component ID")
-  grp = las@data[, .N, by = cluster]
+  grp = las@data[, .N, by = clusterID]
   grp = grp[N < min_pts]
-  las@data[cluster %in% grp$cluster, cluster := 0][]
+  invalid = las@data[[name]] %in% grp$clusterID
+  las@data[[name]][invalid] = 0L
   return(las)
 }
 
