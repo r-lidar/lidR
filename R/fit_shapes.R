@@ -34,6 +34,21 @@ fit_circle_on_3_points <- function(points_subset)
   return(c(a, b, r))
 }
 
+# fit_circle_on_3_points <- function(points_subset)
+# {
+#   stopifnot(nrow(points_subset) == 3L, ncol(points_subset) > 2L)
+#
+#   # Initial guesses
+#   x_mean <- mean(points_subset[, 1])
+#   y_mean <- mean(points_subset[, 2])
+#   r_guess <- sqrt(mean((points_subset[, 1] - x_mean)^2 + (points_subset[, 2] - y_mean)^2))
+#   initial_guess <- c(x_mean, y_mean, r_guess)
+#
+#   # Optimize circle parameters
+#   fit <- optim(par = initial_guess, fn = residuals_circle, points = points_subset)
+#   return(fit$par)
+# }
+
 #' Fits 2D Circles on a Point Cloud
 #'
 #' Fits a 2D horizontally-aligned circle to a set of 3D points. The method uses RANSAC-based fitting
@@ -79,7 +94,7 @@ fit_circle_on_3_points <- function(points_subset)
 #' symbols(circle$center_x, circle$center_y, circles = circle$radius,
 #'   add = TRUE, fg = "red", inches = FALSE)
 #' circle$angle_range
-fit_circle <- function(points, num_iterations = 500, inlier_threshold = 0.01)
+fit_circle <- function(points, num_iterations = 100, inlier_threshold = 0.01)
 {
   best_circle <- NULL
   max_inliers <- 0

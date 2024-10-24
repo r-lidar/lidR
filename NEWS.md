@@ -10,6 +10,8 @@ v4.2.0 brings new tools for terrestrial data (TLS, MLS):
 - New: Introduced the functions `readALS()` and `readTLS()`, which replace the overly complex and rarely used `readALSLAS()`, `readTLSLAS()`, `readUAVLAS()`, and related functions.
 - New: Added the functions `readALScatalog()` and `readTLScatalog()` to replace the complex and less-used `readALSLAScatalog()`, `readTLSLAScatalog()`, `readUAVLAScatalog()`, and related functions.
 - New: Added the function `fit_circle()` using a RANSAC-based approach.
+- New: Added the function `height_above_ground()`
+- New: Added function `remove_noise()`
 - Fix: Resolved issue #771 to allow reading VPC files with absolute paths.
 - Enhance: Improved the `crs()`, `is.empty()`, and `area()` functions, which now inherit from `terra`, avoiding conflicts with `terra`.
 - Enhance: Addressed issue #776 to allow `readLAScatalog()` to skip corrupted files.

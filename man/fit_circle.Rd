@@ -4,7 +4,7 @@
 \alias{fit_circle}
 \title{Fits 2D Circles on a Point Cloud}
 \usage{
-fit_circle(points, num_iterations = 500, inlier_threshold = 0.01)
+fit_circle(points, num_iterations = 100, inlier_threshold = 0.01)
 }
 \arguments{
 \item{points}{A LAS object representing a clustered slice, or an nx3 matrix of point coordinates.}

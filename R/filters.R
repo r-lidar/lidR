@@ -12,6 +12,9 @@
 #' \item{`filter_firstofmany` Select only the first returns from pulses which returned multiple points.}
 #' \item{`filter_single` Select only the returns that return only one point.}
 #' \item{`filter_duplicates` **Removes** the duplicated points (duplicated by XYZ)}
+#' \item{`remove_noise` Removes the returns classified as noise according to LAS specification.}
+#' \item{`remove_ground` Removes the returns classified as ground according to LAS specification.}
+#' \item{`remove_water` Removes the returns classified as water according to LAS specification.}
 #' }
 #'
 #' @section Non-supported LAScatalog options:
@@ -161,3 +164,28 @@ filter_duplicates.LAScatalog = function(las)
   output  <- catalog_map(las, filter_duplicates, .options = options)
   return(output)
 }
+
+#' @export
+#' @rdname filters
+remove_noise = function(las)
+{
+  Classification <- NULL
+  return(filter_poi(las, Classification != LASNOISE))
+}
+
+#' @export
+#' @rdname filters
+remove_ground = function(las)
+{
+  Classification <- NULL
+  return(filter_poi(las, Classification != LASGROUND))
+}
+
+#' @export
+#' @rdname filters
+remove_water = function(las)
+{
+  Classification <- NULL
+  return(filter_poi(las, Classification != LASWATER))
+}
+
