@@ -18,16 +18,6 @@ test_that("read*LAS work", {
 
   expect_equal(las@index$sensor, 2L)
   expect_equal(las@index$index, 0L)
-
-  las = readUAVLAS(LASfile)
-
-  expect_equal(las@index$sensor, 3L)
-  expect_equal(las@index$index, 0L)
-
-  las = readDAPLAS(LASfile)
-
-  expect_equal(las@index$sensor, 4L)
-  expect_equal(las@index$index, 0L)
 })
 
 test_that("read*LAScatalog work", {
@@ -45,16 +35,6 @@ test_that("read*LAScatalog work", {
   las = readTLSLAScatalog(LASfile)
 
   expect_equal(las@index$sensor, 2L)
-  expect_equal(las@index$index, 0L)
-
-  las = readUAVLAScatalog(LASfile)
-
-  expect_equal(las@index$sensor, 3L)
-  expect_equal(las@index$index, 0L)
-
-  las = readDAPLAScatalog(LASfile)
-
-  expect_equal(las@index$sensor, 4L)
   expect_equal(las@index$index, 0L)
 })
 

@@ -85,8 +85,8 @@ is_disable_point_metrics <- function() {
     .Call(`_lidR_is_disable_point_metrics`)
 }
 
-C_fast_knn_metrics <- function(las, k, metrics, cpu) {
-    .Call(`_lidR_C_fast_knn_metrics`, las, k, metrics, cpu)
+C_knn_distance <- function(las, k, cpu) {
+    .Call(`_lidR_C_knn_distance`, las, k, cpu)
 }
 
 C_lasrangecorrection <- function(las, flightlines, Rs, f) {
@@ -111,6 +111,14 @@ C_check_gpstime <- function(t, rn) {
 
 C_eigen_metrics <- function(las, k, r, coeffs, filter, ncpu) {
     .Call(`_lidR_C_eigen_metrics`, las, k, r, coeffs, filter, ncpu)
+}
+
+C_connected_component <- function(las, res) {
+    .Call(`_lidR_C_connected_component`, las, res)
+}
+
+C_voxel_id <- function(las, res) {
+    .Call(`_lidR_C_voxel_id`, las, res)
 }
 
 fast_table <- function(x, size = 5L) {

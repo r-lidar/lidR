@@ -2,6 +2,9 @@
 % Please edit documentation in R/deprecated.R
 \name{deprecated}
 \alias{deprecated}
+\alias{readALSLAS}
+\alias{readTLSLAS}
+\alias{readUAVLAS}
 \alias{lascheck}
 \alias{lasclip}
 \alias{lasclipRectangle}
@@ -47,6 +50,12 @@
 \alias{filter_surfacepoints.LAScatalog}
 \title{Deprecated functions in lidR}
 \usage{
+readALSLAS(files, select = "*", filter = "")
+
+readTLSLAS(files, select = "*", filter = "", sort = TRUE)
+
+readUAVLAS(files, select = "*", filter = "", sort = TRUE)
+
 lascheck(las)
 
 lasclip(las, geometry, ...)
@@ -176,6 +185,10 @@ filter_surfacepoints(las, res)
 \method{filter_surfacepoints}{LAScatalog}(las, res)
 }
 \arguments{
+\item{files, select, sort}{See the new functions that replace the old ones}
+
+\item{filter}{See the new functions that replace the old ones}
+
 \item{las}{See the new functions that replace the old ones}
 
 \item{geometry}{See the new functions that replace the old ones}
@@ -191,8 +204,6 @@ filter_surfacepoints(las, res)
 \item{algorithm}{See the new functions that replace the old ones}
 
 \item{attribute}{See the new functions that replace the old ones}
-
-\item{filter}{See the new functions that replace the old ones}
 
 \item{n, res, dt}{See the new functions that replace the old ones}
 

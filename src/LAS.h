@@ -47,7 +47,7 @@ class LAS
 #ifdef WITHSETLENGTH
     List point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SEXP call, SEXP env);
 #endif
-    NumericVector fast_knn_metrics(unsigned int k, IntegerVector metrics);
+    NumericVector knn_distance(unsigned int k);
     NumericVector interpolate_knnidw(NumericVector x, NumericVector y, int k, double p, double rmax);
     DataFrame eigen_decomposition(int k, double r, bool get_coef);
 

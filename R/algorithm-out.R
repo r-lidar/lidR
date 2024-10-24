@@ -56,7 +56,7 @@ sor = function(k = 10, m = 3, quantile = FALSE)
   f = function(las)
   {
     assert_is_valid_context(LIDRCONTEXTOUT, "sor")
-    dmean <- C_fast_knn_metrics(las, k, 1, getThreads())
+    dmean <- C_knn_distance(las, k, getThreads())
     if (quantile) {
       th <- quantile(dmean, probs = m)
     } else {

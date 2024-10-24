@@ -297,17 +297,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_fast_knn_metrics
-NumericVector C_fast_knn_metrics(S4 las, unsigned int k, IntegerVector metrics, int cpu);
-RcppExport SEXP _lidR_C_fast_knn_metrics(SEXP lasSEXP, SEXP kSEXP, SEXP metricsSEXP, SEXP cpuSEXP) {
+// C_knn_distance
+NumericVector C_knn_distance(S4 las, unsigned int k, int cpu);
+RcppExport SEXP _lidR_C_knn_distance(SEXP lasSEXP, SEXP kSEXP, SEXP cpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type metrics(metricsSEXP);
     Rcpp::traits::input_parameter< int >::type cpu(cpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_fast_knn_metrics(las, k, metrics, cpu));
+    rcpp_result_gen = Rcpp::wrap(C_knn_distance(las, k, cpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -383,6 +382,28 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< LogicalVector >::type filter(filterSEXP);
     Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
     rcpp_result_gen = Rcpp::wrap(C_eigen_metrics(las, k, r, coeffs, filter, ncpu));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_connected_component
+IntegerVector C_connected_component(S4 las, double res);
+RcppExport SEXP _lidR_C_connected_component(SEXP lasSEXP, SEXP resSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< double >::type res(resSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_connected_component(las, res));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_voxel_id
+IntegerVector C_voxel_id(S4 las, double res);
+RcppExport SEXP _lidR_C_voxel_id(SEXP lasSEXP, SEXP resSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< double >::type res(resSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_voxel_id(las, res));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -635,13 +656,15 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_knnidw", (DL_FUNC) &_lidR_C_knnidw, 7},
     {"_lidR_C_point_metrics", (DL_FUNC) &_lidR_C_point_metrics, 7},
     {"_lidR_is_disable_point_metrics", (DL_FUNC) &_lidR_is_disable_point_metrics, 0},
-    {"_lidR_C_fast_knn_metrics", (DL_FUNC) &_lidR_C_fast_knn_metrics, 4},
+    {"_lidR_C_knn_distance", (DL_FUNC) &_lidR_C_knn_distance, 3},
     {"_lidR_C_lasrangecorrection", (DL_FUNC) &_lidR_C_lasrangecorrection, 4},
     {"_lidR_C_lasrange", (DL_FUNC) &_lidR_C_lasrange, 2},
     {"_lidR_C_local_maximum", (DL_FUNC) &_lidR_C_local_maximum, 4},
     {"_lidR_C_isolated_voxel", (DL_FUNC) &_lidR_C_isolated_voxel, 3},
     {"_lidR_C_check_gpstime", (DL_FUNC) &_lidR_C_check_gpstime, 2},
     {"_lidR_C_eigen_metrics", (DL_FUNC) &_lidR_C_eigen_metrics, 6},
+    {"_lidR_C_connected_component", (DL_FUNC) &_lidR_C_connected_component, 2},
+    {"_lidR_C_voxel_id", (DL_FUNC) &_lidR_C_voxel_id, 2},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},
     {"_lidR_fast_countbelow", (DL_FUNC) &_lidR_fast_countbelow, 2},

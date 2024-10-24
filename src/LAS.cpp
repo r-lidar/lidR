@@ -1696,9 +1696,9 @@ DataFrame LAS::eigen_decomposition(int k, double r, bool get_coef)
 }
 
 
-NumericVector LAS::fast_knn_metrics(unsigned int k, IntegerVector metrics)
+NumericVector LAS::knn_distance(unsigned int k)
 {
-  Progress pb(npoints, "Metrics computation: ");
+  Progress pb(npoints, "knn distance: ");
 
   bool abort = false;
 
@@ -1726,10 +1726,7 @@ NumericVector LAS::fast_knn_metrics(unsigned int k, IntegerVector metrics)
       dmean += d;
     }
 
-    #pragma omp critical
-    {
-      out(i) = dmean/(double)(k-1);
-    }
+    out(i) = dmean/(double)(k-1);
   }
 
   if (abort) throw Rcpp::internal::InterruptedException();

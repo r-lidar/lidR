@@ -146,10 +146,10 @@ bool is_disable_point_metrics()
 
 
 // [[Rcpp::export]]
-NumericVector C_fast_knn_metrics(S4 las, unsigned int k, IntegerVector metrics, int cpu)
+NumericVector C_knn_distance(S4 las, unsigned int k, int cpu)
 {
   LAS pt(las, cpu);
-  return pt.fast_knn_metrics(k, metrics);
+  return pt.knn_distance(k);
 }
 
 // [[Rcpp::export(rng = false)]]
@@ -235,6 +235,58 @@ DataFrame C_eigen_metrics(S4 las, int k, double r, bool coeffs, LogicalVector fi
   pt.new_filter(filter);
   return pt.eigen_decomposition(k, r, coeffs);
 }
+
+
+#include "lidR/Grid3D.h"
+
+//[[Rcpp::export(rng = false)]]
+IntegerVector C_connected_component(S4 las, double res)
+{
+  lidR::Grid3D grid(las, res);
+  return grid.connected_components();
+}
+
+//[[Rcpp::export(rng = false)]]
+IntegerVector C_voxel_id(S4 las, double res)
+{
+  lidR::Grid3D grid(las, res);
+
+  DataFrame data = as<DataFrame>(las.slot("data"));
+  NumericVector X = data["X"];
+  NumericVector Y = data["Y"];
+  NumericVector Z = data["Z"];
+
+  std::vector<int64_t> id(X.size());
+
+  for (auto i = 0 ; i < X.size() ; i++)
+  {
+    int64_t cell = grid.get_cell(X[i], Y[i], Z[i]);
+    id[i] = cell;
+  }
+
+  std::unordered_map<int64_t, int> id_map;
+  std::vector<int64_t> unique_ids = id;
+
+  // Remove duplicates while preserving order
+  std::sort(unique_ids.begin(), unique_ids.end());
+  unique_ids.erase(std::unique(unique_ids.begin(), unique_ids.end()), unique_ids.end());
+
+  // Map each unique int64_t to an int
+  for (size_t i = 0; i < unique_ids.size(); ++i)
+  {
+    id_map[unique_ids[i]] = static_cast<int>(i);
+  }
+
+  // Create a new IntegerVector for remapped ids
+  IntegerVector remapped_ids(id.size());
+  for (size_t i = 0; i < id.size(); ++i)
+  {
+    remapped_ids[i] = id_map[id[i]];
+  }
+
+  return remapped_ids;
+}
+
 
 
 /*

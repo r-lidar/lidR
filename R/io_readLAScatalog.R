@@ -183,7 +183,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
 #' @export
 #' @rdname readLAScatalog
-readALSLAScatalog = function(folder, ...)
+readALScatalog = function(folder, ...)
 {
   ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRALSINDEX
@@ -193,28 +193,10 @@ readALSLAScatalog = function(folder, ...)
 
 #' @export
 #' @rdname readLAScatalog
-readTLSLAScatalog = function(folder, ...)
+readTLScatalog = function(folder, ...)
 {
   ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRTLSINDEX
-  return(ctg)
-}
-
-#' @export
-#' @rdname readLAScatalog
-readUAVLAScatalog = function(folder, ...)
-{
-  ctg <- readLAScatalog(folder, ...)
-  ctg@index <- LIDRUAVINDEX
-  return(ctg)
-}
-
-#' @export
-#' @rdname readLAScatalog
-readDAPLAScatalog = function(folder, ...)
-{
-  ctg <- readLAScatalog(folder, ...)
-  ctg@index <- LIDRDAPINDEX
   return(ctg)
 }
 

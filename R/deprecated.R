@@ -37,12 +37,48 @@
 #' @param uniqueness See the new functions that replace the old ones
 #' @param interval,pmin,extra_check,thin_pulse_with_time See the new functions that replace the old ones
 #' @param concavity,length_threshold,func See the new functions that replace the old ones
+#' @param files,select,sort See the new functions that replace the old ones
 #'
 #' @rdname deprecated
 #' @name deprecated
+#'
+#' @include io_readXLAS.R
+#' @include io_readLAScatalog.R
 NULL
 
 # nocov start
+
+#' @export
+#' @rdname deprecated
+readALSLAS = readALS
+
+#' @export
+#' @rdname deprecated
+readTLSLAS = readTLS
+
+#' @export
+#' @rdname deprecated
+readUAVLAS = readTLS
+
+#' @export
+#' @rdname readLAS
+readDAPLAS = readTLS
+
+#' @export
+#' @rdname readLAScatalog
+readALSLAScatalog = readALScatalog
+
+#' @export
+#' @rdname readLAScatalog
+readTLSLAScatalog = readTLScatalog
+
+#' @export
+#' @rdname readLAScatalog
+readUAVLAScatalog = readTLScatalog
+
+#' @export
+#' @rdname readLAScatalog
+readDAPLAScatalog = readTLScatalog
 
 #' @export
 #' @rdname deprecated

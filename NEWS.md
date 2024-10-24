@@ -1,7 +1,14 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v4.1.3 (Release date: )
+## lidR v4.2.0 (Release date: )
 
+v4.2.0 bring new tools for terrestrial data (TLS, MLS)
+
+- New: new function `connected_components()` to perform clustering
+- New: new function `knn_distance()` to measure average distance between a point and its neighborhood
+- New: new C++ spatial indexing class `SparsePartition3D` for TLS data which is memory optimized
+- New: new functions `readALS` and `readTLS` that replace overly complex and unused `readALSLAS`, `readTLSLAS`, `readUAVLAS` and co.
+- New: new functions `readALScatalog` and `readTLScatalog` that replace overly complex and unused `readALSLAScatalog`, `readTLSLAScatalog`, `readUAVLAScatalog` and co.
 - Fix: #771 read VPC files with absolute path
 - Enhance: `crs()` `is.empty()` and `area()` are now inherits from `terra` and no longer clash with `terra`.
 - Enhance: #776 `readLAScatalog` can skip corrupted files
