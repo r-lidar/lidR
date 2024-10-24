@@ -48,7 +48,7 @@ fit_circle_on_3_points <- function(points_subset)
 #' suggest a partial arc.
 #'
 #' @param points A LAS object representing a clustered slice, or an nx3 matrix of point coordinates.
-#' @param num_iteration The number of iterations for the RANSAC fitting algorithm.
+#' @param num_iterations The number of iterations for the RANSAC fitting algorithm.
 #' @param inlier_threshold A threshold value; points are considered inliers if their residuals are
 #' below this value.
 #'

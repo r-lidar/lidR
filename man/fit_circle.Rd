@@ -9,10 +9,10 @@ fit_circle(points, num_iterations = 500, inlier_threshold = 0.01)
 \arguments{
 \item{points}{A LAS object representing a clustered slice, or an nx3 matrix of point coordinates.}
 
+\item{num_iterations}{The number of iterations for the RANSAC fitting algorithm.}
+
 \item{inlier_threshold}{A threshold value; points are considered inliers if their residuals are
 below this value.}
-
-\item{num_iteration}{The number of iterations for the RANSAC fitting algorithm.}
 }
 \value{
 A list containing the circle parameters and additional information for determining whether
