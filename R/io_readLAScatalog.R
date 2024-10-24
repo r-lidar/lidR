@@ -152,6 +152,8 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   xmax <- headers$Max.X
   ymin <- headers$Min.Y
   ymax <- headers$Max.Y
+  zmin <- headers$Min.Z
+  zmax <- headers$Max.Z
   ids  <- as.character(seq_along(files))
 
   geom <- lapply(seq_along(ids), function(xi) {
@@ -171,6 +173,31 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   opt_chunk_size(res) <- chunk_size
   opt_chunk_buffer(res) <- chunk_buffer
   opt_progress(res) <- progress
+
+  xrange = xmax - xmin
+  yrange = ymax - ymin
+  zrange = zmax - zmin
+  area = sum(xrange*yrange)
+  if (area > 0)
+  {
+    n = sum(res$Number.of.point.records)
+    density = n/area
+    zratio = min(zrange/xrange, zrange/yrange)
+  }
+  else
+  {
+    zratio = 0
+    density = 0
+  }
+
+  if (zratio < 10/100)
+    res@index <- LIDRALSINDEX
+  else if ((zratio >= 10/100 & density > 100) || density > 1000)
+    res@index <- LIDRTLSINDEX
+  else
+    res@index <- LIDRALSINDEX
+
+
 
   if (is.overlapping(res))
     message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")

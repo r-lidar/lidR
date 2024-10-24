@@ -174,9 +174,17 @@ LAS <- function(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = 
     yrange = header[["Max Y"]] - header[["Min Y"]]
     zrange = header[["Max Z"]] - header[["Min Z"]]
     area = xrange*yrange
-    n = nrow(data)
-    density = n/area
-    zratio = min(zrange/xrange, zrange/yrange)
+    if (area > 0)
+    {
+      n = nrow(data)
+      density = n/area
+      zratio = min(zrange/xrange, zrange/yrange)
+    }
+    else
+    {
+      zratio = 0
+      density = 0
+    }
 
     if (zratio < 10/100)
       index <- LIDRALSINDEX

@@ -154,11 +154,11 @@ setMethod("show", "LAS", function(object)
   format    <- phb[["Point Data Format ID"]]
   units     <- st_crs(object)$units
   units     <- if (is.null(units) || is.na(units)) "units" else units
-  type      <- sensor(las)
-  if (type == TLSLAS) type = "Terrestrial"
-  else if (type == ALSLAS) type = "Airborne"
-  else if (type == UKNLAS) type = "Unknown"
-  else type = "Unknown"
+  type      <- sensor(object)
+  if (type == TLSLAS) type = "terrestrial"
+  else if (type == ALSLAS) type = "airborne"
+  else if (type == UKNLAS) type = "unknown"
+  else type = "unknown"
 
   areaprefix  <- ""
   pointprefix <- ""
@@ -222,6 +222,11 @@ setMethod("show", "LAScatalog", function(object)
   density     <- round(npoints/area, 1)
   if (is.nan(density)) density <- 0
   dpulse      <- round(npulse/area, 1)
+  type      <- sensor(object)
+  if (type == TLSLAS) type = "terrestrial"
+  else if (type == ALSLAS) type = "airborne"
+  else if (type == UKNLAS) type = "unknown"
+  else type = "unknown"
 
   if (area > 1000*1000/2)
   {
@@ -255,6 +260,7 @@ setMethod("show", "LAScatalog", function(object)
   cat("coord. ref. :", st_crs(object)$Name, "\n")
   cat("area        : ", area.h, " ", areaprefix, units, "\u00B2\n", sep = "")
   cat("points      : ", npoints.h, " ", pointprefix, " points\n", sep = "")
+  cat("type        : ", type, "\n", sep = "")
   cat("density     : ", density, " points/", units, "\u00B2\n", sep = "")
   if (dpulse > 0)
     cat("density     : ", round(dpulse, 2), " pulses/", units, "\u00B2\n", sep = "")
