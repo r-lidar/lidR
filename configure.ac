@@ -1,5 +1,6 @@
+# This script generates a configure file
+# Simply run `autoconf` from the project root directory
 
-dnl package name, version
 AC_INIT
 AC_LANG(C++)
 
