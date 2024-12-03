@@ -240,8 +240,9 @@ random_per_voxel = function(res = 1, n = 1)
     return(rep(TRUE, length(pulseID)))
 
   selectedPulses <- sample(p, n)
-  selectedPulses <- pulseID %in% selectedPulses
   selectedPulses <- sort(selectedPulses)
+  selectedPulses <- pulseID %in% selectedPulses
+
 
   return(selectedPulses)
 }

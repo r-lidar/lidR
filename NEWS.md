@@ -18,6 +18,7 @@ v4.2.0 brings new tools for terrestrial data (TLS, MLS):
 - Enhance: Improved the `crs()`, `is.empty()`, and `area()` functions, which now inherit from `terra`, avoiding conflicts with `terra`.
 - Enhance: Addressed issue #776 to allow `readLAScatalog()` to skip corrupted files.
 - Enhance: Optimized performance for many operations on TLS data.
+- Fix: #789 `homogenize()`
 
 ## lidR v4.1.2 (Release date: 2024-07-09)
 
