@@ -115,6 +115,7 @@ Collate:
     'generate_las.R'
     'io_readLAS.R'
     'io_writeLAS.R'
+    'knn.R'
     'las_check.R'
     'las_compression.R'
     'las_tools.R'

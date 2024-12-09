@@ -142,7 +142,7 @@ template<typename T> void SparsePartition3D::lookup(T& shape, std::vector<PointX
 
         for (auto it = it0->second.begin() ; it != it0->second.end() ; it++)
         {
-          PointXYZ p(X[*it], Y[*it], Z[*it]);
+          PointXYZ p(X[*it], Y[*it], Z[*it], *it);
           if (shape.contains(p))
             res.emplace_back(p);
         }

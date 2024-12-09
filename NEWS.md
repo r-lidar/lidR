@@ -2,7 +2,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v4.2.0 (Release date: )
 
-v4.2.0 brings new tools for terrestrial data (TLS, MLS):
+**v4.2.0 brings new tools for terrestrial data (TLS, MLS):**
 
 - New: Added the function `connected_components()` to perform clustering.
 - New: Introduced the function `knn_distance()` to measure the average distance between a point and its neighborhood.
@@ -14,6 +14,7 @@ v4.2.0 brings new tools for terrestrial data (TLS, MLS):
 - New: Added the function `height_above_ground()`
 - New: Added function `remove_noise()`
 - New: Added function `add_circle3d()`
+- New: Added fast function `knn()` and `knnx()` for point clouds.
 - Fix: Resolved issue #771 to allow reading VPC files with absolute paths.
 - Enhance: Improved the `crs()`, `is.empty()`, and `area()` functions, which now inherit from `terra`, avoiding conflicts with `terra`.
 - Enhance: Addressed issue #776 to allow `readLAScatalog()` to skip corrupted files.
