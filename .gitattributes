@@ -1,0 +1,5 @@
+# https://github.com/topepo/Cubist/blob/193c8b61933e2cef65658cf0e35aa25dcd25f3b6/.gitattributes
+# On GitHub Actions with Windows, git will use CRLF by default when checking out
+# the repo. If this file has CRLF line endings, R's check process will complain.
+
+configure.ac text eol=lf
