@@ -269,7 +269,7 @@ setGeneric("epsg<-", function(object, value) standardGeneric("epsg<-"))
 #' @rdname st_crs
 setMethod("epsg", "LASheader", function(object, ...)
 {
-  if (use_wktcs(object))  warning("This LAS object stores the CRS as WKT. 0 returned; use 'wkt()' instead.", call. = FALSE)
+  if (use_wktcs(object))  warning("This LAS object stores the CRS as WKT. CRS field might not be correctly populated, yielding uncertain results; use 'wkt()' instead.", call. = FALSE)
   return(rlas::header_get_epsg(as.list(object)))
 })
 
