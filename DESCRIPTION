@@ -60,6 +60,7 @@ LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true
 VignetteBuilder: knitr
+Biarch: true
 Collate: 
     'Class-LAS.R'
     'Class-LAScatalog.R'
