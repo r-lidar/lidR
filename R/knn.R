@@ -16,7 +16,7 @@ knn = function(data, k = 10)
 {
   stopifnotlas(data)
   assert_all_are_non_negative(k)
-  return(cpp_knn(las, k, getThreads()))
+  return(cpp_knn(data, k, getThreads()))
 }
 
 #' @rdname knn
@@ -26,6 +26,6 @@ knnx = function(data, query, k = 10)
   stopifnotlas(data)
   stopifnotlas(query)
   assert_all_are_non_negative(k)
-  return(cpp_knnx(las, query, k, getThreads()))
+  return(cpp_knnx(data, query, k, getThreads()))
 }
 

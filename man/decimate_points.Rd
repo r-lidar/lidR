@@ -10,7 +10,7 @@ decimate_points(las, algorithm)
 \item{las}{An object of class \link[lidR:LAS-class]{LAS} or \link[lidR:LAScatalog-class]{LAScatalog}.}
 
 \item{algorithm}{function. An algorithm of point decimation. \code{lidR} have: \link{random},
-\link{homogenize}, \link{highest}, \link{lowest} and \link{random_per_voxel}.}
+\link{homogenize}, \link{highest}, \link{lowest}, \link{random_per_voxel} and \link{barycenter_per_voxel}.}
 }
 \value{
 If the input is a \code{LAS} object, returns a \code{LAS} object. If the input is a

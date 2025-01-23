@@ -3,19 +3,28 @@
 \name{sample_per_voxel}
 \alias{sample_per_voxel}
 \alias{random_per_voxel}
+\alias{barycenter_per_voxel}
+\alias{lowest_attribute_per_voxel}
+\alias{highest_attribute_per_voxel}
 \title{Point Cloud Decimation Algorithm}
 \usage{
 random_per_voxel(res = 1, n = 1)
+
+barycenter_per_voxel(res = 1)
+
+lowest_attribute_per_voxel(res, attribute = "Z")
+
+highest_attribute_per_voxel(res, attribute = "Z")
 }
 \arguments{
 \item{res}{numeric. The resolution of the voxel grid used to filter the point cloud}
 
 \item{n}{integer. The number of points to select}
+
+\item{attribute.}{string name of an attribute (such as 'intensity')}
 }
 \description{
-This functions is made to be used in \link{decimate_points}. It implements an algorithm that
-creates a 3D grid with a given resolution and filters the point cloud by randomly selecting
-n points within each voxel
+
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -24,6 +33,21 @@ thinned <- decimate_points(las, random_per_voxel(8, 1))
 #plot(thinned)
 }
 \seealso{
+Other point cloud decimation algorithms: 
+\code{\link{sample_homogenize}},
+\code{\link{sample_maxima}},
+\code{\link{sample_random}}
+
+Other point cloud decimation algorithms: 
+\code{\link{sample_homogenize}},
+\code{\link{sample_maxima}},
+\code{\link{sample_random}}
+
+Other point cloud decimation algorithms: 
+\code{\link{sample_homogenize}},
+\code{\link{sample_maxima}},
+\code{\link{sample_random}}
+
 Other point cloud decimation algorithms: 
 \code{\link{sample_homogenize}},
 \code{\link{sample_maxima}},

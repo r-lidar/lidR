@@ -625,31 +625,29 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_knn
-List cpp_knn(S4 data, int k, double r, int ncpu);
-RcppExport SEXP _lidR_cpp_knn(SEXP dataSEXP, SEXP kSEXP, SEXP rSEXP, SEXP ncpuSEXP) {
+List cpp_knn(S4 data, int k, int ncpu);
+RcppExport SEXP _lidR_cpp_knn(SEXP dataSEXP, SEXP kSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4 >::type data(dataSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< double >::type r(rSEXP);
     Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_knn(data, k, r, ncpu));
+    rcpp_result_gen = Rcpp::wrap(cpp_knn(data, k, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_knnx
-List cpp_knnx(S4 data, S4 query, int k, double r, int ncpu);
-RcppExport SEXP _lidR_cpp_knnx(SEXP dataSEXP, SEXP querySEXP, SEXP kSEXP, SEXP rSEXP, SEXP ncpuSEXP) {
+List cpp_knnx(S4 data, S4 query, int k, int ncpu);
+RcppExport SEXP _lidR_cpp_knnx(SEXP dataSEXP, SEXP querySEXP, SEXP kSEXP, SEXP ncpuSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< S4 >::type data(dataSEXP);
     Rcpp::traits::input_parameter< S4 >::type query(querySEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< double >::type r(rSEXP);
     Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_knnx(data, query, k, r, ncpu));
+    rcpp_result_gen = Rcpp::wrap(cpp_knnx(data, query, k, ncpu));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -712,8 +710,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_is_materialized", (DL_FUNC) &_lidR_is_materialized, 1},
     {"_lidR_altrep_full_class", (DL_FUNC) &_lidR_altrep_full_class, 1},
     {"_lidR_cpp_concaveman", (DL_FUNC) &_lidR_cpp_concaveman, 5},
-    {"_lidR_cpp_knn", (DL_FUNC) &_lidR_cpp_knn, 4},
-    {"_lidR_cpp_knnx", (DL_FUNC) &_lidR_cpp_knnx, 5},
+    {"_lidR_cpp_knn", (DL_FUNC) &_lidR_cpp_knn, 3},
+    {"_lidR_cpp_knnx", (DL_FUNC) &_lidR_cpp_knnx, 4},
     {"_lidR_R_omp_get_max_threads", (DL_FUNC) &_lidR_R_omp_get_max_threads, 0},
     {NULL, NULL, 0}
 };

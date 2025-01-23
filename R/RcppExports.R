@@ -193,12 +193,12 @@ cpp_concaveman <- function(x, y, concavity, lengthThreshold, chull) {
     .Call(`_lidR_cpp_concaveman`, x, y, concavity, lengthThreshold, chull)
 }
 
-cpp_knn <- function(data, k, r, ncpu) {
-    .Call(`_lidR_cpp_knn`, data, k, r, ncpu)
+cpp_knn <- function(data, k, ncpu) {
+    .Call(`_lidR_cpp_knn`, data, k, ncpu)
 }
 
-cpp_knnx <- function(data, query, k, r, ncpu) {
-    .Call(`_lidR_cpp_knnx`, data, query, k, r, ncpu)
+cpp_knnx <- function(data, query, k, ncpu) {
+    .Call(`_lidR_cpp_knnx`, data, query, k, ncpu)
 }
 
 R_omp_get_max_threads <- function() {

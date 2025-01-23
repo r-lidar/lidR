@@ -24,5 +24,5 @@ a list contains:
 }
 }
 \description{
-Fast k-neareast neighbor algorithms including for point cloud in LAS format
+Fast parallelized k-neareast neighbor searching algorithms for point cloud in LAS format
 }

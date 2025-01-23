@@ -15,6 +15,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - New: Added function `remove_noise()`
 - New: Added function `add_circle3d()`
 - New: Added fast function `knn()` and `knnx()` for point clouds.
+- New: Added algorithms `barycenter_per_voxel()`, `lowest_attribute_per_voxel()` and `highest_attribute_per_voxel()` for `decimate_points()`
 - Fix: Resolved issue #771 to allow reading VPC files with absolute paths.
 - Enhance: Improved the `crs()`, `is.empty()`, and `area()` functions, which now inherit from `terra`, avoiding conflicts with `terra`.
 - Enhance: Addressed issue #776 to allow `readLAScatalog()` to skip corrupted files.

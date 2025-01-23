@@ -8,9 +8,9 @@ using namespace Rcpp;
 using namespace lidR;
 
 // [[Rcpp::export]]
-List cpp_knn(S4 data, int k, double r, int ncpu)
+List cpp_knn(S4 data, int k, int ncpu)
 {
-  SparsePartition3D tree(data);
+  SpatialIndex tree(data);
 
   DataFrame tmp = as<DataFrame>(data.slot("data"));
   NumericVector X = tmp["X"];
@@ -38,7 +38,7 @@ List cpp_knn(S4 data, int k, double r, int ncpu)
 
     std::vector<PointXYZ> pts;
     PointXYZ p(X[i], Y[i], Z[i]);
-    tree.knn(p, k, r, pts);
+    tree.knn(p, k, pts);
 
     for (unsigned int j = 1; j < pts.size(); j++)
     {
@@ -50,8 +50,6 @@ List cpp_knn(S4 data, int k, double r, int ncpu)
       knn_idx(i,j-1) = pts[j].id+1;
       knn_dist(i,j-1) = d;
     }
-
-    pb.increment();
   }
 
   if (abort) throw Rcpp::internal::InterruptedException();
@@ -60,9 +58,9 @@ List cpp_knn(S4 data, int k, double r, int ncpu)
 }
 
 // [[Rcpp::export]]
-List cpp_knnx(S4 data, S4 query, int k, double r, int ncpu)
+List cpp_knnx(S4 data, S4 query, int k, int ncpu)
 {
-  SparsePartition3D tree(data);
+  SpatialIndex tree(data);
 
   DataFrame tmp = as<DataFrame>(query.slot("data"));
   NumericVector X = tmp["X"];
@@ -88,7 +86,7 @@ List cpp_knnx(S4 data, S4 query, int k, double r, int ncpu)
 
     std::vector<PointXYZ> pts;
     PointXYZ p(X[i], Y[i], Z[i]);
-    tree.knn(p, k, r, pts);
+    tree.knn(p, k, pts);
 
     for (unsigned int j = 0 ; j < pts.size(); j++)
     {
@@ -97,11 +95,9 @@ List cpp_knnx(S4 data, S4 query, int k, double r, int ncpu)
       double dz = Z[i] - pts[j].z;
       double d = std::sqrt(dx*dx+dy*dy+dz*dz);
 
-      knn_idx(i,j-1) = pts[j].id+1;
-      knn_dist(i,j-1) = d;
+      knn_idx(i,j) = pts[j].id+1;
+      knn_dist(i,j) = d;
     }
-
-    pb.increment();
   }
 
   if (abort) throw Rcpp::internal::InterruptedException();
