@@ -15,8 +15,7 @@ random(density, use_pulse = FALSE)
 }
 \description{
 This function is made to be used in \link{decimate_points}. It implements an algorithm that
-randomly removes points or pulses to reach the desired density over the whole area (see
-\code{\link[=area]{area}}).
+randomly removes points or pulses to reach the desired density over the area.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")

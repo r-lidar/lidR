@@ -8,8 +8,8 @@
 #'
 #' @return a list contains:
 #' \enumerate{
-#' \item[nn.index]{an n x k matrix for the nearest neighbor indice.}
-#' \item[nn.dist]{an n x k matrix for the nearest neighbor Euclidean distances.}
+#' \item **nn.index** an n x k matrix for the nearest neighbor indice.
+#' \item **nn.dist** an n x k matrix for the nearest neighbor Euclidean distances.
 #' }
 #' @export
 knn = function(data, k = 10)

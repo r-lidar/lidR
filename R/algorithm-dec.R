@@ -1,8 +1,7 @@
 #' Point Cloud Decimation Algorithm
 #'
 #' This function is made to be used in \link{decimate_points}. It implements an algorithm that
-#' randomly removes points or pulses to reach the desired density over the whole area (see
-#' \code{\link[=area]{area}}).
+#' randomly removes points or pulses to reach the desired density over the area.
 #'
 #' @param density numeric. The desired output density.
 #'
@@ -196,16 +195,16 @@ lowest = function(res = 1)
 
 #' Point Cloud Decimation Algorithm
 #'
-#' Thes functions are made to be used in \link{decimate_points}. They implements algorithm that
+#' These functions are made to be used in \link{decimate_points}. They implements algorithm that
 #' creates a 3D grid with a given resolution and filters the point cloud by selecting
 #' points of interest within each voxel. `random_per_voxel()` sample random points. `barycenter_per_voxel()`
 #' samples the point that is the closest to the barycenter of the points within a given voxel.
-#' `[lowest|highest}_attribute_per_voxel()` sample respectively the point that have the highest/lowest
+#' `[lowest|highest]_attribute_per_voxel()` sample respectively the point that have the highest/lowest
 #' attribute (e.g. Intensity) per voxel.
 #'
 #' @param res numeric. The resolution of the voxel grid used to filter the point cloud
 #' @param n integer. The number of points to select
-#' @param attribute. string name of an attribute (such as 'intensity')
+#' @param attribute string name of an attribute (such as 'intensity')
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -235,7 +234,6 @@ random_per_voxel = function(res = 1, n = 1)
   return(f)
 }
 
-#' @family point cloud decimation algorithms
 #' @export
 #' @rdname sample_per_voxel
 barycenter_per_voxel = function(res = 1)
@@ -245,6 +243,8 @@ barycenter_per_voxel = function(res = 1)
 
   f = function(las)
   {
+    X <- Y <- Z <- NULL
+
     id = C_voxel_id(las, res)
 
     which.mean = function(X,Y,Z)
@@ -264,7 +264,6 @@ barycenter_per_voxel = function(res = 1)
 
 }
 
-#' @family point cloud decimation algorithms
 #' @export
 #' @rdname sample_per_voxel
 lowest_attribute_per_voxel = function(res, attribute = "Z")
@@ -277,7 +276,8 @@ lowest_attribute_per_voxel = function(res, attribute = "Z")
 
   f = function(las)
   {
-    voxelID = lidR:::C_voxel_id(las, res)
+    tmp <- NULL
+    voxelID = C_voxel_id(las, res)
     las@data$tmp = las@data[[attribute]]
     return(las@data[, .I[which.min(tmp)], by = voxelID]$V1)
   }
@@ -286,7 +286,6 @@ lowest_attribute_per_voxel = function(res, attribute = "Z")
   return(f)
 }
 
-#' @family point cloud decimation algorithms
 #' @export
 #' @rdname sample_per_voxel
 highest_attribute_per_voxel = function(res, attribute = "Z")

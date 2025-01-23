@@ -21,10 +21,15 @@ highest_attribute_per_voxel(res, attribute = "Z")
 
 \item{n}{integer. The number of points to select}
 
-\item{attribute.}{string name of an attribute (such as 'intensity')}
+\item{attribute}{string name of an attribute (such as 'intensity')}
 }
 \description{
-
+These functions are made to be used in \link{decimate_points}. They implements algorithm that
+creates a 3D grid with a given resolution and filters the point cloud by selecting
+points of interest within each voxel. `random_per_voxel()` sample random points. `barycenter_per_voxel()`
+samples the point that is the closest to the barycenter of the points within a given voxel.
+`[lowest|highest]_attribute_per_voxel()` sample respectively the point that have the highest/lowest
+attribute (e.g. Intensity) per voxel.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -33,21 +38,6 @@ thinned <- decimate_points(las, random_per_voxel(8, 1))
 #plot(thinned)
 }
 \seealso{
-Other point cloud decimation algorithms: 
-\code{\link{sample_homogenize}},
-\code{\link{sample_maxima}},
-\code{\link{sample_random}}
-
-Other point cloud decimation algorithms: 
-\code{\link{sample_homogenize}},
-\code{\link{sample_maxima}},
-\code{\link{sample_random}}
-
-Other point cloud decimation algorithms: 
-\code{\link{sample_homogenize}},
-\code{\link{sample_maxima}},
-\code{\link{sample_random}}
-
 Other point cloud decimation algorithms: 
 \code{\link{sample_homogenize}},
 \code{\link{sample_maxima}},
