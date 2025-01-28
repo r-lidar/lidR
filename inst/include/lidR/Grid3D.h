@@ -131,15 +131,21 @@ inline Grid3D::Grid3D(const Rcpp::S4 las, double res)
 
 inline int64_t Grid3D::get_cell(double x, double y, double z)
 {
-  int64_t col = std::floor((x - xmin) / xres);
-  int64_t row = std::floor((ymax - y) / yres);
-  int64_t lay = std::floor((z - zmin) / zres);
-  int64_t cell = get_cell_id(row, col, lay);
-  if (cell < 0 || cell >= ncells)
+  if (x < xmin || x > xmax || y < ymin || y > ymax || z < zmin || z > zmax)
   {
-    Rcpp::stop("Internal error in spatial index: point out of the range."); // # nocov
+    Rcpp::stop("Internal error in spatial index: point out of range.");
   }
-  return cell;
+
+  int64_t col = std::floor((x - xmin) / xres);
+  int64_t row = std::floor((y - ymin) / yres); // Fixed formula for row
+  int64_t lay = std::floor((z - zmin) / zres);
+
+  if (col < 0 || col >= ncols || row < 0 || row >= nrows || lay < 0 || lay >= nlayers)
+  {
+    Rcpp::stop("Internal error in spatial index: indices out of range.");
+  }
+
+  return  get_cell_id(row, col, lay);
 }
 
 inline int64_t Grid3D::get_cell_id(int64_t row, int64_t col, int64_t lay)
@@ -192,6 +198,7 @@ inline void Grid3D::bfs(int64_t start_x, int64_t start_y, int64_t start_z, int l
 
 inline Rcpp::IntegerVector Grid3D::connected_components()
 {
+
   std::unordered_map<int64_t, int> label_grid;
 
   // Populate the label_grid with occupied voxels

@@ -114,8 +114,8 @@ template<typename T> void SparsePartition3D::lookup(T& shape, std::vector<PointX
 
   int64_t colmin = std::floor((xmin - this->xmin) / xres);
   int64_t colmax = std::ceil((xmax - this->xmin) / xres);
-  int64_t rowmin = std::floor((this->ymax - ymax) / yres);
-  int64_t rowmax = std::ceil((this->ymax - ymin) / yres);
+  int64_t rowmin = std::floor((ymin - this->ymin) / yres);
+  int64_t rowmax = std::ceil((ymax - this->ymin) / yres);
 
   int64_t laymin = 0;
   int64_t laymax = nlayers;
