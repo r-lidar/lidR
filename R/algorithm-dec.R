@@ -276,6 +276,9 @@ lowest_attribute_per_voxel = function(res, attribute = "Z")
 
   f = function(las)
   {
+    if (!attribute %in% names(las))
+      stop(paste0(attribute, " is not an attribute in this point cloud"), call. = FALSE)
+
     tmp <- NULL
     voxelID = C_voxel_id(las, res)
     las@data$tmp = las@data[[attribute]]
