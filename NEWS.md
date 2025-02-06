@@ -21,6 +21,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Enhance: Addressed issue #776 to allow `readLAScatalog()` to skip corrupted files.
 - Enhance: Optimized performance for many operations on TLS data.
 - Fix: #789 `homogenize()`
+- Fix: #800 reading VPC files with relative and absolute paths
 
 ## lidR v4.1.2 (Release date: 2024-07-09)
 

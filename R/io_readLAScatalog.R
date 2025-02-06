@@ -83,6 +83,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
   if (length(files) == 1L && tools::file_ext(files) == "vpc")
   {
+    files = normalizePath(files)
     headers = read_vpc(files)
     files = sapply(headers, function(x) x$filename)
     crs = sf::st_crs(headers[[1]]$CRS)
@@ -190,7 +191,10 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
     density = 0
   }
 
-  if (zratio < 10/100)
+
+  if (is.na(zratio)) # VPC file
+    res@index <- LIDRALSINDEX
+  else if (zratio < 10/100)
     res@index <- LIDRALSINDEX
   else if ((zratio >= 10/100 & density > 100) || density > 1000)
     res@index <- LIDRTLSINDEX
@@ -262,16 +266,22 @@ read_vpc <- function(f)
 
     headers[[i]]$Number.of.point.records = feature$properties[["pc:count"]]
 
-    absolute_path = feature$assets$data$href[1]
+    path = feature$assets$data$href[1]
 
-    if (tools::file_path_as_absolute(absolute_path) != absolute_path) #771
+    if (!is_absolute(path)) #771
     {
-      relative_path <- absolute_path
+      relative_path <- path
       parent = dirname(f)
       absolute_path <- file.path(parent, relative_path)
       absolute_path <- normalizePath(absolute_path)
     }
+    else
+    {
+      absolute_path = path
+    }
 
+    headers[[i]]$Min.Z = NA_real_
+    headers[[i]]$Max.Z = NA_real_
     headers[[i]]$filename = absolute_path
 
     wkt = feature$properties[["proj:wkt2"]]
@@ -286,4 +296,13 @@ read_vpc <- function(f)
   }
 
   return (headers)
+}
+
+is_absolute <- function(path)
+{
+  if (.Platform$OS.type == "windows") {
+    grepl("^[a-zA-Z]:\\\\|^\\\\", path)  # Absolute paths start with "C:\" or "\\" on Windows
+  } else {
+    substr(path, 1, 1) == "/"  # Absolute paths start with "/" on Unix-like systems
+  }
 }
