@@ -22,6 +22,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 - Enhance: Optimized performance for many operations on TLS data.
 - Fix: #789 `homogenize()`
 - Fix: #800 reading VPC files with relative and absolute paths
+- Fix: `pitfill_stonge2008` was bugged with non square rasters du to rows-columns inversion
 
 ## lidR v4.1.2 (Release date: 2024-07-09)
 
