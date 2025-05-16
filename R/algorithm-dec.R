@@ -295,13 +295,14 @@ highest_attribute_per_voxel = function(res, attribute = "Z")
 {
   assert_all_are_positive(res)
   assert_is_character(attribute)
+  tmp <- NULL
 
   res <- lazyeval::uq(res)
   attribute <- lazyeval::uq(attribute)
 
   f = function(las)
   {
-    voxelID = lidR:::C_voxel_id(las, res)
+    voxelID = C_voxel_id(las, res)
     las@data$tmp = las@data[[attribute]]
     return(las@data[, .I[which.max(tmp)], by = voxelID]$V1)
   }

@@ -1,12 +1,13 @@
 #include "myomp.h"
 #include "Progress.h"
 
+
 Progress::Progress(unsigned int iter_max, std::string prefix)
 {
-  SEXP prgssSEXP = Rf_GetOption(Rf_install("lidR.progress"), R_BaseEnv);
+  SEXP prgssSEXP = Rf_GetOption1(Rf_install("lidR.progress"));
   this->display = Rf_isLogical(prgssSEXP) && (Rcpp::as<bool>(prgssSEXP) == true);
 
-  SEXP delaySEXP = Rf_GetOption(Rf_install("lidR.progress.delay"), R_BaseEnv);
+  SEXP delaySEXP = Rf_GetOption1(Rf_install("lidR.progress.delay"));
   this->delay = Rcpp::as<float>(delaySEXP);
 
   iter = 0;
