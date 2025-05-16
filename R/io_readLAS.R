@@ -56,7 +56,7 @@ readLAS = function(files, select = "*", filter = "")
 {
   if (filter == "-h" | filter == "-help")
   {
-    rlas:::lasfilterusage()
+    rlas::help_filter()
     return(invisible())
   }
 
@@ -240,9 +240,9 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
   }
 
   if (utils::packageVersion("rlas") >= "1.8.0") {
-    data <- rlas:::stream.las(ifiles, ofile, select, filter, geom)
+    data <- rlas::read_and_write.las(ifiles, ofile, select, filter, geom)
   } else {
-    data <- rlas:::stream.las(ifiles, ofile, select, filter, filter_wkt)
+    data <- rlas::read_and_write.las(ifiles, ofile, select, filter, filter_wkt)
   }
 
   if (is.null(data))

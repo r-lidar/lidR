@@ -72,7 +72,9 @@ fit_circle_on_3_points <- function(points_subset)
 #' - `center_x`, `center_y`, `radius`: parameters of the fitted circle.
 #' - `z`: average elevation of the circle.
 #' - `rmse`: root mean square error between the circle and all points.
-#' - `angle_range`: angular sector covered by inlier points.
+#' - `covered_arc_degree`: angular sector covered by inlier points.
+#' - `percentage_inlier`: percentage of points that are inliers
+#' - `percentage_inside`: percentage of points inside the circle
 #' - `inliers`: IDs of the inlier points.
 #' @md
 #' @export
@@ -93,13 +95,13 @@ fit_circle_on_3_points <- function(points_subset)
 #' plot(half, asp = 1, pch = 19, cex = 0.1)
 #' symbols(circle$center_x, circle$center_y, circles = circle$radius,
 #'   add = TRUE, fg = "red", inches = FALSE)
-#' circle$angle_range
+#' circle$covered_arc_degree
 fit_circle <- function(points, num_iterations = 100, inlier_threshold = 0.01)
 {
   best_circle <- NULL
   max_inliers <- 0
 
-  if (is(points, "LAS")) points = st_coordinates(points)
+  if (is(points, "LAS")) points = sf::st_coordinates(points)
 
   stopifnot(is.matrix(points), ncol(points) == 3L, nrow(points) > 3L)
 
@@ -128,23 +130,54 @@ fit_circle <- function(points, num_iterations = 100, inlier_threshold = 0.01)
     }
   }
 
-  center_x <- best_circle[1]
-  center_y <- best_circle[2]
-  radius <- best_circle[3]
+  if (is.null(best_circle))
+  {
+    center_x = mean(points[,1])
+    center_y = mean(points[,2])
+    radius = 0.001
+    z = mean(z)
+    angle_range_degrees = 0
+    inlier_ratio = 0
+    percentage_inside = 0
+    inliers = rep(TRUE, nrow(points))
+    cfqi = 0
+  }
+  else
+  {
+    center_x <- best_circle[1]
+    center_y <- best_circle[2]
+    radius   <- best_circle[3]
 
-  # Goodness of fit
-  distances <- sqrt((points[, 1] - center_x)^2 + (points[, 2] - center_y)^2)
-  residuals <- abs(distances - radius)
-  inliers <- residuals < inlier_threshold
-  rmse <- sqrt(mean((residuals)^2))
+    # Goodness of fit
+    distances <- sqrt((points[, 1] - center_x)^2 + (points[, 2] - center_y)^2)
+    residuals <- abs(distances - radius)
+    inliers <- residuals < inlier_threshold
 
-  # Angular range
-  angle_res = 3
-  angles <- atan2(points[inliers, 2] - center_y, points[inliers, 1] - center_x)
-  angles <- ifelse(angles < 0, angles + 2 * pi, angles)
-  angles <- sort(angles*180/pi)
-  rangles <- unique(round(angles/angle_res)*angle_res)
-  angle_range_degrees = sum(diff(rangles) <= angle_res)*angle_res
+    # Angular range
+    angle_res = 3
+    angles <- atan2(points[inliers, 2] - center_y, points[inliers, 1] - center_x)
+    angles <- ifelse(angles < 0, angles + 2 * pi, angles)
+    angles <- sort(angles*180/pi)
+    rangles <- unique(round(angles/angle_res)*angle_res)
 
-  return(list(center_x = center_x, center_y = center_y, radius = radius, z = mean(z), rmse = rmse, angle_range = angle_range_degrees, inliers = which(inliers)))
+    angle_range_degrees = sum(diff(rangles) <= angle_res)*angle_res
+    arc_score <- angle_range_degrees / 360
+
+    # Inlier ratio
+    inlier_ratio <- sum(inliers) / nrow(points)
+
+    # Percentage of point inside the circle
+    ninside = sum(distances < radius - inlier_threshold)
+    percentage_inside = ninside/nrow(points)
+    score_inside = 1-percentage_inside
+  }
+
+  return(list(center_x = center_x,
+              center_y = center_y,
+              radius = radius,
+              z = mean(z),
+              covered_arc_degree = angle_range_degrees,
+              percentage_inlier = inlier_ratio,
+              percentage_inside = percentage_inside,
+              inliers = which(inliers)))
 }

@@ -21,7 +21,9 @@ the data fit a circular shape:
 \item \code{center_x}, \code{center_y}, \code{radius}: parameters of the fitted circle.
 \item \code{z}: average elevation of the circle.
 \item \code{rmse}: root mean square error between the circle and all points.
-\item \code{angle_range}: angular sector covered by inlier points.
+\item \code{covered_arc_degree}: angular sector covered by inlier points.
+\item \code{percentage_inlier}: percentage of points that are inliers
+\item \code{percentage_inside}: percentage of points inside the circle
 \item \code{inliers}: IDs of the inlier points.
 }
 }
@@ -54,5 +56,5 @@ circle = fit_circle(half)
 plot(half, asp = 1, pch = 19, cex = 0.1)
 symbols(circle$center_x, circle$center_y, circles = circle$radius,
   add = TRUE, fg = "red", inches = FALSE)
-circle$angle_range
+circle$covered_arc_degree
 }

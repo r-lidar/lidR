@@ -102,7 +102,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
     headers <- lapply(files, function(x)
     {
-      header <- rlas:::lasheaderreader(x)
+      header <- rlas::read.lasheader(x)
       if (length(header) == 0)
       {
         warning(paste0("Corrupted file ", x, " is not readable and was skipped in the LAScatalog"))
