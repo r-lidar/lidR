@@ -121,7 +121,7 @@ plot(las, color = "Amplitude", add = x)
 
 `lidR` is developed openly by [r-lidar](https://www.r-lidar.com/).
 
-The initial development of `lidR` was made possible through the financial support of [Laval University](https://www.ulaval.ca/en), the [AWARE project](https://awareproject.ca/) and [Ministry of Natural Ressources and Forests]((https://www.quebec.ca/en/government/ministere/ressources-naturelles-forets) of Québec. To continue the development of this free software, we now offer consulting, programming, and training services. For more information, please visit [our website](https://www.r-lidar.com/).
+The development of `lidR` was made possible through the financial support of [Laval University](https://www.ulaval.ca/en), the [AWARE project](https://awareproject.ca/) and [Ministry of Natural Ressources and Forests](https://www.quebec.ca/en/government/ministere/ressources-naturelles-forets) of Québec. To continue the development of this free software, we now offer consulting, programming, and training services. For more information, please visit [our website](https://www.r-lidar.com/).
 
 # Install dependencies on GNU/Linux
 
