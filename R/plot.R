@@ -30,7 +30,7 @@
 #' the display relies on the \code{rgl} package. If \code{"lidRviewer"} is chosen it relies on the
 #' \code{lidRviewer} package, which is much more efficient and can handle million of points
 #' using less memory. \code{lidRviewer} is not available on CRAN yet and should
-#' be installed from github (see. \url{https://github.com/Jean-Romain/lidRviewer}).
+#' be installed from github (see. \url{https://github.com/r-lidar/lidRviewer}).
 #' @param add If \code{FALSE} normal behaviour otherwise must be the output of a prior plot function
 #' to enable the alignment of a second point cloud.
 #' @param voxel boolean or numeric. Displays voxels instead of points. Useful to render the output
