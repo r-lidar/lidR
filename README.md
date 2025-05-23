@@ -29,7 +29,7 @@ You may also be interested by our new [`lasR`](https://github.com/r-lidar/lasR) 
 
 ### Read and display a las file
 
-In R-fashion style the function `plot`, based on `rgl`, enables the user to display, rotate and zoom a point cloud. Because `rgl` has limited capabilities with respect to large datasets, we also made a package [lidRviewer](https://github.com/Jean-Romain/lidRviewer) with better display capabilities.
+In R-fashion style the function `plot`, based on `rgl`, enables the user to display, rotate and zoom a point cloud.
 
 ```r
 las <- readLAS("<file.las>")
