@@ -24,7 +24,7 @@ jobs:
         config:
           - {os: windows-latest, r: 'devel', rglusenull: "true"}
           - {os: windows-latest, r: 'release', rglusenull: "true"}
-          #- {os: macOS-latest, r: 'release', rglusenull: "true"}
+          - {os: macOS-latest, r: 'release', rglusenull: "true"}
           - {os: ubuntu-latest, r: 'release'}
           - {os: ubuntu-latest, r: 'devel'}
 
@@ -63,7 +63,7 @@ jobs:
 
       - name: Cache R packages
         if: runner.os != 'Windows'
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-2-${{ hashFiles('.github/depends.Rds') }}
