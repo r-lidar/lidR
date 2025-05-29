@@ -46,13 +46,9 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Brew and macOS config
-        if: runner.os == 'macOS'
-        run: |
-          # conflicts with gfortran from r-lib/actions when linking gcc
-          rm '/usr/local/bin/gfortran'
-          brew install gdal proj geos
-          brew install --cask xquartz
+      - name: Install macOS system dependencies
+        if: runner.os == 'macos'
+        run: brew install gdal proj
 
       - name: Query dependencies
         run: |
