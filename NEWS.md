@@ -1,6 +1,10 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v4.2.0 (Release date: )
+## lidR v4.2.0 (Release date: 2025-06-02)
+
+- Fix compilation on MacOS
+
+## lidR v4.2.0 (Release date: 2025-05-25)
 
 **v4.2.0 brings new tools for terrestrial data (TLS, MLS):**
 
