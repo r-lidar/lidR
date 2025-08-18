@@ -385,6 +385,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_fast_knn_eigen_decomposition
+DataFrame C_fast_knn_eigen_decomposition(S4 las, int k, bool coeffs, int ncpu);
+RcppExport SEXP _lidR_C_fast_knn_eigen_decomposition(SEXP lasSEXP, SEXP kSEXP, SEXP coeffsSEXP, SEXP ncpuSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< bool >::type coeffs(coeffsSEXP);
+    Rcpp::traits::input_parameter< int >::type ncpu(ncpuSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_fast_knn_eigen_decomposition(las, k, coeffs, ncpu));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_connected_component
 IntegerVector C_connected_component(S4 las, double res);
 RcppExport SEXP _lidR_C_connected_component(SEXP lasSEXP, SEXP resSEXP) {
@@ -690,6 +703,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_isolated_voxel", (DL_FUNC) &_lidR_C_isolated_voxel, 3},
     {"_lidR_C_check_gpstime", (DL_FUNC) &_lidR_C_check_gpstime, 2},
     {"_lidR_C_eigen_metrics", (DL_FUNC) &_lidR_C_eigen_metrics, 6},
+    {"_lidR_C_fast_knn_eigen_decomposition", (DL_FUNC) &_lidR_C_fast_knn_eigen_decomposition, 4},
     {"_lidR_C_connected_component", (DL_FUNC) &_lidR_C_connected_component, 2},
     {"_lidR_C_voxel_id", (DL_FUNC) &_lidR_C_voxel_id, 2},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
