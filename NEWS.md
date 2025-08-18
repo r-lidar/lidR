@@ -2,7 +2,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 ## lidR v4.2.2 (Release date: 2025-06-02)
 
-- Use `nanoflann` for knn computation
+- Use `nanoflann` for knn computation. Numerous functions are faster.
 
 ## lidR v4.2.1 (Release date: 2025-06-02)
 

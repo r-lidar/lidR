@@ -258,8 +258,17 @@ point_eigenvalues = function(las, k, r, xyz = FALSE, metrics = FALSE, coeffs = F
 
   assert_is_a_bool(xyz)
 
-  filter <- parse_filter(las, filter)
-  M <- C_eigen_metrics(las, k, r, coeffs, filter, getThreads())
+  if (!is.null(filter))
+  {
+    filter <- parse_filter(las, filter)
+    M <- C_eigen_metrics(las, k, r, coeffs, filter, getThreads())
+  }
+  else
+  {
+    M <- C_fast_eigen_decomposition(las, k, r, coeffs, getThreads())
+    M <- cbind(pointID = 1:npoints(las), M)
+  }
+
   data.table::setDT(M)
   data.table::setorder(M, pointID)
 

@@ -113,8 +113,8 @@ C_eigen_metrics <- function(las, k, r, coeffs, filter, ncpu) {
     .Call(`_lidR_C_eigen_metrics`, las, k, r, coeffs, filter, ncpu)
 }
 
-C_fast_knn_eigen_decomposition <- function(las, k, coeffs, ncpu) {
-    .Call(`_lidR_C_fast_knn_eigen_decomposition`, las, k, coeffs, ncpu)
+C_fast_eigen_decomposition <- function(las, k, r, coeffs, ncpu) {
+    .Call(`_lidR_C_fast_eigen_decomposition`, las, k, r, coeffs, ncpu)
 }
 
 C_connected_component <- function(las, res) {
