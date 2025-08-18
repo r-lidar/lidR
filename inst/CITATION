@@ -9,7 +9,7 @@ bibentry(bibtype="Article",
          year = "2020",
          issn = "0034-4257",
          doi = "10.1016/j.rse.2020.112061",
-         url = "https://www.sciencedirect.com/science/article/pii/S0034425720304314",
+         url = "https://doi.org/10.1016/j.rse.2020.112061",
          textVersion =
            paste("Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2020).",
            "lidR : An R package for analysis of Airborne Laser Scanning (ALS) data.",

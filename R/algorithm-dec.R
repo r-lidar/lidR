@@ -1,8 +1,7 @@
 #' Point Cloud Decimation Algorithm
 #'
 #' This function is made to be used in \link{decimate_points}. It implements an algorithm that
-#' randomly removes points or pulses to reach the desired density over the whole area (see
-#' \code{\link[=area]{area}}).
+#' randomly removes points or pulses to reach the desired density over the area.
 #'
 #' @param density numeric. The desired output density.
 #'
@@ -196,12 +195,16 @@ lowest = function(res = 1)
 
 #' Point Cloud Decimation Algorithm
 #'
-#' This functions is made to be used in \link{decimate_points}. It implements an algorithm that
-#' creates a 3D grid with a given resolution and filters the point cloud by randomly selecting
-#' n points within each voxel
+#' These functions are made to be used in \link{decimate_points}. They implements algorithm that
+#' creates a 3D grid with a given resolution and filters the point cloud by selecting
+#' points of interest within each voxel. `random_per_voxel()` sample random points. `barycenter_per_voxel()`
+#' samples the point that is the closest to the barycenter of the points within a given voxel.
+#' `[lowest|highest]_attribute_per_voxel()` sample respectively the point that have the highest/lowest
+#' attribute (e.g. Intensity) per voxel.
 #'
 #' @param res numeric. The resolution of the voxel grid used to filter the point cloud
 #' @param n integer. The number of points to select
+#' @param attribute string name of an attribute (such as 'intensity')
 #'
 #' @examples
 #' LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
@@ -231,6 +234,83 @@ random_per_voxel = function(res = 1, n = 1)
   return(f)
 }
 
+#' @export
+#' @rdname sample_per_voxel
+barycenter_per_voxel = function(res = 1)
+{
+  assert_all_are_positive(res)
+  res <- lazyeval::uq(res)
+
+  f = function(las)
+  {
+    X <- Y <- Z <- NULL
+
+    id = C_voxel_id(las, res)
+
+    which.mean = function(X,Y,Z)
+    {
+      x = mean(X)
+      y = mean(Y)
+      z = mean(Z)
+      d = (X-x)^2 + (Y-y)^1 + (Z-z)^2
+      return(which.min(d))
+    }
+
+    return(las@data[, .I[which.mean(X,Y,Z)], by = id]$V1)
+  }
+
+  f <- plugin_decimate(f)
+  return(f)
+
+}
+
+#' @export
+#' @rdname sample_per_voxel
+lowest_attribute_per_voxel = function(res, attribute = "Z")
+{
+  assert_all_are_positive(res)
+  assert_is_character(attribute)
+
+  res <- lazyeval::uq(res)
+  attribute <- lazyeval::uq(attribute)
+
+  f = function(las)
+  {
+    if (!attribute %in% names(las))
+      stop(paste0(attribute, " is not an attribute in this point cloud"), call. = FALSE)
+
+    tmp <- NULL
+    voxelID = C_voxel_id(las, res)
+    las@data$tmp = las@data[[attribute]]
+    return(las@data[, .I[which.min(tmp)], by = voxelID]$V1)
+  }
+
+  f <- plugin_decimate(f)
+  return(f)
+}
+
+#' @export
+#' @rdname sample_per_voxel
+highest_attribute_per_voxel = function(res, attribute = "Z")
+{
+  assert_all_are_positive(res)
+  assert_is_character(attribute)
+  tmp <- NULL
+
+  res <- lazyeval::uq(res)
+  attribute <- lazyeval::uq(attribute)
+
+  f = function(las)
+  {
+    voxelID = C_voxel_id(las, res)
+    las@data$tmp = las@data[[attribute]]
+    return(las@data[, .I[which.max(tmp)], by = voxelID]$V1)
+  }
+
+  f <- plugin_decimate(f)
+  return(f)
+}
+
 
 .selected_pulses = function(pulseID, n)
 {
@@ -240,8 +320,9 @@ random_per_voxel = function(res = 1, n = 1)
     return(rep(TRUE, length(pulseID)))
 
   selectedPulses <- sample(p, n)
-  selectedPulses <- pulseID %in% selectedPulses
   selectedPulses <- sort(selectedPulses)
+  selectedPulses <- pulseID %in% selectedPulses
+
 
   return(selectedPulses)
 }

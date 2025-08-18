@@ -32,8 +32,9 @@ pitfill_stonge2008 = function(x, lap_size = 3L, thr_lap = 0.1, thr_spk = -0.1, m
   dim = dim(z)
   z = as.numeric(t(apply(z,1,rev)))
   z[is.na(z)] = -99999
-  y = C_chm_prep(z, dim[1], dim[2], lap_size, thr_lap, thr_spk, med_size, dil_radius, -99999)
+  y = C_chm_prep(z, dim[2], dim[1], lap_size, thr_lap, thr_spk, med_size, dil_radius, -99999)
   y[y == -99999] = NA
-  x[] = y
+  y = matrix(y, nrow = dim[1], ncol = dim[2])
+  x[] = t(y)
   return(x)
 }

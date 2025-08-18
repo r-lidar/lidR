@@ -23,7 +23,7 @@ verbose = function(...)
     cat(..., "\n")
 }
 
-dummy_las <- lasgenerator
+dummy_las <- generate_las
 
 uuid <- function()
 {

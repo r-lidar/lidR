@@ -1,6 +1,6 @@
 #' @export
 #' @rdname readLAS
-readALSLAS = function(files,  select = "*", filter = "")
+readALS = function(files,  select = "*", filter = "")
 {
   do_no_read_lascluster(files)
   las <- readLAS(files, select, filter)
@@ -11,31 +11,13 @@ readALSLAS = function(files,  select = "*", filter = "")
 
 #' @export
 #' @rdname readLAS
-readTLSLAS = function(files,  select = "*", filter = "")
+#' @param sort boolean. To optimize even more the computation speed the point cloud is spatially sorted
+readTLS = function(files,  select = "*", filter = "", sort = TRUE)
 {
   do_no_read_lascluster(files)
   las <- readLAS(files, select, filter)
   las@index <- LIDRTLSINDEX
-  return(las)
-}
-
-#' @export
-#' @rdname readLAS
-readUAVLAS = function(files,  select = "*", filter = "")
-{
-  do_no_read_lascluster(files)
-  las <- readLAS(files, select, filter)
-  las@index <- LIDRUAVINDEX
-  return(las)
-}
-
-#' @export
-#' @rdname readLAS
-readDAPLAS = function(files,  select = "*", filter = "")
-{
-  do_no_read_lascluster(files)
-  las <- readLAS(files, select, filter)
-  las@index <- LIDRDAPINDEX
+  if (sort) tls_spatial_sort(las)
   return(las)
 }
 
@@ -111,6 +93,21 @@ readMSLAS = function(files1, files2, files3, select = "*", filter = "")
 
   las@index <- LIDRMLSINDEX
   return(las)
+}
+
+tls_spatial_sort = function(las)
+{
+  gpstime <- NULL
+
+  las@data[["order"]] = C_voxel_id(las, 0.1)
+
+  if ("gpstime" %in% names(las))
+    data.table::setorder(las@data, order, gpstime)
+  else
+    data.table::setorder(las@data, order)
+
+  las@data[, order := NULL]
+  return(invisible())
 }
 
 do_no_read_lascluster = function(x)

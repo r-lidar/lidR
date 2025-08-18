@@ -69,7 +69,7 @@ by the style argument of \link[classInt:classIntervals]{classIntervals}}
 the display relies on the \code{rgl} package. If \code{"lidRviewer"} is chosen it relies on the
 \code{lidRviewer} package, which is much more efficient and can handle million of points
 using less memory. \code{lidRviewer} is not available on CRAN yet and should
-be installed from github (see. \url{https://github.com/Jean-Romain/lidRviewer}).}
+be installed from github (see. \url{https://github.com/r-lidar/lidRviewer}).}
 
 \item{clear_artifacts}{logical. It is a known and documented issue that the 3D visualisation with
 \code{rgl} displays artifacts. The points look aligned and/or regularly spaced in some view angles.

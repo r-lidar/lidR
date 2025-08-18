@@ -4,7 +4,7 @@
 #'
 #' @template param-las
 #' @param algorithm function. An algorithm of point decimation. \code{lidR} have: \link{random},
-#' \link{homogenize}, \link{highest}, \link{lowest} and \link{random_per_voxel}.
+#' \link{homogenize}, \link{highest}, \link{lowest}, \link{random_per_voxel} and \link{barycenter_per_voxel}.
 #'
 #' @section Non-supported LAScatalog options:
 #' The option `select` is not supported and not respected because it always preserves the file format

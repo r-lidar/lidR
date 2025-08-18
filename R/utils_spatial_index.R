@@ -1,9 +1,10 @@
-LIDRSPATIALINDEXES <- c("auto", "gridpartition", "voxelpartition", "quadtree", "octree")
-LIDRAUTOINDEX      <- 0L
-LIDRGRIDPARTITION  <- 1L
-LIDRVOXELPARTITION <- 2L
-LIDRQUADTREE       <- 3L
-LIDROCTREE         <- 4L
+LIDRSPATIALINDEXES  <- c("auto", "gridpartition", "voxelpartition", "quadtree", "octree", "sparcepartition")
+LIDRAUTOINDEX       <- 0L
+LIDRGRIDPARTITION   <- 1L
+LIDRVOXELPARTITION  <- 2L
+LIDRQUADTREE        <- 3L
+LIDROCTREE          <- 4L
+LIDRSPARSEPARTITION <- 5L
 
 LIDRAQUISITIONDEVICES <- c("unknown", "als", "tls", "uav", "dap", "multispectral")
 UKNLAS <- 0L

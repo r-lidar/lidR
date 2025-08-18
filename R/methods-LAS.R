@@ -169,7 +169,30 @@ LAS <- function(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = 
     crs <- st_crs(header)
 
   if (is.null(index))
-    index <- LIDRDEFAULTINDEX
+  {
+    xrange = header[["Max X"]] - header[["Min X"]]
+    yrange = header[["Max Y"]] - header[["Min Y"]]
+    zrange = header[["Max Z"]] - header[["Min Z"]]
+    area = xrange*yrange
+    if (area > 0)
+    {
+      n = nrow(data)
+      density = n/area
+      zratio = min(zrange/xrange, zrange/yrange)
+    }
+    else
+    {
+      zratio = 0
+      density = 0
+    }
+
+    if (zratio < 10/100)
+      index <- LIDRALSINDEX
+    else if ((zratio > 10/100 & density > 100) || density > 1000)
+      index <- LIDRTLSINDEX
+    else
+      index <- LIDRALSINDEX
+  }
 
   index$xprt <- NULL
 

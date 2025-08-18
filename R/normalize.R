@@ -12,6 +12,8 @@
 #' \item{normalize_intensity}{Normalize intensity values using multiple methods. The attribute 'Intensity'
 #' records the normalized intensity. An extra attribute named 'RawIntensity' records the original
 #' intensities.}
+#' \item{height_above_ground}{instead of normalizing the point cloud, records the height above ground (HAG)
+#' in a new attribute named 'hag'}
 #' }
 #'
 #' @section Non-supported LAScatalog options:
@@ -24,9 +26,7 @@
 #' model. (2) An algorithm for intensity normalization. \code{lidR} currently has \link{range_correction}.
 #' @param use_class integer vector. By default the terrain is computed by using ground points
 #' (class 2) and water points (class 9). Relevant only for a normalization without a raster DTM.
-#' @param ... `normalized_height()` supports `add_lasattribute= TRUE` to add the elevation above
-#' see level as an extra byte attribute and ` Wdegenerated = FALSE` to silence the warning about
-#' degenerated ground points.
+#' @param ... passed to `normalized_height()`
 #' @param dtm raster. If `dtm` is provided, then the DTM is used in place of ground points. This is
 #' different than providing a DTM in `algorithm`. If `algorithm = dtm` the dtm is subtracted naively.
 #' If `algorithm = tin()` and `dtm = raster` the ground points are not used and the DTM is
@@ -90,3 +90,4 @@
 #' # the sample is too small to notice any effect of range
 #' las <- normalize_intensity(las, range_correction(sensor, Rs = 2000))
 NULL
+

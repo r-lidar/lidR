@@ -2,172 +2,34 @@
 % Please edit documentation in R/deprecated.R
 \name{deprecated}
 \alias{deprecated}
-\alias{lascheck}
-\alias{lasclip}
-\alias{lasclipRectangle}
-\alias{lasclipPolygon}
-\alias{lasclipCircle}
-\alias{lasdetectshape}
-\alias{lasfilter}
-\alias{lasfilterfirst}
-\alias{lasfilterfirstlast}
-\alias{lasfilterfirstofmany}
-\alias{lasfilterground}
-\alias{lasfilterlast}
-\alias{lasfilternth}
-\alias{lasfiltersingle}
-\alias{lasfilterdecimate}
-\alias{lasfilterduplicates}
-\alias{lasfiltersurfacepoints}
-\alias{lasground}
-\alias{laspulse}
-\alias{lasflightline}
-\alias{lasscanline}
-\alias{lasmergespatial}
-\alias{lasnormalize}
-\alias{lasunnormalize}
-\alias{lasrangecorrection}
-\alias{lasrescale}
-\alias{lasreoffset}
-\alias{lassmooth}
-\alias{lasunsmooth}
-\alias{lassnags}
-\alias{lastrees}
-\alias{lasadddata}
-\alias{lasaddextrabytes}
-\alias{lasaddextrabytes_manual}
-\alias{lasremoveextrabytes}
-\alias{lasvoxelize}
-\alias{sensor_tracking}
-\alias{tree_detection}
-\alias{tree_hulls}
-\alias{hexbin_metrics}
+\alias{readALSLAS}
+\alias{readTLSLAS}
+\alias{readUAVLAS}
+\alias{readDAPLAS}
+\alias{readALSLAScatalog}
+\alias{readTLSLAScatalog}
+\alias{readUAVLAScatalog}
+\alias{readDAPLAScatalog}
 \alias{filter_surfacepoints}
 \alias{filter_surfacepoints.LAS}
 \alias{filter_surfacepoints.LAScatalog}
 \title{Deprecated functions in lidR}
 \usage{
-lascheck(las)
+readALSLAS(files, select = "*", filter = "")
 
-lasclip(las, geometry, ...)
+readTLSLAS(files, select = "*", filter = "", sort = TRUE)
 
-lasclipRectangle(las, xleft, ybottom, xright, ytop, ...)
+readUAVLAS(files, select = "*", filter = "", sort = TRUE)
 
-lasclipPolygon(las, xpoly, ypoly, ...)
+readDAPLAS(files, select = "*", filter = "", sort = TRUE)
 
-lasclipCircle(las, xcenter, ycenter, radius, ...)
+readALSLAScatalog(folder, ...)
 
-lasdetectshape(las, algorithm, attribute = "Shape", filter = NULL)
+readTLSLAScatalog(folder, ...)
 
-lasfilter(las, ...)
+readUAVLAScatalog(folder, ...)
 
-lasfilterfirst(las)
-
-lasfilterfirstlast(las)
-
-lasfilterfirstofmany(las)
-
-lasfilterground(las)
-
-lasfilterlast(las)
-
-lasfilternth(las, n)
-
-lasfiltersingle(las)
-
-lasfilterdecimate(las, algorithm)
-
-lasfilterduplicates(las)
-
-lasfiltersurfacepoints(las, res)
-
-lasground(las, algorithm, last_returns = TRUE)
-
-laspulse(las)
-
-lasflightline(las, dt = 30)
-
-lasscanline(las)
-
-lasmergespatial(las, source, attribute = NULL)
-
-lasnormalize(
-  las,
-  algorithm,
-  na.rm = FALSE,
-  use_class = c(2L, 9L),
-  ...,
-  add_lasattribute = FALSE
-)
-
-lasunnormalize(las)
-
-lasrangecorrection(
-  las,
-  sensor,
-  Rs,
-  f = 2.3,
-  gpstime = "gpstime",
-  elevation = "Z"
-)
-
-lasrescale(las, xscale, yscale, zscale)
-
-lasreoffset(las, xoffset, yoffset, zoffset)
-
-lassmooth(
-  las,
-  size,
-  method = c("average", "gaussian"),
-  shape = c("circle", "square"),
-  sigma = size/6
-)
-
-lasunsmooth(las)
-
-lassnags(las, algorithm, attribute = "snagCls")
-
-lastrees(las, algorithm, attribute = "treeID", uniqueness = "incremental")
-
-lasadddata(las, x, name)
-
-lasaddextrabytes(las, x, name, desc)
-
-lasaddextrabytes_manual(
-  las,
-  x,
-  name,
-  desc,
-  type,
-  offset = NULL,
-  scale = NULL,
-  NA_value = NULL
-)
-
-lasremoveextrabytes(las, name)
-
-lasvoxelize(las, res)
-
-sensor_tracking(
-  las,
-  interval = 0.5,
-  pmin = 50,
-  extra_check = TRUE,
-  thin_pulse_with_time = 0.001
-)
-
-tree_detection(las, algorithm)
-
-tree_hulls(
-  las,
-  type = c("convex", "concave", "bbox"),
-  concavity = 3,
-  length_threshold = 0,
-  func = NULL,
-  attribute = "treeID"
-)
-
-hexbin_metrics(...)
+readDAPLAScatalog(folder, ...)
 
 filter_surfacepoints(las, res)
 
@@ -176,61 +38,12 @@ filter_surfacepoints(las, res)
 \method{filter_surfacepoints}{LAScatalog}(las, res)
 }
 \arguments{
-\item{las}{See the new functions that replace the old ones}
+\item{files, select, filter, sort}{See the new functions that replace the old ones}
 
-\item{geometry}{See the new functions that replace the old ones}
+\item{folder, ...}{See the new functions that replace the old ones}
 
-\item{...}{See the new functions that replace the old ones}
-
-\item{xleft, ybottom, xright, ytop}{See the new functions that replace the old ones}
-
-\item{xpoly, ypoly}{See the new functions that replace the old ones}
-
-\item{xcenter, ycenter, radius}{See the new functions that replace the old ones}
-
-\item{algorithm}{See the new functions that replace the old ones}
-
-\item{attribute}{See the new functions that replace the old ones}
-
-\item{filter}{See the new functions that replace the old ones}
-
-\item{n, res, dt}{See the new functions that replace the old ones}
-
-\item{last_returns}{See the new functions that replace the old ones}
-
-\item{source}{See the new functions that replace the old ones}
-
-\item{na.rm, use_class, add_lasattribute}{See the new functions that replace the old ones}
-
-\item{sensor, Rs, f, gpstime, elevation}{See the new functions that replace the old ones}
-
-\item{xscale, yscale, zscale, xoffset, yoffset, zoffset}{See the new functions that replace the old ones}
-
-\item{size, method, shape, sigma}{See the new functions that replace the old ones}
-
-\item{uniqueness}{See the new functions that replace the old ones}
-
-\item{x, name, desc, type, offset, scale, NA_value}{See the new functions that replace the old ones}
-
-\item{interval, pmin, extra_check, thin_pulse_with_time}{See the new functions that replace the old ones}
-
-\item{concavity, length_threshold, func}{See the new functions that replace the old ones}
+\item{las, res}{See the new functions that replace the old ones}
 }
 \description{
-These functions are provided for compatibility with older versions of lidR but are deprecated. They
-will progressively print a message, throw a warning and eventually be removed. The links below point
-to the documentation of the new names. In version 4 they now throw an error. In version 4.1 they
-ill be removed definitively.\cr\cr
-\link[=add_attribute]{lasadd} \link[=las_check]{lascheck} \link[=clip]{lasclip}
-\link[=segment_shapes]{lasdetectshape} \link[=filter_poi]{lasfilter}
-\link[=filter_surfacepoints]{lasfiltersurfacepoints} \link[=retrieve_flightlines]{lasflightline}
-\link[=classify_ground]{lasground} \link[=merge_spatial]{lasmergespatial}
-\link[=normalize_height]{lasnormalize} \link[=retrieve_pulses]{laspulse}
-\link[=normalize_intensity]{lasrangecorrection} \link[=retrieve_flightlines]{lasflightline}
-\link[=las_reoffset]{lasreoffset} \link[=las_rescale]{lasrescale}
-\link[=retrieve_scanlines]{lasscanlines} \link[=smooth_height]{lassmooth}
-\link[=segment_snags]{lassnags}
-\link[=segment_trees]{lastrees} \link[=voxelize_points]{lasvoxelize}
-\link[=track_sensor]{sensor_tracking} \link[=locate_trees]{tree_detection}
-\link[=crown_metrics]{tree_hull}
+These functions are provided for compatibility with older versions of lidR but are deprecated.
 }

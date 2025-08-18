@@ -14,7 +14,7 @@ stored in .csv files with \link[data.table:fwrite]{fwrite}, and other objects ar
 However, users can modify all these default settings and even add new drivers.
 This manual page explain how. One may also refer to some unofficial documentation
 \href{https://github.com/r-lidar/lidR/wiki/Modify-the-LAScatalog-drivers}{here} or
-\href{https://gis.stackexchange.com/questions/325367/how-to-configure-lidr-catalog-to-save-raster-files}{here}.
+\href{https://gis.stackexchange.com/questions/325367/configuring-lidr-catalog-to-overwrite-raster-output-with-different-extension}{here}.
 }
 \section{Generic form of a driver}{
 

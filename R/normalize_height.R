@@ -190,3 +190,14 @@ n_na_not_in_buffer <- function(las, isna)
   buffer_na <- las$buffer[isna]
   return(sum(buffer_na == LIDRNOBUFFER))
 }
+
+#' @rdname normalize
+#' @export
+height_above_ground = function(las, ...)
+{
+  las = normalize_height(las, ...)
+  hag = las$Z
+  las = unnormalize_height(las)
+  las = add_lasattribute(las, hag, "hag", "height above ground")
+  las
+}

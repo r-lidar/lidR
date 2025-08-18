@@ -2,6 +2,8 @@
 #define INDEX_H
 
 #include <Rcpp.h>
+
+#include "lidR/SparsePartition.h"
 #include "lidR/GridPartition.h"
 #include "lidR/QuadTree.h"
 #include "lidR/Octree.h"
@@ -36,9 +38,10 @@ private:
   GridPartition grid;
   QuadTree quadtree;
   Octree octree;
+  SparsePartition3D sparsepartition;
   int type;
   enum TYPES {UKN = 0, ALS = 1, TLS = 2, UAV = 3, DAP = 4, MLS = 5};
-  enum INDEXES {AUTOINDEX = 0, GRIDPARTITION = 1, VOXELPARTITION = 2, QUADTREE = 3, OCTREE = 4};
+  enum INDEXES {AUTOINDEX = 0, GRIDPARTITION = 1, VOXELPARTITION = 2, QUADTREE = 3, OCTREE = 4, SPARSEPARTITION = 5};
 };
 
 /*
@@ -53,6 +56,7 @@ inline SpatialIndex::SpatialIndex(const Rcpp::S4 las)
   {
   case GRIDPARTITION:
   case VOXELPARTITION: grid = GridPartition(las); break;
+  case SPARSEPARTITION: sparsepartition = SparsePartition3D(las); break;
   case QUADTREE: quadtree = QuadTree(las); break;
   case OCTREE: Rcpp::stop("Error: octree no longer supported."); break; // # nocov
   default: Rcpp::stop("Internal error: spatial index code inccorect."); break; // # nocov
@@ -74,6 +78,7 @@ inline SpatialIndex::SpatialIndex(const Rcpp::S4 las, const std::vector<bool>& f
   {
   case GRIDPARTITION:
   case VOXELPARTITION: grid = GridPartition(las, f); break;
+  case SPARSEPARTITION: sparsepartition = SparsePartition3D(las, f); break;
   case QUADTREE: quadtree = QuadTree(las, f); break;
   case OCTREE: octree = Octree(las, f); break;
   default: Rcpp::stop("Internal error: spatial index code inccorect."); break; // # nocov
@@ -91,6 +96,7 @@ template<typename T> void SpatialIndex::lookup(T& shape, std::vector<PointXYZ>& 
   {
   case GRIDPARTITION:
   case VOXELPARTITION: grid.lookup(shape, res); break;
+  case SPARSEPARTITION: sparsepartition.lookup(shape, res); break;
   case QUADTREE: quadtree.lookup(shape, res); break;
   case OCTREE: octree.lookup(shape, res); break;
   }
@@ -109,6 +115,7 @@ inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, std::vecto
   {
   case GRIDPARTITION:
   case VOXELPARTITION: grid.knn(p, k, res); break;
+  case SPARSEPARTITION: sparsepartition.knn(p, k, res); break;
   case QUADTREE: quadtree.knn(p, k, res); break;
   case OCTREE: octree.knn(p, k, res); break;
   }
@@ -126,6 +133,7 @@ inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, std::vect
   {
   case GRIDPARTITION:
   case VOXELPARTITION:  grid.knn(p, k, res); break;
+  case SPARSEPARTITION: sparsepartition.knn(p, k, res); break;
   case QUADTREE: quadtree.knn(p, k, res); break;
   case OCTREE: octree.knn(p, k, res); break;
   }
@@ -142,6 +150,7 @@ inline void SpatialIndex::knn(const PointXY& p, const unsigned int k, const doub
   {
   case GRIDPARTITION:
   case VOXELPARTITION: grid.knn(p, k, radius, res); break;
+  case SPARSEPARTITION: sparsepartition.knn(p, k, radius, res); break;
   case QUADTREE: quadtree.knn(p, k, radius,  res); break;
   case OCTREE: octree.knn(p, k, radius, res); break;
   }
@@ -158,6 +167,7 @@ inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, const dou
   {
   case GRIDPARTITION:
   case VOXELPARTITION: grid.knn(p, k, radius, res); break;
+  case SPARSEPARTITION: sparsepartition.knn(p, k, radius, res); break;
   case QUADTREE: quadtree.knn(p, k, radius,  res); break;
   case OCTREE: octree.knn(p, k, radius, res); break;
   }
@@ -168,7 +178,6 @@ inline void SpatialIndex::knn(const PointXYZ& p, const unsigned int k, const dou
 /*
  * PRIVATE MEMBERS
  */
-
 inline int SpatialIndex::index_selector(const Rcpp::S4 las) const
 {
   int code = GRIDPARTITION;
@@ -186,7 +195,7 @@ inline int SpatialIndex::index_selector(const Rcpp::S4 las) const
       if (sensor == UKN || sensor == ALS)
         code = GRIDPARTITION;
       else if (sensor == TLS || sensor == UAV || sensor == DAP)
-        code = VOXELPARTITION;
+        code = SPARSEPARTITION;
       else
         code = QUADTREE;
     }

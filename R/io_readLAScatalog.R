@@ -83,6 +83,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
   if (length(files) == 1L && tools::file_ext(files) == "vpc")
   {
+    files = normalizePath(files)
     headers = read_vpc(files)
     files = sapply(headers, function(x) x$filename)
     crs = sf::st_crs(headers[[1]]$CRS)
@@ -101,7 +102,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
     headers <- lapply(files, function(x)
     {
-      header <- rlas:::lasheaderreader(x)
+      header <- rlas::read.lasheader(x)
       if (length(header) == 0)
       {
         warning(paste0("Corrupted file ", x, " is not readable and was skipped in the LAScatalog"))
@@ -152,6 +153,8 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   xmax <- headers$Max.X
   ymin <- headers$Min.Y
   ymax <- headers$Max.Y
+  zmin <- headers$Min.Z
+  zmax <- headers$Max.Z
   ids  <- as.character(seq_along(files))
 
   geom <- lapply(seq_along(ids), function(xi) {
@@ -172,6 +175,34 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
   opt_chunk_buffer(res) <- chunk_buffer
   opt_progress(res) <- progress
 
+  xrange = xmax - xmin
+  yrange = ymax - ymin
+  zrange = zmax - zmin
+  area = sum(xrange*yrange)
+  if (area > 0)
+  {
+    n = sum(res$Number.of.point.records)
+    density = n/area
+    zratio = min(zrange/xrange, zrange/yrange)
+  }
+  else
+  {
+    zratio = 0
+    density = 0
+  }
+
+
+  if (is.na(zratio)) # VPC file
+    res@index <- LIDRALSINDEX
+  else if (zratio < 10/100)
+    res@index <- LIDRALSINDEX
+  else if ((zratio >= 10/100 & density > 100) || density > 1000)
+    res@index <- LIDRTLSINDEX
+  else
+    res@index <- LIDRALSINDEX
+
+
+
   if (is.overlapping(res))
     message("Be careful, some tiles seem to overlap each other. lidR may return incorrect outputs with edge artifacts when processing this catalog.")
 
@@ -183,7 +214,7 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 
 #' @export
 #' @rdname readLAScatalog
-readALSLAScatalog = function(folder, ...)
+readALScatalog = function(folder, ...)
 {
   ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRALSINDEX
@@ -193,28 +224,10 @@ readALSLAScatalog = function(folder, ...)
 
 #' @export
 #' @rdname readLAScatalog
-readTLSLAScatalog = function(folder, ...)
+readTLScatalog = function(folder, ...)
 {
   ctg <- readLAScatalog(folder, ...)
   ctg@index <- LIDRTLSINDEX
-  return(ctg)
-}
-
-#' @export
-#' @rdname readLAScatalog
-readUAVLAScatalog = function(folder, ...)
-{
-  ctg <- readLAScatalog(folder, ...)
-  ctg@index <- LIDRUAVINDEX
-  return(ctg)
-}
-
-#' @export
-#' @rdname readLAScatalog
-readDAPLAScatalog = function(folder, ...)
-{
-  ctg <- readLAScatalog(folder, ...)
-  ctg@index <- LIDRDAPINDEX
   return(ctg)
 }
 
@@ -253,16 +266,22 @@ read_vpc <- function(f)
 
     headers[[i]]$Number.of.point.records = feature$properties[["pc:count"]]
 
-    absolute_path = feature$assets$data$href[1]
+    path = feature$assets$data$href[1]
 
-    if (tools::file_path_as_absolute(absolute_path) != absolute_path) #771
+    if (!is_absolute(path)) #771
     {
-      relative_path <- absolute_path
+      relative_path <- path
       parent = dirname(f)
       absolute_path <- file.path(parent, relative_path)
       absolute_path <- normalizePath(absolute_path)
     }
+    else
+    {
+      absolute_path = path
+    }
 
+    headers[[i]]$Min.Z = NA_real_
+    headers[[i]]$Max.Z = NA_real_
     headers[[i]]$filename = absolute_path
 
     wkt = feature$properties[["proj:wkt2"]]
@@ -277,4 +296,13 @@ read_vpc <- function(f)
   }
 
   return (headers)
+}
+
+is_absolute <- function(path)
+{
+  if (.Platform$OS.type == "windows") {
+    grepl("^[a-zA-Z]:\\\\|^\\\\", path)  # Absolute paths start with "C:\" or "\\" on Windows
+  } else {
+    substr(path, 1, 1) == "/"  # Absolute paths start with "/" on Unix-like systems
+  }
 }

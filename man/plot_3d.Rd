@@ -6,6 +6,7 @@
 \alias{add_dtm3d}
 \alias{add_treetops3d}
 \alias{add_flightlines3d}
+\alias{add_circle3d}
 \title{Add a spatial object to a point cloud scene}
 \usage{
 plot_dtm3d(dtm, bg = "black", clear_artifacts = TRUE, ...)
@@ -15,6 +16,8 @@ add_dtm3d(x, dtm, ...)
 add_treetops3d(x, ttops, z = "Z", ...)
 
 add_flightlines3d(x, flightlines, z = "Z", ...)
+
+add_circle3d(x, center_x, center_y, radius, height)
 }
 \arguments{
 \item{dtm}{An object of the class `RasterLayer` or `stars` or `SpatRaster`}
@@ -38,6 +41,8 @@ their coordinates. The drawback is that the objects are not plotted at their act
 flightlines. Only for XY geometries Ignored if the input have XYZ geometries}
 
 \item{flightlines}{A `SpatialPointsDataFrame` or `sf` that contains flightlines coordinates.}
+
+\item{center_x, center_y, radius, height}{horizontal circle parameters}
 }
 \description{
 Add a raster (`raster`, `stars` `terra`) object that represents a digital terrain model or a

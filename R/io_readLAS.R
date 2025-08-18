@@ -4,14 +4,13 @@
 #' once the returned LAS object is considered as one LAS file. The optional parameters enable the user
 #' to save a substantial amount of memory by choosing to load only the attributes or points of interest.
 #' LAS formats 1.0 to 1.4 are supported. Point Data Record Format 0 to 10 are supported.\cr\cr
-#' `readLAS` is the original function and always works. Using one of the `read*LAS` functions
+#' `readLAS` is the original function and always works. Using one of the `readALS` or `readTLS` functions
 #' adds information to the returned object to register a point-cloud type. Registering the correct point
-#' type **may** improve the performance of some functions by enabling users to select an appropriate spatial index.
+#' type improves the performance of some functions by enabling users to select an appropriate spatial index.
 #' See \link[=lidR-spatial-index]{spatial indexing}. Notice that by legacy and for backwards-compatibility reasons,
-#' `readLAS()` and `readALSLAS()` are equivalent because lidR was originally designed for ALS and thus the
+#' `readLAS()` and `readALS()` are equivalent because lidR was originally designed for ALS and thus the
 #' original function `readLAS()` was (supposedly) used for ALS. Reading a TLS dataset with `readLAS()` instead
-#' of `readTLSLAS()` is perfectly valid and performs similarly to versions `<= 3.0.0`, with neither
-#' performance degradation nor improvements.
+#' of `readTLS()` is perfectly valid but less powerful.
 #'
 #'
 #' **Select:** the 'select' argument specifies the data that will actually be loaded. For example,
@@ -57,7 +56,7 @@ readLAS = function(files, select = "*", filter = "")
 {
   if (filter == "-h" | filter == "-help")
   {
-    rlas:::lasfilterusage()
+    rlas::help_filter()
     return(invisible())
   }
 
@@ -241,9 +240,9 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
   }
 
   if (utils::packageVersion("rlas") >= "1.8.0") {
-    data <- rlas:::stream.las(ifiles, ofile, select, filter, geom)
+    data <- rlas::read_and_write.las(ifiles, ofile, select, filter, geom)
   } else {
-    data <- rlas:::stream.las(ifiles, ofile, select, filter, filter_wkt)
+    data <- rlas::read_and_write.las(ifiles, ofile, select, filter, filter_wkt)
   }
 
   if (is.null(data))
@@ -276,5 +275,5 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
     }
   }
 
-  return(LAS(data, header, check = TRUE, index = LIDRDEFAULTINDEX, no_attr_name_check = TRUE))
+  return(LAS(data, header, check = TRUE, index = NULL, no_attr_name_check = TRUE))
 }

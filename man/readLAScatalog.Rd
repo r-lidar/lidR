@@ -2,10 +2,8 @@
 % Please edit documentation in R/io_readLAScatalog.R
 \name{readLAScatalog}
 \alias{readLAScatalog}
-\alias{readALSLAScatalog}
-\alias{readTLSLAScatalog}
-\alias{readUAVLAScatalog}
-\alias{readDAPLAScatalog}
+\alias{readALScatalog}
+\alias{readTLScatalog}
 \alias{catalog}
 \title{Create an object of class LAScatalog}
 \usage{
@@ -19,13 +17,9 @@ readLAScatalog(
   ...
 )
 
-readALSLAScatalog(folder, ...)
+readALScatalog(folder, ...)
 
-readTLSLAScatalog(folder, ...)
-
-readUAVLAScatalog(folder, ...)
-
-readDAPLAScatalog(folder, ...)
+readTLScatalog(folder, ...)
 
 catalog(folder, ...)
 }

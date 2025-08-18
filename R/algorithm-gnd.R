@@ -217,7 +217,7 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
 
     las@data[["idx"]] <- 1:npoints(las)
     cloud <- las@data[filter, .(X,Y,Z, idx)]
-    gnd <- RCSF:::R_CSF(cloud, sloop_smooth, class_threshold, cloth_resolution, rigidness, iterations, time_step)
+    gnd <- RCSF::CSF(cloud, sloop_smooth, class_threshold, cloth_resolution, rigidness, iterations, time_step)
     idx <- cloud$idx[gnd]
     return(idx)
   }

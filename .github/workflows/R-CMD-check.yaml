@@ -24,7 +24,7 @@ jobs:
         config:
           - {os: windows-latest, r: 'devel', rglusenull: "true"}
           - {os: windows-latest, r: 'release', rglusenull: "true"}
-          #- {os: macOS-latest, r: 'release', rglusenull: "true"}
+          - {os: macOS-latest, r: 'release', rglusenull: "true"}
           - {os: ubuntu-latest, r: 'release'}
           - {os: ubuntu-latest, r: 'devel'}
 
@@ -46,13 +46,9 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Brew and macOS config
-        if: runner.os == 'macOS'
-        run: |
-          # conflicts with gfortran from r-lib/actions when linking gcc
-          rm '/usr/local/bin/gfortran'
-          brew install gdal proj geos
-          brew install --cask xquartz
+      - name: Install macOS system dependencies
+        if: runner.os == 'macos'
+        run: brew install gdal proj
 
       - name: Query dependencies
         run: |
@@ -63,7 +59,7 @@ jobs:
 
       - name: Cache R packages
         if: runner.os != 'Windows'
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-2-${{ hashFiles('.github/depends.Rds') }}

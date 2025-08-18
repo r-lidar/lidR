@@ -56,7 +56,7 @@ sor = function(k = 10, m = 3, quantile = FALSE)
   f = function(las)
   {
     assert_is_valid_context(LIDRCONTEXTOUT, "sor")
-    dmean <- C_fast_knn_metrics(las, k, 1, getThreads())
+    dmean <- C_knn_distance(las, k, getThreads())
     if (quantile) {
       th <- quantile(dmean, probs = m)
     } else {
@@ -76,7 +76,6 @@ sor = function(k = 10, m = 3, quantile = FALSE)
 #'
 #' This function is made to be used in \link{classify_noise}. It implements an
 #' algorithm for outliers (noise) segmentation based on isolated voxels filter (IVF).
-#' It is similar to \href{https://rapidlasso.de/lasnoise/}{lasnoise from lastools}.
 #' The algorithm finds points that have only a few other points in their surrounding
 #' 3 x 3 x 3 = 27 voxels.
 #'

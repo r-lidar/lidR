@@ -2,9 +2,34 @@
 #include "Progress.h"
 #include "myomp.h"
 #include "SpatialIndex.h"
+#include "nanoflann.hpp"
 #include <limits>
 
 using namespace lidR;
+
+class DataFrameAdaptor
+{
+public:
+  std::vector<Rcpp::NumericVector> coords;
+  size_t dim;
+
+  DataFrameAdaptor(const Rcpp::DataFrame& df, std::vector<std::string> col_names)
+  {
+    dim = col_names.size();
+    coords.reserve(dim);
+    for (const auto& name : col_names)
+      coords.push_back(df[name]);
+  }
+
+  inline size_t kdtree_get_point_count() const { return coords[0].size(); }
+  inline double kdtree_get_pt(const size_t idx, const size_t d) const {
+    return coords[d][idx];
+  }
+  template <class BBOX> bool kdtree_get_bbox(BBOX&) const { return false; }
+};
+
+using KDTree = nanoflann::KDTreeSingleIndexAdaptor<nanoflann::L2_Simple_Adaptor<double, DataFrameAdaptor>, DataFrameAdaptor, 3>;
+
 
 bool pnpoly(NumericMatrix polygon, double x, double y)
 {
@@ -352,8 +377,9 @@ NumericVector LAS::compute_range(DataFrame flightlines)
   // Compute the median sensor elevation then average range for this sensor
   // elevation. This gives a rough idea of the expected range and allows for
   // detecting failure and bad computations
-  double median_z_sensor = Rcpp::median(z);
-  double R_control = mean(median_z_sensor - Z);
+  //double median_z_sensor = Rcpp::median(z);
+  //double R_control = mean(median_z_sensor - Z);
+  double R_control = DBL_MAX;
 
   NumericVector R(npoints);
 
@@ -1546,6 +1572,112 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
 }
 #endif
 
+DataFrame LAS::fast_knn_eigen_decomposition(int k, bool get_coef)
+{
+  int n = npoints;
+
+  NumericVector eigen_largest(n);
+  NumericVector eigen_medium(n);
+  NumericVector eigen_smallest(n);
+  NumericVector coeff0;
+  NumericVector coeff1;
+  NumericVector coeff2;
+  NumericVector coeff3;
+  NumericVector coeff4;
+  NumericVector coeff5;
+  NumericVector coeff6;
+  NumericVector coeff7;
+  NumericVector coeff8;
+
+  if (get_coef)
+  {
+    coeff0 = NumericVector(n);
+    coeff1 = NumericVector(n);
+    coeff2 = NumericVector(n);
+    coeff3 = NumericVector(n);
+    coeff4 = NumericVector(n);
+    coeff5 = NumericVector(n);
+    coeff6 = NumericVector(n);
+    coeff7 = NumericVector(n);
+    coeff8 = NumericVector(n);
+  }
+
+  bool abort = false;
+
+  DataFrame df = as<DataFrame>(las.slot("data"));
+  DataFrameAdaptor adaptor(df, {"X", "Y", "Z"});
+  KDTree tree = KDTree(3, adaptor, nanoflann::KDTreeSingleIndexAdaptorParams(10));
+  tree.buildIndex();
+
+  Progress pb(npoints, "Eigen decomposition: ");
+
+  #pragma omp parallel for num_threads(ncpu)
+  for (unsigned int i = 0 ; i < npoints ; i++)
+  {
+    if (abort) continue;
+    if (pb.check_interrupt()) abort = true;
+    pb.increment();
+
+    std::vector<uint32_t> indices(k);
+    std::vector<KDTree::DistanceType> dists(k);
+    double p[3] = { X[i], Y[i], Z[i] };
+    tree.knnSearch(p, k, indices.data(), dists.data());
+
+
+    arma::mat A(k,3);
+    arma::mat coeff;  // Principle component matrix
+    arma::mat score;
+    arma::vec latent; // Eigenvalues in descending order
+
+    for (unsigned int j = 0 ; j < indices.size() ; j++)
+    {
+      A(j,0) = X[indices[j]];
+      A(j,1) = Y[indices[j]];
+      A(j,2) = Z[indices[j]];
+    }
+
+    arma::princomp(coeff, score, latent, A);
+
+    eigen_largest[i] = latent[0];
+    eigen_medium[i] = latent[1];
+    eigen_smallest[i] = latent[2];
+
+    if (get_coef)
+    {
+      coeff0[i] = coeff(0,0);
+      coeff1[i] = coeff(0,1);
+      coeff2[i] = coeff(0,2);
+      coeff3[i] = coeff(1,0);
+      coeff4[i] = coeff(1,1);
+      coeff5[i] = coeff(1,2);
+      coeff6[i] = coeff(2,0);
+      coeff7[i] = coeff(2,1);
+      coeff8[i] = coeff(2,2);
+    }
+  }
+
+  DataFrame out;
+  out.push_back(eigen_largest, "eigen_largest");
+  out.push_back(eigen_medium, "eigen_medium");
+  out.push_back(eigen_smallest, "eigen_smallest");
+
+  if (get_coef)
+  {
+    out.push_back(coeff0, "coeff00");
+    out.push_back(coeff1, "coeff01");
+    out.push_back(coeff2, "coeff02");
+    out.push_back(coeff3, "coeff10");
+    out.push_back(coeff4, "coeff11");
+    out.push_back(coeff5, "coeff12");
+    out.push_back(coeff6, "coeff20");
+    out.push_back(coeff7, "coeff21");
+    out.push_back(coeff8, "coeff22");
+  }
+
+  return out;
+}
+
+
 DataFrame LAS::eigen_decomposition(int k, double r, bool get_coef)
 {
   int n = std::count(skip.begin(), skip.end(), true);
@@ -1695,9 +1827,9 @@ DataFrame LAS::eigen_decomposition(int k, double r, bool get_coef)
 }
 
 
-NumericVector LAS::fast_knn_metrics(unsigned int k, IntegerVector metrics)
+NumericVector LAS::knn_distance(unsigned int k)
 {
-  Progress pb(npoints, "Metrics computation: ");
+  Progress pb(npoints, "knn distance: ");
 
   bool abort = false;
 
@@ -1725,10 +1857,7 @@ NumericVector LAS::fast_knn_metrics(unsigned int k, IntegerVector metrics)
       dmean += d;
     }
 
-    #pragma omp critical
-    {
-      out(i) = dmean/(double)(k-1);
-    }
+    out(i) = dmean/(double)(k-1);
   }
 
   if (abort) throw Rcpp::internal::InterruptedException();

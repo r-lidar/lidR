@@ -6,6 +6,7 @@
 \alias{normalize_height}
 \alias{unnormalize_height}
 \alias{-,LAS,ANY-method}
+\alias{height_above_ground}
 \alias{normalize_intensity}
 \title{Normalize point cloud}
 \usage{
@@ -14,6 +15,8 @@ normalize_height(las, algorithm, use_class = c(2L, 9L), dtm = NULL, ...)
 unnormalize_height(las)
 
 \S4method{-}{LAS,ANY}(e1, e2)
+
+height_above_ground(las, ...)
 
 normalize_intensity(las, algorithm)
 }
@@ -32,9 +35,7 @@ different than providing a DTM in \code{algorithm}. If \code{algorithm = dtm} th
 If \code{algorithm = tin()} and \code{dtm = raster} the ground points are not used and the DTM is
 interpolated as if it were made of regularly-spaced ground points.}
 
-\item{...}{\code{normalized_height()} supports \code{add_lasattribute= TRUE} to add the elevation above
-see level as an extra byte attribute and \code{ Wdegenerated = FALSE} to silence the warning about
-degenerated ground points.}
+\item{...}{passed to \code{normalized_height()}}
 
 \item{e1}{a LAS object}
 
@@ -54,6 +55,8 @@ the use of \link{unnormalize_height} to restore original point elevations.}
 \item{normalize_intensity}{Normalize intensity values using multiple methods. The attribute 'Intensity'
 records the normalized intensity. An extra attribute named 'RawIntensity' records the original
 intensities.}
+\item{height_above_ground}{instead of normalizing the point cloud, records the height above ground (HAG)
+in a new attribute named 'hag'}
 }
 }
 \section{Non-supported LAScatalog options}{

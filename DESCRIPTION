@@ -2,9 +2,9 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 4.1.3
+Version: 4.2.1
 Authors@R: c(
-    person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre", "cph")),
+    person("Jean-Romain", "Roussel", email = "info@r-lidar.com", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
     person("Florian", "De Boissieu", email = "", role = ("ctb"), comment = "Fixed bugs and improved catalog features"),
     person("Andrew", "Sánchez Meador", email = "", role = ("ctb"), comment = "Implemented wing2015() for segment_snags()"),
@@ -32,7 +32,7 @@ Imports:
     lazyeval,
     Rcpp (>= 1.0.3),
     rgl,
-    rlas (>= 1.5.0),
+    rlas (>= 1.8.2),
     sf,
     stats,
     stars,
@@ -55,8 +55,125 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
-RoxygenNote: 7.3.1
-LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
+RoxygenNote: 7.3.2
+LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo,Rnanoflann
 Encoding: UTF-8
 ByteCompile: true
 VignetteBuilder: knitr
+Biarch: true
+Collate: 
+    'Class-LAS.R'
+    'Class-LAScatalog.R'
+    'Class-LAScluster.R'
+    'RcppExports.R'
+    'add_attribute.R'
+    'algorithm-dec.R'
+    'algorithm-dsm.R'
+    'algorithm-dtm.R'
+    'algorithm-gnd.R'
+    'algorithm-itd.R'
+    'algorithm-its.R'
+    'algorithm-noi.R'
+    'algorithm-out.R'
+    'algorithm-shp.R'
+    'algorithm-snag.R'
+    'algorithm-trk.R'
+    'backward_compatibility.R'
+    'catalog_apply.R'
+    'catalog_boundaries.R'
+    'catalog_fakerun.R'
+    'catalog_intersect.R'
+    'catalog_laxindex.R'
+    'catalog_overlaps.R'
+    'catalog_retile.R'
+    'catalog_select.R'
+    'classify.R'
+    'classify_ground.R'
+    'classify_noise.R'
+    'classify_poi.R'
+    'clip_roi.R'
+    'connected_components.R'
+    'decimate_points.R'
+    'io_readLAScatalog.R'
+    'io_readXLAS.R'
+    'deprecated.R'
+    'doc-drivers.R'
+    'doc-lidR.R'
+    'doc-parallelism.R'
+    'doc-spatialindex.R'
+    'engine.R'
+    'engine_apply.R'
+    'engine_chunks.R'
+    'engine_crop.R'
+    'engine_index.R'
+    'engine_merge.R'
+    'engine_options.R'
+    'engine_write.R'
+    'fasterize.R'
+    'filters.R'
+    'fit_shapes.R'
+    'fullwaveform.R'
+    'generate_las.R'
+    'io_readLAS.R'
+    'io_writeLAS.R'
+    'knn.R'
+    'las_check.R'
+    'las_compression.R'
+    'las_tools.R'
+    'locate_localmaxima.R'
+    'locate_trees.R'
+    'merge_spatial.R'
+    'methods-LAS.R'
+    'methods-LAScatalog.R'
+    'methods-LAScluster.R'
+    'methods-LASheader.R'
+    'metrics_cloud.R'
+    'metrics_crowns.R'
+    'metrics_hexagons.R'
+    'metrics_pixels.R'
+    'metrics_plot.R'
+    'metrics_point.R'
+    'metrics_polygon.R'
+    'metrics_stdmetrics.R'
+    'metrics_template.R'
+    'metrics_voxels.R'
+    'normalize.R'
+    'normalize_height.R'
+    'normalize_intensity.R'
+    'plot.R'
+    'plot.s3.R'
+    'plugins.R'
+    'print.R'
+    'rasterize.R'
+    'rasterize_canopy.R'
+    'rasterize_density.R'
+    'rasterize_terrain.R'
+    'retrieve_info.R'
+    'segment.R'
+    'segment_shapes.R'
+    'segment_snags.R'
+    'segment_trees.R'
+    'smooth_height.R'
+    'st_area.R'
+    'st_as_sf.R'
+    'st_bbox.R'
+    'st_coordinates.R'
+    'st_crs.R'
+    'st_hull.R'
+    'st_misc.R'
+    'st_transform.R'
+    'track_sensor.R'
+    'utils_assertive.R'
+    'utils_base.R'
+    'utils_chm.R'
+    'utils_colors.R'
+    'utils_constant.R'
+    'utils_delaunay.R'
+    'utils_geometry.R'
+    'utils_is.R'
+    'utils_misc.R'
+    'utils_raster.R'
+    'utils_spatial_index.R'
+    'utils_threads.R'
+    'voxelize_points.R'
+    'zzz.R'

@@ -198,7 +198,7 @@ las_check(las)
 
 ## Display a LAS object
 
-lidR provides a simple `plot` function to plot a LAS object in 3D. It is based on the `rgl` package. The `rgl` package is amazing but has some problems working with large point clouds. We are currently developing [our own viewer](https://github.com/Jean-Romain/lidRviewer) to overcome this issue. This viewer is fully compatible with `lidR` but still in heavy development.
+lidR provides a simple `plot` function to plot a LAS object in 3D. It is based on the `rgl` package. The `rgl` package is amazing but has some problems working with large point clouds. We are currently developing [our own viewer](https://github.com/r-lidar/lidRviewer) to overcome this issue. This viewer is fully compatible with `lidR` but still in heavy development.
 
 ```r
 plot(las)

@@ -6,27 +6,17 @@ test_that("read*LAS work", {
 
   las = readLAS(LASfile)
 
-  expect_equal(las@index$sensor, 0L)
+  expect_equal(las@index$sensor, lidR:::ALSLAS)
   expect_equal(las@index$index, 0L)
 
   las = readALSLAS(LASfile)
 
-  expect_equal(las@index$sensor, 1L)
+  expect_equal(las@index$sensor, lidR:::ALSLAS)
   expect_equal(las@index$index, 0L)
 
   las = readTLSLAS(LASfile)
 
-  expect_equal(las@index$sensor, 2L)
-  expect_equal(las@index$index, 0L)
-
-  las = readUAVLAS(LASfile)
-
-  expect_equal(las@index$sensor, 3L)
-  expect_equal(las@index$index, 0L)
-
-  las = readDAPLAS(LASfile)
-
-  expect_equal(las@index$sensor, 4L)
+  expect_equal(las@index$sensor, lidR:::TLSLAS)
   expect_equal(las@index$index, 0L)
 })
 
@@ -34,27 +24,17 @@ test_that("read*LAScatalog work", {
 
   las = readLAScatalog(LASfile)
 
-  expect_equal(las@index$sensor, 0L)
+  expect_equal(las@index$sensor, lidR:::ALSLAS)
   expect_equal(las@index$index, 0L)
 
   las = readALSLAScatalog(LASfile)
 
-  expect_equal(las@index$sensor, 1L)
+  expect_equal(las@index$sensor, lidR:::ALSLAS)
   expect_equal(las@index$index, 0L)
 
   las = readTLSLAScatalog(LASfile)
 
-  expect_equal(las@index$sensor, 2L)
-  expect_equal(las@index$index, 0L)
-
-  las = readUAVLAScatalog(LASfile)
-
-  expect_equal(las@index$sensor, 3L)
-  expect_equal(las@index$index, 0L)
-
-  las = readDAPLAScatalog(LASfile)
-
-  expect_equal(las@index$sensor, 4L)
+  expect_equal(las@index$sensor, lidR:::TLSLAS)
   expect_equal(las@index$index, 0L)
 })
 
@@ -81,15 +61,15 @@ test_that("sensor works", {
 
   las = readLAS(LASfile)
 
-  expect_equal(sensor(las), 0L)
+  expect_equal(sensor(las),lidR:::ALSLAS)
 
-  sensor(las) <- 2
+  sensor(las) <- lidR:::TLSLAS
 
-  expect_equal(sensor(las), 2L)
+  expect_equal(sensor(las), lidR:::TLSLAS)
 
   sensor(las) <- "tls"
 
-  expect_equal(sensor(las), 2L)
+  expect_equal(sensor(las), lidR:::TLSLAS)
   expect_equal(sensor(las, h = TRUE), "TLS")
 
   expect_error(sensor(las) <- "plop")

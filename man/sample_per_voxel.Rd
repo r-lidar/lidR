@@ -3,19 +3,33 @@
 \name{sample_per_voxel}
 \alias{sample_per_voxel}
 \alias{random_per_voxel}
+\alias{barycenter_per_voxel}
+\alias{lowest_attribute_per_voxel}
+\alias{highest_attribute_per_voxel}
 \title{Point Cloud Decimation Algorithm}
 \usage{
 random_per_voxel(res = 1, n = 1)
+
+barycenter_per_voxel(res = 1)
+
+lowest_attribute_per_voxel(res, attribute = "Z")
+
+highest_attribute_per_voxel(res, attribute = "Z")
 }
 \arguments{
 \item{res}{numeric. The resolution of the voxel grid used to filter the point cloud}
 
 \item{n}{integer. The number of points to select}
+
+\item{attribute}{string name of an attribute (such as 'intensity')}
 }
 \description{
-This functions is made to be used in \link{decimate_points}. It implements an algorithm that
-creates a 3D grid with a given resolution and filters the point cloud by randomly selecting
-n points within each voxel
+These functions are made to be used in \link{decimate_points}. They implements algorithm that
+creates a 3D grid with a given resolution and filters the point cloud by selecting
+points of interest within each voxel. `random_per_voxel()` sample random points. `barycenter_per_voxel()`
+samples the point that is the closest to the barycenter of the points within a given voxel.
+`[lowest|highest]_attribute_per_voxel()` sample respectively the point that have the highest/lowest
+attribute (e.g. Intensity) per voxel.
 }
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
