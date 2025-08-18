@@ -50,6 +50,7 @@ class LAS
     NumericVector knn_distance(unsigned int k);
     NumericVector interpolate_knnidw(NumericVector x, NumericVector y, int k, double p, double rmax);
     DataFrame eigen_decomposition(int k, double r, bool get_coef);
+    DataFrame fast_knn_eigen_decomposition(int k, bool get_coef);
 
   private:
     static bool coplanar (arma::vec& latent, arma::mat& coeff, NumericVector& th) { return latent[1] > th[0]*latent[2] && th[1]*latent[1] > latent[0]; }

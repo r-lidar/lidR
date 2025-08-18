@@ -56,7 +56,7 @@ Suggests:
     knitr,
     rmarkdown
 RoxygenNote: 7.3.2
-LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
+LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo,Rnanoflann
 Encoding: UTF-8
 ByteCompile: true
 VignetteBuilder: knitr

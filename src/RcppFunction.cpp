@@ -236,6 +236,13 @@ DataFrame C_eigen_metrics(S4 las, int k, double r, bool coeffs, LogicalVector fi
   return pt.eigen_decomposition(k, r, coeffs);
 }
 
+//[[Rcpp::export(rng = false)]]
+DataFrame C_fast_knn_eigen_decomposition(S4 las, int k, bool coeffs, int ncpu)
+{
+  LAS pt(las, ncpu);
+  return pt.fast_knn_eigen_decomposition(k, coeffs);
+}
+
 
 #include "lidR/Grid3D.h"
 
