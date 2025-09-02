@@ -1,8 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v4.2.2 (Release date: 2025-06-02)
+## lidR v4.2.2 (Release date: ...)
 
 - Use `nanoflann` for knn computation. Numerous functions are faster.
+- Fix #824 `readLAScatalog` with a VPC files parse absolute paths with "/" instead of "\\" properly.
 
 ## lidR v4.2.1 (Release date: 2025-06-02)
 

@@ -301,7 +301,7 @@ read_vpc <- function(f)
 is_absolute <- function(path)
 {
   if (.Platform$OS.type == "windows") {
-    grepl("^[a-zA-Z]:\\\\|^\\\\", path)  # Absolute paths start with "C:\" or "\\" on Windows
+    grepl("^(?:[A-Za-z]:[\\\\/]|\\\\\\\\)", path)  # Absolute paths start with "C:\" or "\\" on Windows
   } else {
     substr(path, 1, 1) == "/"  # Absolute paths start with "/" on Unix-like systems
   }
