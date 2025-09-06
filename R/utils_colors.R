@@ -86,23 +86,26 @@ pastel.colors = function(n)
 
 lasclass.colors = function(...)
 {
-  return(c("lightgrey",   # 0 never classifiied
-           "lightgray",   # 1 unclassified
-           "blue",        # 2 ground
-           "limegreen",   # 3 low vegetation
-           "forestgreen", # 4 medium vegetation
-           "darkgreen",   # 5 high vegetation
-           "red",         # 6 building
-           "yellow",      # 7 low point (noise)
-           "yellow",      # 8 reserved
-           "#6495ED",     # 9 water
-           "yellow",      # 10 rail
-           "gray20",      # 11 Road surface
-           "yellow",      # 12 reserved
-           "pink",        # 13 wire
-           "pink",        # 14 wire
-           "purple",      # 15 transmission tower
-           "pink",        # 16 Wire connector
-           "orange",      # 17 bridge deck
-           "yellow"))     # +
+  pal = c("lightgrey",   # 0 never classifiied
+          "lightgray",   # 1 unclassified
+          "blue",        # 2 ground
+          "limegreen",   # 3 low vegetation
+          "forestgreen", # 4 medium vegetation
+          "darkgreen",   # 5 high vegetation
+          "red",         # 6 building
+          "yellow",      # 7 low point (noise)
+          "yellow",      # 8 reserved
+          "#6495ED",     # 9 water
+          "yellow",      # 10 rail
+          "gray20",      # 11 Road surface
+          "yellow",      # 12 reserved
+          "pink",        # 13 wire
+          "pink",        # 14 wire
+          "purple",      # 15 transmission tower
+          "pink",        # 16 Wire connector
+          "orange",      # 17 bridge deck
+          "yellow")
+
+  hex <- rgb(t(col2rgb(pal)), maxColorValue = 255)
+  return(hex)
 }

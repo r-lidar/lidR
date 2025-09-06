@@ -4,6 +4,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 - Use `nanoflann` for knn computation. Numerous functions are faster.
 - Fix #824 `readLAScatalog` with a VPC files parse absolute paths with "/" instead of "\\" properly.
+- Fix #825 `plot()` with `color = "Classification"`is now as fast as plotting other attributes 
 
 ## lidR v4.2.1 (Release date: 2025-06-02)
 
