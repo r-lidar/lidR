@@ -43,6 +43,7 @@ List cpp_knn(S4 data, int k, int ncpu)
   tree.buildIndex();
 
   int npoints = X.size();
+  k = std::min(k, npoints);
 
   IntegerMatrix knn_idx(npoints, k);
   NumericMatrix knn_dist(npoints, k);
@@ -92,6 +93,7 @@ List cpp_knnx(S4 data, S4 query, int k, int ncpu)
   NumericVector Z = tmp["Z"];
 
   int npoints = X.size();
+  k = std::min(k, npoints);
 
   IntegerMatrix knn_idx(npoints, k);
   NumericMatrix knn_dist(npoints, k);

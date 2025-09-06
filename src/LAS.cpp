@@ -1434,7 +1434,6 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
       // Query the knn neighborhood
       PointXYZ p(X[i], Y[i], Z[i]);
       tree.knn(p, k, pts);
-
       // No need to reallocate the memory because it is always of size k
     }
     else
@@ -1572,9 +1571,21 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
 }
 #endif
 
-DataFrame LAS::fast_knn_eigen_decomposition(int k, bool get_coef)
+DataFrame LAS::fast_eigen_decomposition(int k, double r, bool get_coef)
 {
   int n = npoints;
+  k = std::min(k, n);
+  double rsq = r*r;
+
+  int mode = 0;
+  if (k == 0 && r > 0)
+    mode = 1;
+  else if (k > 0 && r == 0)
+    mode = 0;
+  else if (k > 0 && r > 0)
+    mode = 2;
+  else
+    Rcpp::stop("Internal error: invalid argument k or r");
 
   NumericVector eigen_largest(n);
   NumericVector eigen_medium(n);
@@ -1618,18 +1629,55 @@ DataFrame LAS::fast_knn_eigen_decomposition(int k, bool get_coef)
     if (pb.check_interrupt()) abort = true;
     pb.increment();
 
-    std::vector<uint32_t> indices(k);
-    std::vector<KDTree::DistanceType> dists(k);
     double p[3] = { X[i], Y[i], Z[i] };
-    tree.knnSearch(p, k, indices.data(), dists.data());
 
+    std::vector<uint32_t> indices;
+    std::vector<KDTree::DistanceType> dists;
 
-    arma::mat A(k,3);
+    switch (mode)
+    {
+      case 2:
+      {
+        // ---- KNN with radius cap ----
+        std::vector<uint32_t> tmp_idx(k);
+        std::vector<KDTree::DistanceType> tmp_dist(k);
+
+        size_t found = tree.knnSearch(p, k, tmp_idx.data(), tmp_dist.data());
+        for (size_t j = 0; j < found; j++)
+        {
+          if (tmp_dist[j] <= rsq)
+            indices.push_back(tmp_idx[j]);
+        }
+        break;
+      }
+      case 0:
+      {
+        // ---- Pure KNN ----
+        indices.resize(k);
+        dists.resize(k);
+        tree.knnSearch(p, k, indices.data(), dists.data());
+        break;
+      }
+      case 1:
+      {
+        // ---- Pure Radius ----
+        std::vector<nanoflann::ResultItem<uint32_t, KDTree::DistanceType>> matches;
+        const size_t found = tree.radiusSearch(p, rsq+EPSILON, matches);
+
+        for (const auto& m : matches)
+          indices.push_back(m.first);
+
+        break;
+      }
+    }
+
+    // build matrix A
+    arma::mat A(indices.size(), 3);
     arma::mat coeff;  // Principle component matrix
     arma::mat score;
     arma::vec latent; // Eigenvalues in descending order
 
-    for (unsigned int j = 0 ; j < indices.size() ; j++)
+    for (size_t j = 0; j < indices.size(); j++)
     {
       A(j,0) = X[indices[j]];
       A(j,1) = Y[indices[j]];
