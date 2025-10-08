@@ -400,13 +400,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_connected_component
-IntegerVector C_connected_component(S4 las, double res);
-RcppExport SEXP _lidR_C_connected_component(SEXP lasSEXP, SEXP resSEXP) {
+IntegerVector C_connected_component(S4 las, double res, int connectivity);
+RcppExport SEXP _lidR_C_connected_component(SEXP lasSEXP, SEXP resSEXP, SEXP connectivitySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< S4 >::type las(lasSEXP);
     Rcpp::traits::input_parameter< double >::type res(resSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_connected_component(las, res));
+    Rcpp::traits::input_parameter< int >::type connectivity(connectivitySEXP);
+    rcpp_result_gen = Rcpp::wrap(C_connected_component(las, res, connectivity));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -705,7 +706,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_check_gpstime", (DL_FUNC) &_lidR_C_check_gpstime, 2},
     {"_lidR_C_eigen_metrics", (DL_FUNC) &_lidR_C_eigen_metrics, 6},
     {"_lidR_C_fast_eigen_decomposition", (DL_FUNC) &_lidR_C_fast_eigen_decomposition, 5},
-    {"_lidR_C_connected_component", (DL_FUNC) &_lidR_C_connected_component, 2},
+    {"_lidR_C_connected_component", (DL_FUNC) &_lidR_C_connected_component, 3},
     {"_lidR_C_voxel_id", (DL_FUNC) &_lidR_C_voxel_id, 2},
     {"_lidR_fast_table", (DL_FUNC) &_lidR_fast_table, 2},
     {"_lidR_fast_countequal", (DL_FUNC) &_lidR_fast_countequal, 2},

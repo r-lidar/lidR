@@ -25,7 +25,7 @@ public:
   int npoints;
 
 public:
-  Rcpp::IntegerVector connected_components();
+  Rcpp::IntegerVector connected_components(int connectivity);
   int64_t get_cell(double, double, double);
   int64_t get_cell_id(int64_t, int64_t, int64_t);
 
@@ -35,7 +35,7 @@ protected:
   Rcpp::NumericVector Z;
 
 protected:
-  void bfs(int64_t, int64_t, int64_t, int, std::unordered_map<int64_t, int>&);
+  void bfs(int64_t, int64_t, int64_t, int, std::unordered_map<int64_t, int>&, int connectivity);
 };
 
 inline Grid3D::Grid3D()
@@ -156,11 +156,29 @@ inline int64_t Grid3D::get_cell_id(int64_t row, int64_t col, int64_t lay)
   return cell;
 }
 
-inline void Grid3D::bfs(int64_t start_x, int64_t start_y, int64_t start_z, int label_id, std::unordered_map<int64_t, int>& label_grid)
+inline void Grid3D::bfs(int64_t start_x, int64_t start_y, int64_t start_z,
+                        int label_id, std::unordered_map<int64_t, int>& label_grid,
+                        int connectivity = 6)
 {
-  const int dx[] = {1, -1, 0, 0, 0, 0};
-  const int dy[] = {0, 0, 1, -1, 0, 0};
-  const int dz[] = {0, 0, 0, 0, 1, -1};
+  // Define neighbor offsets based on connectivity
+  std::vector<std::tuple<int,int,int>> neighbors;
+
+  for (int dx = -1; dx <= 1; ++dx) {
+    for (int dy = -1; dy <= 1; ++dy) {
+      for (int dz = -1; dz <= 1; ++dz) {
+        if (dx == 0 && dy == 0 && dz == 0) continue; // skip self
+
+        int sum_abs = std::abs(dx) + std::abs(dy) + std::abs(dz);
+
+        if ((connectivity == 6 && sum_abs == 1) ||     // face neighbors
+            (connectivity == 18 && sum_abs <= 2) ||    // face + edge neighbors
+            (connectivity == 26))                      // all neighbors
+        {
+          neighbors.emplace_back(dx, dy, dz);
+        }
+      }
+    }
+  }
 
   std::queue<std::tuple<int64_t, int64_t, int64_t>> q;
   q.push(std::make_tuple(start_x, start_y, start_z));
@@ -174,11 +192,11 @@ inline void Grid3D::bfs(int64_t start_x, int64_t start_y, int64_t start_z, int l
     q.pop();
 
     // Check all 6-connected neighbors
-    for (int i = 0; i < 6; ++i)
+    for (auto [dx, dy, dz] : neighbors)
     {
-      int64_t nx = x + dx[i];
-      int64_t ny = y + dy[i];
-      int64_t nz = z + dz[i];
+      int64_t nx = x + dx;
+      int64_t ny = y + dy;
+      int64_t nz = z + dz;
 
       // Ensure the neighbor is within bounds
       if (nx >= 0 && ny >= 0 && nz >= 0 && nx < ncols && ny < nrows && nz < nlayers)
@@ -196,7 +214,7 @@ inline void Grid3D::bfs(int64_t start_x, int64_t start_y, int64_t start_z, int l
   }
 }
 
-inline Rcpp::IntegerVector Grid3D::connected_components()
+inline Rcpp::IntegerVector Grid3D::connected_components(int connectivity)
 {
 
   std::unordered_map<int64_t, int> label_grid;
@@ -222,7 +240,7 @@ inline Rcpp::IntegerVector Grid3D::connected_components()
         // If the voxel is labeled and unlabelled, perform BFS/DFS
         if (label_grid.find(index) != label_grid.end() && label_grid[index] == 0)
         {
-          bfs(x, y, z, label_id, label_grid);
+          bfs(x, y, z, label_id, label_grid, connectivity);
           label_id++;
         }
       }

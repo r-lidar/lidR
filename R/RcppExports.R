@@ -117,8 +117,8 @@ C_fast_eigen_decomposition <- function(las, k, r, coeffs, ncpu) {
     .Call(`_lidR_C_fast_eigen_decomposition`, las, k, r, coeffs, ncpu)
 }
 
-C_connected_component <- function(las, res) {
-    .Call(`_lidR_C_connected_component`, las, res)
+C_connected_component <- function(las, res, connectivity) {
+    .Call(`_lidR_C_connected_component`, las, res, connectivity)
 }
 
 C_voxel_id <- function(las, res) {
