@@ -1,8 +1,7 @@
 #' Connected-Component Labeling
 #'
 #' Assigns an ID to each cluster of connected components in a point cloud. The point cloud is subdivided
-#' into a 3D grid, and a classical [Connected-Component Labeling](https://en.wikipedia.org/wiki/Connected-component_labeling)
-#' algorithm is applied in 3D.
+#' into a 3D grid, and a classical Connected-Component Labeling algorithm is applied in 3D.
 #'
 #' @param las A LAS object representing the point cloud data.
 #' @param res Grid resolution. If two non-empty voxels are contiguous, they are considered part of

@@ -24,6 +24,5 @@ A LAS object with an additional attribute named as specified by \code{name}.
 }
 \description{
 Assigns an ID to each cluster of connected components in a point cloud. The point cloud is subdivided
-into a 3D grid, and a classical \href{https://en.wikipedia.org/wiki/Connected-component_labeling}{Connected-Component Labeling}
-algorithm is applied in 3D.
+into a 3D grid, and a classical Connected-Component Labeling algorithm is applied in 3D.
 }

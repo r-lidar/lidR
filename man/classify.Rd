@@ -49,7 +49,7 @@ are classified \code{class}.}
 \description{
 Classify points that meet some criterion and/or that belong in a region of interest. The
 functions updates the attribute \code{Classification} of the LAS object according to
-\href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{las specifications}
+\href{https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities}{las specifications}
 }
 \details{
 \describe{

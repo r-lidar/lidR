@@ -123,7 +123,7 @@ ctg
 
 A `LAScatalog` contains a `sf` object with `POLYGON` geometries plus some extra slots that store information relative to how the `LAScatalog` will be processed.
 
-The slot `data` of a `LAScatalog` object contains the `sf` object with the most important information read from the header of .las or .laz files. Reading only the header of the file provides an overview of the content of the files very quickly without actually loading the point cloud. The columns of the table are named after the [LAS specification](https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf) version 1.4
+The slot `data` of a `LAScatalog` object contains the `sf` object with the most important information read from the header of .las or .laz files. Reading only the header of the file provides an overview of the content of the files very quickly without actually loading the point cloud. The columns of the table are named after the [LAS specification](https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities) version 1.4
 
 The other slots are well documented in the documentation `help("LAScatalog-class")` so they are not described in this vignette.
 

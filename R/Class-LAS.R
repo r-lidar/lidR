@@ -1,7 +1,7 @@
 #' An S4 class to represent the header of .las or .laz files
 #'
 #' An S4 class to represent the header of .las or .laz files according to the
-#' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications}.
+#' \href{https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities}{LAS file format specifications}.
 #' A `LASheader` object contains a `list` in the slot `@PHB` with
 #' the data read from the Public Header Block, a `list` in the slot `@VLR` with
 #' the data read from the Variable Length Records and a `list` in the slot `EVLR` with the data read
@@ -50,13 +50,12 @@ setMethod("initialize", "LASheader", function(.Object, data = list())
 #' An S4 class to represent a .las or .laz file
 #'
 #' Class LAS is the representation of a las/laz file according to the
-#' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications}.
+#' \href{https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities}{LAS file format specifications}.
 #'
 #' A `LAS` object contains a `data.table` with the data read from a `las/laz` file and
-#' a \link[=LASheader-class]{LASheader} (see the ASPRS documentation for the
-#' \href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS file format}
-#' for more information). Because las files are standardized the table of attributes read from the las/laz file
-#' is also standardized. Columns are named:
+#' a \link[=LASheader-class]{LASheader} (see the ASPRS documentation for the LAS file format for more information).
+#' Because las files are standardized the table of attributes read from the las/laz file is also standardized.
+#' Columns are named:
 #' \itemize{
 #' \item{`X`, `Y`, `Z` (numeric)}
 #' \item{`gpstime` (numeric)}
@@ -73,10 +72,8 @@ setMethod("initialize", "LASheader", function(.Object, data = list())
 #' }
 #'
 #' @slot crs Object of class \link[sf:st_crs]{crs} from sf.
-#' @slot data Object of class \link[data.table:data.table]{data.table}. Point cloud data according to the
-#' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}
-#' @slot header Object of class \link[=LASheader-class]{LASheader}. LAS file header according to the
-#' \href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format}
+#' @slot data Object of class \link[data.table:data.table]{data.table}. Point cloud data according to the LAS file format.
+#' @slot header Object of class \link[=LASheader-class]{LASheader}. LAS file header according to the LAS file format.
 #' @slot index list. See \link[=lidR-spatial-index]{spatial indexing}.
 #'
 #' @export

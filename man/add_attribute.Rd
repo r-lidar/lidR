@@ -56,7 +56,7 @@ An object of class \link[=LAS-class]{LAS}
 }
 \description{
 A \link[=LAS-class]{LAS} object represents a las file in R. According to the
-\href{https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf}{LAS specifications}
+\href{https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities}{LAS specifications}
 a las file contains a core of defined attributes, such as XYZ coordinates, intensity, return number,
 and so on, for each point. It is possible to add supplementary attributes.
 }

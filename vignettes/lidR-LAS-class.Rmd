@@ -33,7 +33,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 library(lidR)
 ```
 
-A LAS class is a representation in R of a las file that aims to respect as closely as possible the official [LAS specification](https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf) that describes the file format. "As closely as possible" means that, due to R internal limitations, it is not possible to represent a las file exactly as it should be represented. Additionally, some aspects of the las format specifications are not supported in lidR. Still, the contents of a `LAS` object must reflect the fact that it is a representation of a standardized format, so some restrictions are imposed on users.
+A LAS class is a representation in R of a las file that aims to respect as closely as possible the official [LAS specification](https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities) that describes the file format. "As closely as possible" means that, due to R internal limitations, it is not possible to represent a las file exactly as it should be represented. Additionally, some aspects of the las format specifications are not supported in lidR. Still, the contents of a `LAS` object must reflect the fact that it is a representation of a standardized format, so some restrictions are imposed on users.
 
 ## Build a LAS object reading a las file
 
