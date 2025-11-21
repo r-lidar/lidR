@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v4.2.3 (Release date: ...)
+
+- Fix #831 numerical accuracy issue in 3D grid partition.
+
 ## lidR v4.2.2 (Release date: 2025-11-04)
 
 - Use `nanoflann` for knn computation. Numerous functions are faster.

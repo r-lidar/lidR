@@ -91,23 +91,16 @@ inline Grid3D::Grid3D(const Rcpp::S4 las, double res)
     if (z[i] > zmax) zmax = z[i];
   }
 
-  xmin = ROUNDANY(xmin - 0.5 * xres, xres);
-  ymin = ROUNDANY(ymin - 0.5 * yres, yres);
-  zmin = ROUNDANY(zmin - 0.5 * zres, zres);
-  xmax = ROUNDANY(xmax + 0.5 * xres, xres);
-  ymax = ROUNDANY(ymax + 0.5 * yres, yres);
-  zmax = ROUNDANY(zmax + 0.5 * zres, zres);
+  xmin = std::floor(xmin / xres) * xres;
+  xmax = std::ceil (xmax / xres) * xres;
+  ymin = std::floor(ymin / yres) * yres;
+  ymax = std::ceil (ymax / yres) * yres;
+  zmin = std::floor(zmin / zres) * zres;
+  zmax = std::ceil (zmax / zres) * zres;
 
-  xmin -= xres;
-  xmax += xres;
-  ymin -= yres;
-  ymax += yres;
-  zmin -= zres;
-  zmax += zres;
-
-  ncols   = static_cast<int64_t>((xmax - xmin) / xres);
-  nrows   = static_cast<int64_t>((ymax - ymin) / yres);
-  nlayers = static_cast<int64_t>((zmax - zmin) / zres);
+  ncols   = (int64_t)std::floor((xmax - xmin) / xres) + 1;
+  nrows   = (int64_t)std::floor((ymax - ymin) / yres) + 1;
+  nlayers = (int64_t)std::floor((zmax - zmin) / zres) + 1;
 
   uint64_t max_cells =
     static_cast<uint64_t>(ncols) *
@@ -137,11 +130,12 @@ inline int64_t Grid3D::get_cell(double x, double y, double z)
   }
 
   int64_t col = std::floor((x - xmin) / xres);
-  int64_t row = std::floor((y - ymin) / yres); // Fixed formula for row
+  int64_t row = std::floor((y - ymin) / yres);
   int64_t lay = std::floor((z - zmin) / zres);
 
   if (col < 0 || col >= ncols || row < 0 || row >= nrows || lay < 0 || lay >= nlayers)
   {
+    Rcpp::Rcout << col << row << lay << std::endl;
     Rcpp::stop("Internal error in spatial index: indices out of range.");
   }
 
