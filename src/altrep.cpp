@@ -28,5 +28,5 @@ SEXP altrep_full_class(SEXP x) {
   return Rcpp::wrap(v);
 #else
   return ATTRIB(ALTREP_CLASS(x));
-#fi
+#endif
 }
