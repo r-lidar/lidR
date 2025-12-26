@@ -6,7 +6,7 @@
 \title{An S4 class to represent the header of .las or .laz files}
 \description{
 An S4 class to represent the header of .las or .laz files according to the
-\href{https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities}{LAS file format specifications}.
+\href{https://community.asprs.org/leadership-restricted/leadership-content/public-documents/standards}{LAS file format specifications}.
 A \code{LASheader} object contains a \code{list} in the slot \verb{@PHB} with
 the data read from the Public Header Block, a \code{list} in the slot \verb{@VLR} with
 the data read from the Variable Length Records and a \code{list} in the slot \code{EVLR} with the data read

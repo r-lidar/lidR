@@ -1,7 +1,7 @@
 #' An S4 class to represent the header of .las or .laz files
 #'
 #' An S4 class to represent the header of .las or .laz files according to the
-#' \href{https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities}{LAS file format specifications}.
+#' \href{https://community.asprs.org/leadership-restricted/leadership-content/public-documents/standards}{LAS file format specifications}.
 #' A `LASheader` object contains a `list` in the slot `@PHB` with
 #' the data read from the Public Header Block, a `list` in the slot `@VLR` with
 #' the data read from the Variable Length Records and a `list` in the slot `EVLR` with the data read
@@ -50,7 +50,7 @@ setMethod("initialize", "LASheader", function(.Object, data = list())
 #' An S4 class to represent a .las or .laz file
 #'
 #' Class LAS is the representation of a las/laz file according to the
-#' \href{https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities}{LAS file format specifications}.
+#' \href{https://community.asprs.org/leadership-restricted/leadership-content/public-documents/standards}{LAS file format specifications}.
 #'
 #' A `LAS` object contains a `data.table` with the data read from a `las/laz` file and
 #' a \link[=LASheader-class]{LASheader} (see the ASPRS documentation for the LAS file format for more information).

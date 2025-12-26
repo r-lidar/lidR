@@ -60,7 +60,7 @@ evlr(las)
 }
 \description{
 Tools to manipulate LAS objects maintaining compliance with
-\href{https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities}{ASPRS specification}
+\href{https://community.asprs.org/leadership-restricted/leadership-content/public-documents/standards}{ASPRS specification}
 }
 \details{
 In the specification of the LAS format the coordinates are expected to be given

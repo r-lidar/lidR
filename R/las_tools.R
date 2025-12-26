@@ -1,7 +1,7 @@
 #' LAS utilities
 #'
 #' Tools to manipulate LAS objects maintaining compliance with
-#' \href{https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities}{ASPRS specification}
+#' \href{https://community.asprs.org/leadership-restricted/leadership-content/public-documents/standards}{ASPRS specification}
 #'
 #' In the specification of the LAS format the coordinates are expected to be given
 #' with a certain precision e.g. 0.01 for a millimeter precision (or millifeet), meaning

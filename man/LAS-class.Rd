@@ -28,7 +28,7 @@ An object of class \code{LAS}
 }
 \description{
 Class LAS is the representation of a las/laz file according to the
-\href{https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities}{LAS file format specifications}.
+\href{https://community.asprs.org/leadership-restricted/leadership-content/public-documents/standards}{LAS file format specifications}.
 }
 \details{
 A \code{LAS} object contains a \code{data.table} with the data read from a \code{las/laz} file and
