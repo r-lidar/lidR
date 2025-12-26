@@ -93,7 +93,7 @@ List cpp_knnx(S4 data, S4 query, int k, int ncpu)
   NumericVector Z = tmp["Z"];
 
   int npoints = X.size();
-  k = std::min(k, temp.nrow());
+  k = std::min(k, static_cast<int>(temp.nrow());
 
   IntegerMatrix knn_idx(npoints, k);
   NumericMatrix knn_dist(npoints, k);
