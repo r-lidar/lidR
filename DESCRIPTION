@@ -38,7 +38,8 @@ Imports:
     stars,
     terra (>= 1.5-17),
     tools,
-    utils
+    utils,
+    parallelly
 Suggests:
     EBImage,
     future,

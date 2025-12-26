@@ -202,7 +202,7 @@ must_disable_openmp = function()
 
   workers    <- getWorkers()
   threads    <- getThreads()
-  cores      <- future::availableCores()
+  cores      <- parallelly::availableCores()
 
   if (is.null(workers))
   {

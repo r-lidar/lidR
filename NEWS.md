@@ -3,6 +3,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 ## lidR v4.2.3 (Release date: ...)
 
 - Fix #831 numerical accuracy issue in 3D grid partition.
+- Other CRAN issues
 
 ## lidR v4.2.2 (Release date: 2025-11-04)
 
