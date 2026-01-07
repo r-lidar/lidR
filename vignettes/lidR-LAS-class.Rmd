@@ -33,7 +33,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 library(lidR)
 ```
 
-A LAS class is a representation in R of a las file that aims to respect as closely as possible the official [LAS specification](https://www.asprs.org/divisions-committees/lidar-division/laser-las-file-format-exchange-activities) that describes the file format. "As closely as possible" means that, due to R internal limitations, it is not possible to represent a las file exactly as it should be represented. Additionally, some aspects of the las format specifications are not supported in lidR. Still, the contents of a `LAS` object must reflect the fact that it is a representation of a standardized format, so some restrictions are imposed on users.
+A LAS class is a representation in R of a las file that aims to respect as closely as possible the official [LAS specification](https://community.asprs.org/leadership-restricted/leadership-content/public-documents/standards) that describes the file format. "As closely as possible" means that, due to R internal limitations, it is not possible to represent a las file exactly as it should be represented. Additionally, some aspects of the las format specifications are not supported in lidR. Still, the contents of a `LAS` object must reflect the fact that it is a representation of a standardized format, so some restrictions are imposed on users.
 
 ## Build a LAS object reading a las file
 
@@ -51,7 +51,7 @@ A `LAS` object is composed of four slots: `@data`, `@header`, `@crs` and `@index
 
 ### @data: the point cloud
 
-The slot `data` of a LAS object contains a `data.table` with the data read from .las or .laz file(s). The columns of the table are named after the [LAS specification](https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf) version 1.4. Each name is reserved and is associated with a given type:
+The slot `data` of a LAS object contains a `data.table` with the data read from .las or .laz file(s). The columns of the table are named after the [LAS specification](https://community.asprs.org/leadership-restricted/leadership-content/public-documents/standards) version 1.4. Each name is reserved and is associated with a given type:
 
 - `X` `Y` `Z` (dbl)
 - `Intensity` (int)
@@ -77,7 +77,7 @@ Here we can already see some deviations from the official las format specificati
 
 ### @header: the header
 
-A `LAS` object contains a slot `@header` that represents the header of the las file. The header is stored in a `LASheader`  object. A `LASheader` object contains two slots: `@PHB` for the public header block and `@VLR` for the variable length records. Both slots are lists labelled according to the las file format specification. See [public documentation of las file format](https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf) for more information about las headers. Users should never normally have to worry about the header as long as they use functions from lidR. Everything is managed internally to ensure that objects are valid. However, users still need to know that the contents of the header are important, especially when writing `LAS` objects into las or laz files.
+A `LAS` object contains a slot `@header` that represents the header of the las file. The header is stored in a `LASheader`  object. A `LASheader` object contains two slots: `@PHB` for the public header block and `@VLR` for the variable length records. Both slots are lists labelled according to the las file format specification. See [public documentation of las file format](https://community.asprs.org/leadership-restricted/leadership-content/public-documents/standards) for more information about las headers. Users should never normally have to worry about the header as long as they use functions from lidR. Everything is managed internally to ensure that objects are valid. However, users still need to know that the contents of the header are important, especially when writing `LAS` objects into las or laz files.
 
 ```{r}
 print(header(las))
