@@ -640,56 +640,42 @@ SEXP LAS::find_polygon_ids(Rcpp::List polygons, bool by_poly)
     std::fill(poly_id.begin(), poly_id.end(), NA_INTEGER);
   }
 
-  SpatialIndex tree(las);
+  if (polygons.size() == 0)
+    Rcpp::stop("0 size input");
 
-  for (unsigned int i = 0 ; i < polygons.size() ; i++)
+  if (polygons.size() == 1)
   {
-    bool is_in_polygon = false;
+    // "Stupid algo": test every point against the single polygon
+    Rcpp::List rings = polygons[0];
 
-    // This list can be made of several rings (MULTIPOLYGON) and interior rings
-    Rcpp::List rings = polygons[i];
-
-    // Find the bbox of the polygons
-    double min_x = INFINITY;
-    double min_y = INFINITY;
-    double max_x = -INFINITY;
-    double max_y = -INFINITY;
-    for (int j = 0 ; j < rings.size() ; j++)
+    // Compute bounding box
+    double min_x = INFINITY, min_y = INFINITY;
+    double max_x = -INFINITY, max_y = -INFINITY;
+    for (int j = 0; j < rings.size(); j++)
     {
       Rcpp::NumericMatrix ring = rings[j];
       Rcpp::NumericVector x = ring(_, 0);
       Rcpp::NumericVector y = ring(_, 1);
 
-      double maxx = max(x);
-      double maxy = max(y);
-      double minx = min(x);
-      double miny = min(y);
-
-      if (min_x > minx) min_x = minx;
-      if (min_y > miny) min_y = miny;
-      if (max_x < maxx) max_x = maxx;
-      if (max_y < maxy) max_y = maxy;
+      min_x = std::min(min_x, (double)min(x));
+      min_y = std::min(min_y, (double)min(y));
+      max_x = std::max(max_x, (double)max(x));
+      max_y = std::max(max_y, (double)max(y));
     }
 
-    // Spatial query of the point that are in the bounding box of the polygon
-    lidR::Rectangle rect(min_x, max_x, min_y, max_y);
-    std::vector<PointXYZ> pts;
-    tree.lookup(rect, pts);
-
-    // For each point we check if it is in the potential multi part polygon
-    for (unsigned int k = 0 ; k < pts.size() ; k++)
+    for (size_t pid = 0; pid < X.size(); pid++)
     {
+      // Bounding box test
+      if (X[pid] < min_x || X[pid] > max_x || Y[pid] < min_y || Y[pid] > max_y)
+        continue;
+
       bool inpoly = false;
 
-      // Loop through sub polygons (ring)
-      for (int j = 0 ; j < rings.size() ; j++)
+      for (int j = 0; j < rings.size(); j++)
       {
         Rcpp::NumericMatrix ring = rings[j];
-
-        // We need to know if the ring is an exterior/interior ring (hole)
-        bool exterior_ring = ring(0,2) == 1;
-
-        bool b = pnpoly(ring, pts[k].x, pts[k].y);
+        bool exterior_ring = ring(0, 2) == 1;
+        bool b = pnpoly(ring, X[pid], Y[pid]);
 
         if (b)
         {
@@ -708,9 +694,68 @@ SEXP LAS::find_polygon_ids(Rcpp::List polygons, bool by_poly)
       if (inpoly)
       {
         if (by_poly)
-          res[i].push_back(pts[k].id+1);
+          res[0].push_back(pid + 1);
         else
-          poly_id[pts[k].id] = i+1;
+          poly_id[pid] = 1;
+      }
+    }
+  }
+  else
+  {
+    // Usual algo with spatial index
+    GridPartition tree(las);
+
+    for (unsigned int i = 0 ; i < polygons.size() ; i++)
+    {
+      Rcpp::List rings = polygons[i];
+
+      // Find bbox
+      double min_x = INFINITY, min_y = INFINITY;
+      double max_x = -INFINITY, max_y = -INFINITY;
+      for (int j = 0 ; j < rings.size() ; j++)
+      {
+        Rcpp::NumericMatrix ring = rings[j];
+        Rcpp::NumericVector x = ring(_, 0);
+        Rcpp::NumericVector y = ring(_, 1);
+
+        min_x = std::min(min_x, (double)min(x));
+        min_y = std::min(min_y, (double)min(y));
+        max_x = std::max(max_x, (double)max(x));
+        max_y = std::max(max_y, (double)max(y));
+      }
+
+      lidR::Rectangle rect(min_x, max_x, min_y, max_y);
+      std::vector<PointXYZ> pts;
+      tree.lookup(rect, pts);
+
+      for (unsigned int k = 0 ; k < pts.size() ; k++)
+      {
+        bool inpoly = false;
+        for (int j = 0 ; j < rings.size() ; j++)
+        {
+          Rcpp::NumericMatrix ring = rings[j];
+          bool exterior_ring = ring(0, 2) == 1;
+          bool b = pnpoly(ring, pts[k].x, pts[k].y);
+
+          if (b)
+          {
+            if (exterior_ring)
+              inpoly = true;
+            else
+            {
+              inpoly = false;
+              break;
+            }
+          }
+        }
+
+        if (inpoly)
+        {
+          if (by_poly)
+            res[i].push_back(pts[k].id + 1);
+          else
+            poly_id[pts[k].id] = i + 1;
+        }
       }
     }
   }

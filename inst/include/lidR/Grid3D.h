@@ -25,7 +25,7 @@ public:
   int npoints;
 
 public:
-  Rcpp::IntegerVector connected_components();
+  Rcpp::IntegerVector connected_components(int connectivity);
   int64_t get_cell(double, double, double);
   int64_t get_cell_id(int64_t, int64_t, int64_t);
 
@@ -35,7 +35,7 @@ protected:
   Rcpp::NumericVector Z;
 
 protected:
-  void bfs(int64_t, int64_t, int64_t, int, std::unordered_map<int64_t, int>&);
+  void bfs(int64_t, int64_t, int64_t, int, std::unordered_map<int64_t, int>&, int connectivity);
 };
 
 inline Grid3D::Grid3D()
@@ -91,23 +91,16 @@ inline Grid3D::Grid3D(const Rcpp::S4 las, double res)
     if (z[i] > zmax) zmax = z[i];
   }
 
-  xmin = ROUNDANY(xmin - 0.5 * xres, xres);
-  ymin = ROUNDANY(ymin - 0.5 * yres, yres);
-  zmin = ROUNDANY(zmin - 0.5 * zres, zres);
-  xmax = ROUNDANY(xmax + 0.5 * xres, xres);
-  ymax = ROUNDANY(ymax + 0.5 * yres, yres);
-  zmax = ROUNDANY(zmax + 0.5 * zres, zres);
+  xmin = std::floor(xmin / xres) * xres;
+  xmax = std::ceil (xmax / xres) * xres;
+  ymin = std::floor(ymin / yres) * yres;
+  ymax = std::ceil (ymax / yres) * yres;
+  zmin = std::floor(zmin / zres) * zres;
+  zmax = std::ceil (zmax / zres) * zres;
 
-  xmin -= xres;
-  xmax += xres;
-  ymin -= yres;
-  ymax += yres;
-  zmin -= zres;
-  zmax += zres;
-
-  ncols   = static_cast<int64_t>((xmax - xmin) / xres);
-  nrows   = static_cast<int64_t>((ymax - ymin) / yres);
-  nlayers = static_cast<int64_t>((zmax - zmin) / zres);
+  ncols   = (int64_t)std::floor((xmax - xmin) / xres) + 1;
+  nrows   = (int64_t)std::floor((ymax - ymin) / yres) + 1;
+  nlayers = (int64_t)std::floor((zmax - zmin) / zres) + 1;
 
   uint64_t max_cells =
     static_cast<uint64_t>(ncols) *
@@ -137,11 +130,12 @@ inline int64_t Grid3D::get_cell(double x, double y, double z)
   }
 
   int64_t col = std::floor((x - xmin) / xres);
-  int64_t row = std::floor((y - ymin) / yres); // Fixed formula for row
+  int64_t row = std::floor((y - ymin) / yres);
   int64_t lay = std::floor((z - zmin) / zres);
 
   if (col < 0 || col >= ncols || row < 0 || row >= nrows || lay < 0 || lay >= nlayers)
   {
+    Rcpp::Rcout << col << row << lay << std::endl;
     Rcpp::stop("Internal error in spatial index: indices out of range.");
   }
 
@@ -156,11 +150,29 @@ inline int64_t Grid3D::get_cell_id(int64_t row, int64_t col, int64_t lay)
   return cell;
 }
 
-inline void Grid3D::bfs(int64_t start_x, int64_t start_y, int64_t start_z, int label_id, std::unordered_map<int64_t, int>& label_grid)
+inline void Grid3D::bfs(int64_t start_x, int64_t start_y, int64_t start_z,
+                        int label_id, std::unordered_map<int64_t, int>& label_grid,
+                        int connectivity = 6)
 {
-  const int dx[] = {1, -1, 0, 0, 0, 0};
-  const int dy[] = {0, 0, 1, -1, 0, 0};
-  const int dz[] = {0, 0, 0, 0, 1, -1};
+  // Define neighbor offsets based on connectivity
+  std::vector<std::tuple<int,int,int>> neighbors;
+
+  for (int dx = -1; dx <= 1; ++dx) {
+    for (int dy = -1; dy <= 1; ++dy) {
+      for (int dz = -1; dz <= 1; ++dz) {
+        if (dx == 0 && dy == 0 && dz == 0) continue; // skip self
+
+        int sum_abs = std::abs(dx) + std::abs(dy) + std::abs(dz);
+
+        if ((connectivity == 6 && sum_abs == 1) ||     // face neighbors
+            (connectivity == 18 && sum_abs <= 2) ||    // face + edge neighbors
+            (connectivity == 26))                      // all neighbors
+        {
+          neighbors.emplace_back(dx, dy, dz);
+        }
+      }
+    }
+  }
 
   std::queue<std::tuple<int64_t, int64_t, int64_t>> q;
   q.push(std::make_tuple(start_x, start_y, start_z));
@@ -174,11 +186,11 @@ inline void Grid3D::bfs(int64_t start_x, int64_t start_y, int64_t start_z, int l
     q.pop();
 
     // Check all 6-connected neighbors
-    for (int i = 0; i < 6; ++i)
+    for (auto [dx, dy, dz] : neighbors)
     {
-      int64_t nx = x + dx[i];
-      int64_t ny = y + dy[i];
-      int64_t nz = z + dz[i];
+      int64_t nx = x + dx;
+      int64_t ny = y + dy;
+      int64_t nz = z + dz;
 
       // Ensure the neighbor is within bounds
       if (nx >= 0 && ny >= 0 && nz >= 0 && nx < ncols && ny < nrows && nz < nlayers)
@@ -196,7 +208,7 @@ inline void Grid3D::bfs(int64_t start_x, int64_t start_y, int64_t start_z, int l
   }
 }
 
-inline Rcpp::IntegerVector Grid3D::connected_components()
+inline Rcpp::IntegerVector Grid3D::connected_components(int connectivity)
 {
 
   std::unordered_map<int64_t, int> label_grid;
@@ -222,7 +234,7 @@ inline Rcpp::IntegerVector Grid3D::connected_components()
         // If the voxel is labeled and unlabelled, perform BFS/DFS
         if (label_grid.find(index) != label_grid.end() && label_grid[index] == 0)
         {
-          bfs(x, y, z, label_id, label_grid);
+          bfs(x, y, z, label_id, label_grid, connectivity);
           label_id++;
         }
       }

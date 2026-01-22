@@ -106,6 +106,6 @@ lasclass.colors = function(...)
           "orange",      # 17 bridge deck
           "yellow")
 
-  hex <- rgb(t(col2rgb(pal)), maxColorValue = 255)
+  hex <- grDevices::rgb(t(grDevices::col2rgb(pal)), maxColorValue = 255)
   return(hex)
 }

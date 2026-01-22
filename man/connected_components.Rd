@@ -4,7 +4,7 @@
 \alias{connected_components}
 \title{Connected-Component Labeling}
 \usage{
-connected_components(las, res, min_pts, name = "clusterID")
+connected_components(las, res, min_pts, name = "clusterID", connectivity = 6)
 }
 \arguments{
 \item{las}{A LAS object representing the point cloud data.}
@@ -16,12 +16,13 @@ the same component.}
 points, it is assigned an ID of 0, indicating that it does not belong to any group.}
 
 \item{name}{A string specifying the name of the new attribute used to store the ID of each cluster.}
+
+\item{connectivity}{integer. 6, 18 or 26 neighbors search.}
 }
 \value{
 A LAS object with an additional attribute named as specified by \code{name}.
 }
 \description{
 Assigns an ID to each cluster of connected components in a point cloud. The point cloud is subdivided
-into a 3D grid, and a classical \href{https://en.wikipedia.org/wiki/Connected-component_labeling}{Connected-Component Labeling}
-algorithm is applied in 3D.
+into a 3D grid, and a classical Connected-Component Labeling algorithm is applied in 3D.
 }

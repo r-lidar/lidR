@@ -1,8 +1,7 @@
 #' Connected-Component Labeling
 #'
 #' Assigns an ID to each cluster of connected components in a point cloud. The point cloud is subdivided
-#' into a 3D grid, and a classical [Connected-Component Labeling](https://en.wikipedia.org/wiki/Connected-component_labeling)
-#' algorithm is applied in 3D.
+#' into a 3D grid, and a classical Connected-Component Labeling algorithm is applied in 3D.
 #'
 #' @param las A LAS object representing the point cloud data.
 #' @param res Grid resolution. If two non-empty voxels are contiguous, they are considered part of
@@ -10,15 +9,19 @@
 #' @param min_pts Minimum number of points in a cluster. If a cluster contains fewer than `min_pts`
 #' points, it is assigned an ID of 0, indicating that it does not belong to any group.
 #' @param name A string specifying the name of the new attribute used to store the ID of each cluster.
+#' @param connectivity integer. 6, 18 or 26 neighbors search.
 #'
 #' @return A LAS object with an additional attribute named as specified by `name`.
 #' @md
 #' @export
-connected_components = function(las, res, min_pts, name = "clusterID")
+connected_components = function(las, res, min_pts, name = "clusterID", connectivity = 6)
 {
   .N <- N <- clusterID <- gpstime <- NULL
 
-  u = C_connected_component(las, res)
+  allowed <- c(6L, 18L, 26L)
+  if (!connectivity %in% allowed) stop(sprintf("Invalid connectivity: %d. Allowed values are %s", connectivity, paste(allowed, collapse = ", ")))
+
+  u = C_connected_component(las, res, connectivity)
   las = add_lasattribute(las, u, name, "connected component ID")
   grp = las@data[, .N, by = clusterID]
   grp = grp[N < min_pts]
