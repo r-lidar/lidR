@@ -2,7 +2,7 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 4.2.2
+Version: 4.3.0
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "info@r-lidar.com", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
@@ -47,6 +47,7 @@ Suggests:
     raster,
     RCSF,
     RMCC,
+    ptd,
     rjson,
     mapview,
     mapedit,
@@ -55,7 +56,7 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo,Rnanoflann
 Encoding: UTF-8
 ByteCompile: true

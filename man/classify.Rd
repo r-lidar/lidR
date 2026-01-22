@@ -56,8 +56,8 @@ functions updates the attribute \code{Classification} of the LAS object accordin
 \item{classify_noise}{Classify points as 'noise' (outliers) with several possible algorithms.
 lidR has: \link{sor}, \link{ivf}. The points classified as 'noise' are assigned a value of 18.}
 \item{classify_ground}{Classify points as 'ground' with several possible algorithms.
-lidR has \link{pmf}, \link{csf} and \link{mcc}. The points classified as 'ground' are assigned a
-value of 2 }
+lidR has \link{ptd}, \link{pmf}, \link{csf} and \link{mcc}. The points classified as 'ground'
+are assigned a value of 2. Using \code{ptd} is strongly recommended.}
 \item{classify_poi}{Classify points that meet some logical criterion and/or that belong in a
 region of interest with class of choice.}
 }

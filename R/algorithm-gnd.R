@@ -226,6 +226,93 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
   return(f)
 }
 
+
+#' Progressive TIN Densification
+#'
+#' Classify ground points using a modified version of the Progressive TIN
+#' densification method by Axelsson (2000) (see references). The approach involves iteratively
+#' constructing a triangulated surface model (TIN) to classify ground points (see details).
+#'
+#' The method begins by identifying local low points, assuming at least one ground-level point exists
+#' within any X meters area. Initially, the triangles of the TIN model are mostly below the ground
+#' surface, only touching lowest points at their vertices. As the iterations progress, additional
+#' points are incorporated to more accurately follow the true ground surface.\cr\cr
+#' The classification process is controlled by two main parameters:
+#' \itemize{
+#' \item Iteration angle: This controls the rate at which points are classified based on variations in
+#' ground level. Use smaller values (e.g., 20) for flat terrain and larger values (e.g., 40) for
+#' mountainous regions.
+#' \item Iteration distance: This limits large upward jumps in the model, preventing the misclassification
+#'  of points in low vegetation or on small buildings.
+#' }
+#' The algorithm is robust to low noise points, meaning it can handle some level of noise without
+#' needing explicit noise classification. However, it is preferable to have noise classified points
+#' to guarantee optimal results.
+#' \cr\cr
+#' The densification process can also stop if the triangle edges become shorter than a specified length.
+#'
+#' @param distance Scalar. The threshold for iteration distance, as described in Figure 3 of Axelsson's paper.
+#' @param angle Scalar. The threshold for iteration angle, as illustrated in Figure 3 of Axelsson's paper.
+#' Use smaller values (close to 20) for flat areas and larger values (close to 40) for mountainous
+#' areas.
+#' @param res Scalar. The resolution for locating seed points. It takes the lowest point per grid cell.
+#' It should be larger than any above ground structure such as building or bridges. In forested lands
+#' 10 m is good but larger values are recommended if human made structure can be observed. 50 m is
+#' good in urban scene
+#' @param spacing Scalar. The spacing of ground points. TIN densification halts if triangles are
+#' smaller than this limit avoiding useless over-densification. The default setting is generally suitable
+#' for most scenarios.
+#' @param verbose bool
+#'
+#' @references
+#' Axelsson, P. (2000). DEM Generation from Laser Scanner Data Using adaptive TIN Models. International
+#' Archives of Photogrammetry and Remote Sensing, 33(B4), 110–117.
+#' https://www.isprs.org/proceedings/xxxiii/congress/part4/111_xxxiii-part4.pdf
+#'
+#' @export
+#' @md
+#'
+#' @examples
+#' if (require(ptd, quietly = TRUE))
+#' {
+#' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
+#' las <- readLAS(LASfile, select = "xyzrn")
+#'
+#' myptd <- ptd(res = 20, distance = 1, angle = 20)
+#' las <- classify_ground(las, myptd)
+#' #plot(las, color = "Classification")
+#' }
+ptd = function(res = 10, angle = 30, distance = 2, spacing = 0.25, verbose = FALSE)
+{
+  res     <- lazyeval::uq(res)
+  angle   <- lazyeval::uq(angle)
+  distance <- lazyeval::uq(distance)
+  spacing  <- lazyeval::uq(spacing)
+  verbose  <- lazyeval::uq(verbose)
+
+  assert_is_a_bool(verbose)
+  assert_is_a_number(res)
+  assert_is_a_number(angle)
+  assert_is_a_number(distance)
+  assert_is_a_number(spacing)
+  assert_package_is_installed("ptd")
+
+  f = function(las, filter)
+  {
+    . <- X <- Y <- Z <- NULL
+    assert_is_valid_context(LIDRCONTEXTGND, "ptd")
+
+    las@data[["idx"]] <- 1:npoints(las)
+    cloud <- las@data[filter, .(X,Y,Z, idx)]
+    gnd <- ptd::ptd(cloud, res, angle, distance, spacing, verbose)
+    idx <- cloud$idx[gnd]
+    return(idx)
+  }
+
+  f <- plugin_gnd(f)
+  return(f)
+}
+
 #' @export
 #' @rdname gnd_pmf
 util_makeZhangParam = function(b = 2, dh0 = 0.5, dhmax = 3.0, s = 1.0,  max_ws = 20, exp = FALSE)
