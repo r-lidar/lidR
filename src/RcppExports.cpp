@@ -120,6 +120,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_ptd
+NumericVector C_ptd(DataFrame df, double res, double angle, double distance, double spacing, bool verbose);
+RcppExport SEXP _lidR_C_ptd(SEXP dfSEXP, SEXP resSEXP, SEXP angleSEXP, SEXP distanceSEXP, SEXP spacingSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< double >::type res(resSEXP);
+    Rcpp::traits::input_parameter< double >::type angle(angleSEXP);
+    Rcpp::traits::input_parameter< double >::type distance(distanceSEXP);
+    Rcpp::traits::input_parameter< double >::type spacing(spacingSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_ptd(df, res, angle, distance, spacing, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_spikefree
+NumericVector C_spikefree(DataFrame df, DataFrame grid, double d_f, double h_b);
+RcppExport SEXP _lidR_C_spikefree(SEXP dfSEXP, SEXP gridSEXP, SEXP d_fSEXP, SEXP h_bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< DataFrame >::type grid(gridSEXP);
+    Rcpp::traits::input_parameter< double >::type d_f(d_fSEXP);
+    Rcpp::traits::input_parameter< double >::type h_b(h_bSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_spikefree(df, grid, d_f, h_b));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_lmf
 LogicalVector C_lmf(S4 las, NumericVector ws, double min_height, bool circular, int ncpu);
 RcppExport SEXP _lidR_C_lmf(SEXP lasSEXP, SEXP wsSEXP, SEXP min_heightSEXP, SEXP circularSEXP, SEXP ncpuSEXP) {
@@ -685,6 +715,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_interpolate_delaunay", (DL_FUNC) &_lidR_C_interpolate_delaunay, 7},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 4},
+    {"_lidR_C_ptd", (DL_FUNC) &_lidR_C_ptd, 6},
+    {"_lidR_C_spikefree", (DL_FUNC) &_lidR_C_spikefree, 4},
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},
     {"_lidR_C_smooth", (DL_FUNC) &_lidR_C_smooth, 6},
     {"_lidR_C_highest", (DL_FUNC) &_lidR_C_highest, 2},

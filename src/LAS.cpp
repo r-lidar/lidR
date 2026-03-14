@@ -2,7 +2,7 @@
 #include "Progress.h"
 #include "myomp.h"
 #include "SpatialIndex.h"
-#include "nanoflann.hpp"
+#include "nanoflann/nanoflann.h"
 #include <limits>
 
 using namespace lidR;

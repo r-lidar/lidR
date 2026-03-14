@@ -48,7 +48,6 @@ Suggests:
     raster,
     RCSF,
     RMCC,
-    ptd,
     rjson,
     mapview,
     mapedit,
@@ -58,7 +57,7 @@ Suggests:
     knitr,
     rmarkdown
 RoxygenNote: 7.3.3
-LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo,Rnanoflann
+LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true
 VignetteBuilder: knitr

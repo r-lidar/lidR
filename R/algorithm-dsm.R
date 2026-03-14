@@ -305,6 +305,61 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
   return(f)
 }
 
+# ====== SPIKE-FREE =======
+
+#' Digital Surface Model Algorithm
+#'
+#' This function is made to be used in \link{rasterize_canopy}. It implements the spike-free algorithm
+#' developed by Khosravipour et al. (2016), which is based on the computation of an incremental
+#' triangulation of all returns with triangle freezing criteria (see references).
+#'
+#' @param freeze_distance freeze distance (see references). Recommended value: 3 times the pulse spacing or
+#' a little higher.
+#' @param height_buffer buffer distance (see references). Recommended value: 0.5 do not change.
+#'
+#' @references Khosravipour, Anahita & Skidmore, Andrew & Isenburg, Martin. (2016). Generating spike-free
+#' digital surface models using LiDAR raw point clouds: A new approach for forestry applications.
+#' International Journal of Applied Earth Observation and Geoinformation. 52. 104-114. 10.1016/j.jag.2016.06.005.
+#'
+#' @export
+#'
+#' @family digital surface model algorithms
+#'
+#' @examples
+#' LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
+#' poi = "-drop_z_below 0 -inside 481280 3812940 481330 3812990"
+#' las <- readLAS(LASfile, filter = poi)
+#' col <- height.colors(50)
+#'
+#' # Khosravipour et al. spikefree algorithm
+#' chm <- rasterize_canopy(las, res = 0.25, spikefree(1.5))
+#' plot(chm, col = col)
+#' @export
+#' @name dsm_spikefree
+spikefree <- function(freeze_distance, height_buffer = 0.5)
+{
+  assert_is_numeric(freeze_distance)
+  assert_all_are_non_negative(freeze_distance)
+  assert_all_are_non_negative(height_buffer)
+  assert_is_a_number(height_buffer)
+
+  freeze_distance <- lazyeval::uq(freeze_distance)
+  height_buffer <- lazyeval::uq(height_buffer)
+
+  f <- function(las, layout)
+  {
+    assert_is_valid_context(LIDRCONTEXTDSM, "spikefree")
+    grid <- raster_as_dataframe(layout, na.rm = FALSE)
+    print(dim(grid))
+    z <- C_spikefree(las@data, grid, freeze_distance, height_buffer)
+    print(length(z))
+    return(z)
+  }
+
+  f <- plugin_dsm(f, omp = TRUE)
+  return(f)
+}
+
 subcircle = function(las, r, n)
 {
   xscale  <- las[["X scale factor"]]

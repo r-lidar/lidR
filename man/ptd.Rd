@@ -49,15 +49,12 @@ to guarantee optimal results.
 The densification process can also stop if the triangle edges become shorter than a specified length.
 }
 \examples{
-if (require(ptd, quietly = TRUE))
-{
 LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 las <- readLAS(LASfile, select = "xyzrn")
 
 myptd <- ptd(res = 20, distance = 1, angle = 20)
 las <- classify_ground(las, myptd)
 #plot(las, color = "Classification")
-}
 }
 \references{
 Axelsson, P. (2000). DEM Generation from Laser Scanner Data Using adaptive TIN Models. International

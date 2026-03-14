@@ -273,15 +273,12 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
 #' @md
 #'
 #' @examples
-#' if (require(ptd, quietly = TRUE))
-#' {
 #' LASfile <- system.file("extdata", "Topography.laz", package="lidR")
 #' las <- readLAS(LASfile, select = "xyzrn")
 #'
 #' myptd <- ptd(res = 20, distance = 1, angle = 20)
 #' las <- classify_ground(las, myptd)
 #' #plot(las, color = "Classification")
-#' }
 ptd = function(res = 10, angle = 30, distance = 2, spacing = 0.25, verbose = FALSE)
 {
   res     <- lazyeval::uq(res)
@@ -304,7 +301,7 @@ ptd = function(res = 10, angle = 30, distance = 2, spacing = 0.25, verbose = FAL
 
     las@data[["idx"]] <- 1:npoints(las)
     cloud <- las@data[filter, .(X,Y,Z, idx)]
-    gnd <- ptd::ptd(cloud, res, angle, distance, spacing, verbose)
+    gnd <- C_ptd(cloud, res, angle, distance, spacing, verbose)
     idx <- cloud$idx[gnd]
     return(idx)
   }

@@ -45,6 +45,7 @@ plot(chm, col = col)
 \seealso{
 Other digital surface model algorithms: 
 \code{\link{dsm_pitfree}},
+\code{\link{dsm_spikefree}},
 \code{\link{dsm_tin}}
 }
 \concept{digital surface model algorithms}

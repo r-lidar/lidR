@@ -1,3 +1,25 @@
 PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) -I../inst/include/ -DRCPP_NO_MODULES -DWITHSETLENGTH
 PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(SHLIB_OPENMP_CXXFLAGS)
+SOURCES = ./Progress.cpp \
+./ptd/PTD.cpp \
+./RcppExports.cpp \
+./UnitTests.cpp \
+./C_delaunay.cpp \
+./C_ptd.cpp \
+./C_chm_prep.cpp \
+./LAS.cpp \
+./knn.cpp \
+./C_Gatziolis2019.cpp \
+./RcppFunction.cpp \
+./spikefree/Spikefree.cpp \
+./openmputils.cpp \
+./convaveman.cpp \
+./altrep.cpp \
+./hporro/pred3d.cpp  \
+./hporro/delaunay.cpp  \
+./hporro/index.cpp \
+./C_dalponte2016.cpp \
+./C_spikefree.cpp
+TEMP1   =  $(SOURCES:.cpp=.o)
+OBJECTS =  $(TEMP1:.c=.o)
 CXX_STD = CXX17

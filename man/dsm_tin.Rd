@@ -50,6 +50,7 @@ plot(chm, col = col)
 \seealso{
 Other digital surface model algorithms: 
 \code{\link{dsm_pitfree}},
-\code{\link{dsm_point2raster}}
+\code{\link{dsm_point2raster}},
+\code{\link{dsm_spikefree}}
 }
 \concept{digital surface model algorithms}

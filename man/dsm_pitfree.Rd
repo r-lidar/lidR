@@ -75,6 +75,7 @@ Remote Sensing, 80(9), 863-872.
 \seealso{
 Other digital surface model algorithms: 
 \code{\link{dsm_point2raster}},
+\code{\link{dsm_spikefree}},
 \code{\link{dsm_tin}}
 }
 \concept{digital surface model algorithms}
