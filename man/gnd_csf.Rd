@@ -58,6 +58,7 @@ Filtering Method Based on Cloth Simulation,” Remote Sens., vol. 8, no. 6, p. 5
 \seealso{
 Other ground segmentation algorithms: 
 \code{\link{gnd_mcc}},
-\code{\link{gnd_pmf}}
+\code{\link{gnd_pmf}},
+\code{\link{ptd}()}
 }
 \concept{ground segmentation algorithms}

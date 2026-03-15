@@ -270,6 +270,7 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
 #' https://www.isprs.org/proceedings/xxxiii/congress/part4/111_xxxiii-part4.pdf
 #'
 #' @export
+#' @family ground segmentation algorithms
 #' @md
 #'
 #' @examples
@@ -302,7 +303,7 @@ ptd = function(res = 10, angle = 30, distance = 2, spacing = 0.25, verbose = FAL
     las@data[["idx"]] <- 1:npoints(las)
     cloud <- las@data[filter, .(X,Y,Z, idx)]
     gnd <- C_ptd(cloud, res, angle, distance, spacing, verbose)
-    idx <- cloud$idx[gnd]
+    idx <- cloud$idx[gnd+1]
     return(idx)
   }
 

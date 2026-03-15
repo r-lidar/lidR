@@ -68,6 +68,7 @@ IEEE Transactions on Geoscience and Remote Sensing. 45(4): 1029-1038.
 \seealso{
 Other ground segmentation algorithms: 
 \code{\link{gnd_csf}},
-\code{\link{gnd_pmf}}
+\code{\link{gnd_pmf}},
+\code{\link{ptd}()}
 }
 \concept{ground segmentation algorithms}

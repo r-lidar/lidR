@@ -23,7 +23,7 @@ NumericVector C_ptd(DataFrame df, double res, double angle, double distance, dou
   PTD::Bbox bb;
   bb.xmin = min(x);
   bb.ymin = min(y);
-  bb.zmin = min(x);
+  bb.zmin = min(z);
   bb.xmax = max(x);
   bb.ymax = max(y);
   bb.zmax = max(z);

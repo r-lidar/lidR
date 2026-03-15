@@ -115,3 +115,18 @@ test_that("classify_ground does not erase former classification (but new ground 
   expect_equal(names(table(las$Classification)), c("1", "2", "9"))
 })
 
+test_that("PTD works",
+{
+  myptd = ptd()
+  las <- classify_ground(topography, myptd)
+  ans <- as.numeric(table(las$Classification))
+  class = c(48988,24364,51)
+  expect_equal(ans, class)
+
+  myptd = ptd(angle = 1, distance = 0.5)
+  las <- classify_ground(topography, myptd)
+  ans <- as.numeric(table(las$Classification))
+  class = c(67278,4758,1367)
+  expect_equal(ans, class)
+})
+

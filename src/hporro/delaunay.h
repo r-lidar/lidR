@@ -23,7 +23,7 @@ public:
   void set_frozen(int t, bool frozen);
   bool is_frozen(int t) const;
   const std::vector<bool>& get_dirty_cells() const;
-  void write(const std::string& filename) const;
+  //void write(const std::string& filename) const;
 
   Vertex *vertices;
   Triangle *triangles;
@@ -66,6 +66,9 @@ private:
   std::vector<bool> dirty_cells;
   void indexTriangle(int t);
   void unindexTriangle(int t);
+
+  std::vector<std::pair<int, int>> m_flip_stack;
+  std::vector<int> m_temp_cells;
 };
 
 }

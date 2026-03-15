@@ -16,7 +16,7 @@ a little higher.}
 \description{
 This function is made to be used in \link{rasterize_canopy}. It implements the spike-free algorithm
 developed by Khosravipour et al. (2016), which is based on the computation of an incremental
-triangulation of all returns with triangle freezing criteria.
+triangulation of all returns with triangle freezing criteria (see references).
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")

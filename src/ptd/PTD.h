@@ -21,9 +21,8 @@ struct Parameters
   float max_iteration_distance = 2.0;
   float spacing = 0.25;
   float buffer_size = 30.0;
-  float rotation = 0; // degrees
-  char  rotation_axe = 'x';
-  int max_iter = 50;
+  unsigned int max_iter = 50;
+  unsigned int ncores = 1;
   bool verbose = false;
 };
 

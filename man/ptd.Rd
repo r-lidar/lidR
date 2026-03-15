@@ -61,3 +61,10 @@ Axelsson, P. (2000). DEM Generation from Laser Scanner Data Using adaptive TIN M
 Archives of Photogrammetry and Remote Sensing, 33(B4), 110–117.
 https://www.isprs.org/proceedings/xxxiii/congress/part4/111_xxxiii-part4.pdf
 }
+\seealso{
+Other ground segmentation algorithms: 
+\code{\link{gnd_csf}},
+\code{\link{gnd_mcc}},
+\code{\link{gnd_pmf}}
+}
+\concept{ground segmentation algorithms}

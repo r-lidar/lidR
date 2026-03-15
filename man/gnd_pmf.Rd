@@ -81,6 +81,7 @@ Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#do
 \seealso{
 Other ground segmentation algorithms: 
 \code{\link{gnd_csf}},
-\code{\link{gnd_mcc}}
+\code{\link{gnd_mcc}},
+\code{\link{ptd}()}
 }
 \concept{ground segmentation algorithms}

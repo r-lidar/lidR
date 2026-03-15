@@ -139,4 +139,22 @@ test_that("triangulation does not return negative values", {
   expect_equal(min(lidR:::raster_values(chm), na.rm = T), 0)
 })
 
+test_that("rasterize_canopy spike-free works", {
+
+  f <- spikefree(1.5)
+  x <- rasterize_canopy(mixedconifer, 0.5, f)
+
+  expect_true(is(x, slr))
+  expect_equal(lidR:::raster_res(x), c(0.5,0.5))
+  expect_equivalent(lidR:::raster_size(x), c(180,180,1))
+  expect_equal(mean(x[], na.rm = T), 12.455, tolerance = 0.001)
+  expect_equal(sum(is.na(x[])), 25, tolerance = 0.001)
+
+  f <- spikefree(1)
+  x <- rasterize_canopy(mixedconifer, 0.25, f)
+
+  expect_equal(mean(x[], na.rm = T), 11.774, tolerance = 0.001)
+  expect_equal(sum(is.na(x[])), 83, tolerance = 0.001)
+})
+
 

@@ -56,12 +56,10 @@ PTD::PTD(const Parameters& p, Bbox b)
   if (p.max_iteration_distance <= 0.0) throw std::invalid_argument("max_iteration_distance must be > 0");
   if (p.spacing < 0.0) throw std::invalid_argument("spacing must be >= 0");
   if (p.buffer_size < 0.0) throw std::invalid_argument("buffer_size must be >= 0");
-  if (p.max_iter < 0) throw std::invalid_argument("max_iter must be >= 0");
-  if (p.rotation < -90.0 || p.rotation > 90.0) throw std::invalid_argument("rotation must be in [-90, 90] degrees");
-  if (p.rotation_axe != 'x' && p.rotation_axe != 'y') throw std::invalid_argument("rotation axe must be in 'x' or 'y'");
 
   params = p;
   params.spacing = params.spacing *  params.spacing; //squared comparable distance
+  if (params.ncores > omp_get_max_threads()) params.ncores = omp_get_max_threads();
 
   logger = nullptr;
   d = nullptr;
@@ -125,7 +123,6 @@ bool PTD::run()
   sort_by_z();        // Sort to process bottom to top
   make_seeds();       // Generate the seed points for iteration 0
   make_buffer();      // Generate extra virtual buffer seeds
-  //rotate_scene();
 
   // Grid used as spatial index by the triangulation (and this class)
   double bs = params.buffer_size;
@@ -151,8 +148,6 @@ bool PTD::run()
   is_spike.assign(d->vcount, false);
   detect_spikes(12, 0.75);
   detect_spikes(12, 0.75);
-
-  //d->write("/home/jr/Bureau/del.obj");
 
   return true;
 }
@@ -205,7 +200,7 @@ void PTD::make_buffer()
 {
   if (params.buffer_size <= 0) return;
 
-  std::mt19937 generator(std::random_device{}());
+  std::mt19937 generator(42);
   std::uniform_real_distribution<double> distribution(-0.5, 0.5);
 
   double xmin = bbox.xmin - (params.buffer_size - 1);
@@ -428,7 +423,7 @@ void PTD::tin_densify()
     if (params.verbose)
     {
       const auto t1 = clock::now();
-      const double elapsed_sec = std::chrono::duration<double>(tt1 - t0).count();
+      const double elapsed_sec = std::chrono::duration<double>(t1 - tt1).count();
       std::string timing = "    Densification " + std::to_string(iteration) + " done in " + std::to_string(elapsed_sec) + " s";
       log(timing);
     }
@@ -443,6 +438,7 @@ void PTD::tin_densify()
     log(timing);
   }
 }
+
 
 void PTD::detect_spikes(int k, double threshold)
 {
@@ -462,7 +458,7 @@ void PTD::detect_spikes(int k, double threshold)
   kdtree index(2, adaptor, nanoflann::KDTreeSingleIndexAdaptorParams(10));
   index.buildIndex();
 
-  #pragma omp parallel
+  #pragma omp parallel num_threads(params.ncores)
   {
     // Thread-local Memory Reuse (Hoisting)
     // Each thread gets its own vectors to avoid allocation overhead
@@ -472,9 +468,6 @@ void PTD::detect_spikes(int k, double threshold)
     std::vector<Vec3> nb_pos;
     neighbors.reserve(k);
     nb_pos.reserve(k);
-
-    // Thread-local RNG
-    std::mt19937 rng(12345 + omp_get_thread_num());
 
     #pragma omp for schedule(dynamic)
     for (int i = 0; i < d->vcount; ++i)
@@ -513,7 +506,7 @@ void PTD::detect_spikes(int k, double threshold)
       // If 75% of neighbors fit the plane, it's a good plane. Stop searching.
       int sufficient_inliers = (int)(neighbors.size() * 0.75);
 
-
+      std::mt19937 rng(i);
       std::uniform_int_distribution<int> dist_indices(0, (int)nb_pos.size() - 1);
 
       for (int iter = 0; iter < ransac_iters; ++iter)
