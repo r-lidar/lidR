@@ -293,7 +293,6 @@ ptd = function(res = 10, angle = 30, distance = 2, spacing = 0.25, verbose = FAL
   assert_is_a_number(angle)
   assert_is_a_number(distance)
   assert_is_a_number(spacing)
-  assert_package_is_installed("ptd")
 
   f = function(las, filter)
   {
