@@ -2,6 +2,7 @@
 #define PTD_H
 
 #include <vector>
+#include <functional>
 
 #include "../hporro/constants.h"
 #include "../hporro/delaunay.h"
