@@ -4,6 +4,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 - New: Progressive TIN Densification for ground classification (`ptd()`)
 - New: Spike-free algorithm for CHM (`spikefree()`)
+- New: function `catalog_split_clusters()`
 
 ## lidR v4.2.3 (Release date: 2026-01-07)
 

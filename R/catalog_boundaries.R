@@ -35,3 +35,25 @@ catalog_boundaries = function(ctg, ...)
   attr(ctg, "trueshape") <- TRUE
   return(ctg)
 }
+
+#' Split a catalog into spatially clustered subsets
+#'
+#' This function groups elements of a catalog into spatial clusters based on
+#' contiguity of the tiles. The original catalog is then split into `n` catalogs
+#'
+#' @param ctg A LAScatalog
+#' @param buffer Numeric. Buffer distance applied to tile geometry before clustering. Defaults to 1.
+#'
+#' @return A list of LAScatalog
+#'
+#' @export
+catalog_split_clusters = function(ctg, buffer = 1)
+{
+  sfctg = sf::st_as_sf(ctg)
+  sfctg = sf::st_buffer(sfctg, buffer)
+  clustered = sf::st_union(sfctg)
+  clustered = sf::st_cast(clustered, "POLYGON")
+  idx = sf::st_contains(clustered, sfctg)
+  subctg = lapply(idx, function(i) ctg[i,])
+  subctg
+}
