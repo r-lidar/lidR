@@ -1,4 +1,4 @@
-#include "nanoflann.hpp"
+#include "nanoflann/nanoflann.h"
 #include "Progress.h"
 
 #include <Rcpp.h>

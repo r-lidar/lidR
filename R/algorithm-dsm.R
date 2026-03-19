@@ -351,7 +351,6 @@ spikefree <- function(freeze_distance, height_buffer = 0.5)
     assert_is_valid_context(LIDRCONTEXTDSM, "spikefree")
     grid <- raster_as_dataframe(layout, na.rm = FALSE)
     z <- C_spikefree(las@data, grid, freeze_distance, height_buffer)
-    print(length(z))
     return(z)
   }
 

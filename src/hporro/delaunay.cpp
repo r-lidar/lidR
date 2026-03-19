@@ -611,15 +611,15 @@ bool Triangulation::flip(int t1, int t2)
   int p11 = triangles[t1].v[(i+1)%3];
   int p12 = triangles[t1].v[(i+2)%3];
 
-  int f10 = triangles[t1].t[i];
+  //int f10 = triangles[t1].t[i];
   int f11 = triangles[t1].t[(i+1)%3];
   int f12 = triangles[t1].t[(i+2)%3];
 
   int p20 = triangles[t2].v[j];
-  int p21 = triangles[t2].v[(j+1)%3];
-  int p22 = triangles[t2].v[(j+2)%3];
+  //int p21 = triangles[t2].v[(j+1)%3];
+  //int p22 = triangles[t2].v[(j+2)%3];
 
-  int f20 = triangles[t2].t[j];
+  //int f20 = triangles[t2].t[j];
   int f21 = triangles[t2].t[(j+1)%3];
   int f22 = triangles[t2].t[(j+2)%3];
 

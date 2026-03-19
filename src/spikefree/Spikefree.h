@@ -70,7 +70,6 @@ private:
   double x_offset;
   double y_offset;
   double z_offset;
-  double z_default;
 
   bool ready;
   double cur_h;

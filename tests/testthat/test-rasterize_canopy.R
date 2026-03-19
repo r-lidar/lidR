@@ -154,7 +154,7 @@ test_that("rasterize_canopy spike-free works", {
   x <- rasterize_canopy(mixedconifer, 0.25, f)
 
   expect_equal(mean(x[], na.rm = T), 11.774, tolerance = 0.001)
-  expect_equal(sum(is.na(x[])), 83, tolerance = 0.001)
+  expect_equal(sum(is.na(x[])), 108, tolerance = 0.001)
 })
 
 

@@ -663,7 +663,7 @@ SEXP LAS::find_polygon_ids(Rcpp::List polygons, bool by_poly)
       max_y = std::max(max_y, (double)max(y));
     }
 
-    for (size_t pid = 0; pid < X.size(); pid++)
+    for (R_xlen_t pid = 0; pid < X.size(); pid++)
     {
       // Bounding box test
       if (X[pid] < min_x || X[pid] > max_x || Y[pid] < min_y || Y[pid] > max_y)
@@ -852,7 +852,7 @@ void LAS::filter_isolated_voxel(double res, unsigned int isolated)
   double zmin = min(Z);
   double xmax = max(X);
   double ymax = max(Y);
-  double zmax = max(Z);
+  //double zmax = max(Z);
 
   unsigned int width = std::floor((xmax - xmin) / res);
   unsigned int height = std::floor((ymax - ymin) / res);
@@ -1707,7 +1707,7 @@ DataFrame LAS::fast_eigen_decomposition(int k, double r, bool get_coef)
       {
         // ---- Pure Radius ----
         std::vector<nanoflann::ResultItem<uint32_t, KDTree::DistanceType>> matches;
-        const size_t found = tree.radiusSearch(p, rsq+EPSILON, matches);
+        tree.radiusSearch(p, rsq+EPSILON, matches);
 
         for (const auto& m : matches)
           indices.push_back(m.first);

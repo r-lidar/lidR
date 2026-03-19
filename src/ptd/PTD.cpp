@@ -59,7 +59,7 @@ PTD::PTD(const Parameters& p, Bbox b)
 
   params = p;
   params.spacing = params.spacing *  params.spacing; //squared comparable distance
-  if (params.ncores > omp_get_max_threads()) params.ncores = omp_get_max_threads();
+  if (params.ncores > (unsigned int)omp_get_max_threads()) params.ncores = omp_get_max_threads();
 
   logger = nullptr;
   d = nullptr;
@@ -343,8 +343,8 @@ void PTD::tin_densify()
 {
   const auto t0 = clock::now();
 
-  int iteration = 0;
-  int count = 0;
+  unsigned int iteration = 0;
+  unsigned int count = 0;
   int t = -1;
 
   int n_cells = index_grid.get_ncells();

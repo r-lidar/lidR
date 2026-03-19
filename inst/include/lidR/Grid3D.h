@@ -22,7 +22,7 @@ public:
   double xmin,ymin,xmax,ymax,zmin,zmax;
   double xres, yres, zres;
   double area, volume;
-  int npoints;
+  unsigned int npoints;
 
 public:
   Rcpp::IntegerVector connected_components(int connectivity);
