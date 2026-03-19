@@ -53,7 +53,7 @@ catalog_split_clusters = function(ctg, buffer = 1)
   sfctg = sf::st_buffer(sfctg, buffer)
   clustered = sf::st_union(sfctg)
   clustered = sf::st_cast(clustered, "POLYGON")
-  idx = sf::st_contains(clustered, sfctg)
+  idx = sf::st_intersects(clustered, sfctg)
   subctg = lapply(idx, function(i) ctg[i,])
   subctg
 }
