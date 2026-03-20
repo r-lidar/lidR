@@ -309,9 +309,8 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
 
 #' Digital Surface Model Algorithm
 #'
-#' This function is made to be used in \link{rasterize_canopy}. It implements the spike-free algorithm
-#' developed by Khosravipour et al. (2016), which is based on the computation of an incremental
-#' triangulation of all returns with triangle freezing criteria (see references).
+#' The spike-free algorithm developed by Khosravipour et al. (2016), which is based on the computation
+#' of an incremental triangulation of all returns with triangle freezing criteria (see references).
 #'
 #' @param freeze_distance freeze distance (see references). Recommended value: 3 times the pulse spacing or
 #' a little higher.
@@ -334,6 +333,10 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
 #' # Khosravipour et al. spikefree algorithm
 #' chm <- rasterize_canopy(las, res = 0.25, spikefree(1.5))
 #' plot(chm, col = col)
+#'
+#' # Locally adaptive spikefree algorithm
+#' chm <- rasterize_canopy(las, res = 0.25, lspikefree())
+#' plot(chm, col = col)
 #' @export
 #' @name dsm_spikefree
 spikefree <- function(freeze_distance, height_buffer = 0.5)
@@ -351,6 +354,36 @@ spikefree <- function(freeze_distance, height_buffer = 0.5)
     assert_is_valid_context(LIDRCONTEXTDSM, "spikefree")
     grid <- raster_as_dataframe(layout, na.rm = FALSE)
     z <- C_spikefree(las@data, grid, freeze_distance, height_buffer)
+    return(z)
+  }
+
+  f <- plugin_dsm(f, omp = TRUE)
+  return(f)
+}
+
+#' Locally adaptative spikefree
+#'
+#' The locally adaptative spikefree by Fisher F. J. (2024) adjusts the freeze distance parameters
+#' automatically and locally.
+#'
+#' @references Fischer, F. J., Jackson, T., Vincent, G., & Jucker, T. (2024). Robust characterisation
+#' of forest structure from airborne laser scanning—A systematic assessment and sample workflow for
+#' ecologists. Methods in Ecology and Evolution, 15, 1873–1888. https://doi.org/10.1111/2041-210X.14416
+#'
+#' @rdname dsm_spikefree
+#' @export
+lspikefree <- function(height_buffer = 0.5)
+{
+  assert_all_are_non_negative(height_buffer)
+  assert_is_a_number(height_buffer)
+
+  height_buffer <- lazyeval::uq(height_buffer)
+
+  f <- function(las, layout)
+  {
+    assert_is_valid_context(LIDRCONTEXTDSM, "lspikefree")
+    grid <- raster_as_dataframe(layout, na.rm = FALSE)
+    z <- C_spikefree(las@data, grid, 0, height_buffer)
     return(z)
   }
 

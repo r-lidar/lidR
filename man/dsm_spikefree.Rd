@@ -3,9 +3,12 @@
 \name{dsm_spikefree}
 \alias{dsm_spikefree}
 \alias{spikefree}
+\alias{lspikefree}
 \title{Digital Surface Model Algorithm}
 \usage{
 spikefree(freeze_distance, height_buffer = 0.5)
+
+lspikefree(height_buffer = 0.5)
 }
 \arguments{
 \item{freeze_distance}{freeze distance (see references). Recommended value: 3 times the pulse spacing or
@@ -14,9 +17,11 @@ a little higher.}
 \item{height_buffer}{buffer distance (see references). Recommended value: 0.5 do not change.}
 }
 \description{
-This function is made to be used in \link{rasterize_canopy}. It implements the spike-free algorithm
-developed by Khosravipour et al. (2016), which is based on the computation of an incremental
-triangulation of all returns with triangle freezing criteria (see references).
+The spike-free algorithm developed by Khosravipour et al. (2016), which is based on the computation
+of an incremental triangulation of all returns with triangle freezing criteria (see references).
+
+The locally adaptative spikefree by Fisher F. J. (2024) adjusts the freeze distance parameters
+automatically and locally.
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")
@@ -27,11 +32,19 @@ col <- height.colors(50)
 # Khosravipour et al. spikefree algorithm
 chm <- rasterize_canopy(las, res = 0.25, spikefree(1.5))
 plot(chm, col = col)
+
+# Locally adaptive spikefree algorithm
+chm <- rasterize_canopy(las, res = 0.25, lspikefree())
+plot(chm, col = col)
 }
 \references{
 Khosravipour, Anahita & Skidmore, Andrew & Isenburg, Martin. (2016). Generating spike-free
 digital surface models using LiDAR raw point clouds: A new approach for forestry applications.
 International Journal of Applied Earth Observation and Geoinformation. 52. 104-114. 10.1016/j.jag.2016.06.005.
+
+Fischer, F. J., Jackson, T., Vincent, G., & Jucker, T. (2024). Robust characterisation
+of forest structure from airborne laser scanning—A systematic assessment and sample workflow for
+ecologists. Methods in Ecology and Evolution, 15, 1873–1888. https://doi.org/10.1111/2041-210X.14416
 }
 \seealso{
 Other digital surface model algorithms: 

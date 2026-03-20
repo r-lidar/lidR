@@ -16,8 +16,8 @@ using clock = std::chrono::steady_clock;
 
 Spikefree::Spikefree(const Parameters& p, Bbox b)
 {
-  if (p.d_f <= 0.0) throw std::invalid_argument("Freeze size must be > 0");
-  if (p.h_b <- 0.0) throw std::invalid_argument("Z buffer size must be > 0");
+  if (p.d_f < 0.0) throw std::invalid_argument("Freeze size must be >= 0");
+  if (p.h_b <= 0.0) throw std::invalid_argument("Z buffer size must be >= 0");
 
   // Offset for floating point accuracy
   x_offset = std::round((b.xmin+b.xmax)/2);
@@ -42,10 +42,19 @@ Spikefree::Spikefree(const Parameters& p, Bbox b)
   logger = nullptr;
 
   // Grid to retain highest point per grid cell during pre-densification
-  double res = std::min(20*std::sqrt(params.d_f), 10.0f);
-  spacing_grid = Grid(b.xmin, b.ymin, b.xmax, b.ymax, res);
+  float res = 10.0f;
+  if (params.d_f > 0) res = std::min(20*std::sqrt(params.d_f), 10.0f);
+  spacing_grid = Grid(bbox.xmin, bbox.ymin, bbox.xmax, bbox.ymax, res);
   high_points.resize(spacing_grid.get_ncells());
   for(auto& p : high_points) { p.z = -std::numeric_limits<double>::infinity(); }
+
+  // Grid for locally adaptive spikefree
+  if (params.d_f == 0)
+  {
+    point_density_grid = Grid(bbox.xmin, bbox.ymin, bbox.xmax, bbox.ymax, 5);
+    pulse_spacing.resize(point_density_grid.get_ncells());
+    std::fill(pulse_spacing.begin(), pulse_spacing.end(), 0);
+  }
 
   // state
   cur_h = std::numeric_limits<double>::infinity();
@@ -62,6 +71,7 @@ void Spikefree::set_logger(Logger l)
 bool Spikefree::pre_insert_point(double x, double y, double z)
 {
   int cell = spacing_grid.cell_from_xy(x-x_offset, y-y_offset);
+
   if (cell < 0 || cell >= (int)high_points.size()) return false;
 
   if (z > high_points[cell].z)
@@ -70,6 +80,13 @@ bool Spikefree::pre_insert_point(double x, double y, double z)
     pt.x = x - x_offset;
     pt.y = y - y_offset;
     pt.z = z;
+  }
+
+
+  if (params.d_f == 0)
+  {
+    cell = point_density_grid.cell_from_xy(x-x_offset, y-y_offset);
+    pulse_spacing[cell] += 0.04f; // 1/(5x5)
   }
 
   return true;
@@ -92,6 +109,17 @@ bool Spikefree::pre_tin()
   d->activate_spatial_index();
   ready = true;
 
+  if (params.d_f == 0)
+  {
+    for (auto& v : pulse_spacing)
+    {
+      if (v < 0.05)
+        v = 10;
+      else
+        v = 1/std::sqrt(v);
+    }
+  }
+
   return true;
 }
 
@@ -111,7 +139,7 @@ bool Spikefree::insert_point(double x, double y , double z)
   if (t < 0) return false;
   if (d->is_frozen(t)) return false;
 
-  if (freeze(t))
+  if (freeze(t, p.x, p.y))
   {
     d->set_frozen(t, true);
     return false;
@@ -156,7 +184,7 @@ double Spikefree::get_z(double x, double y)
   return std::numeric_limits<double>::quiet_NaN();
 }
 
-bool Spikefree::freeze(int t)
+bool Spikefree::freeze(int t, double x, double y)
 {
   const IncrementalDelaunay::Triangle& tri = d->triangles[t];
 
@@ -180,6 +208,16 @@ bool Spikefree::freeze(int t)
   double min_h = std::min({posA.z, posB.z, posC.z});
 
   // Evaluate freeze condition
-  return (sq_max_edge <= params.d_f) && ((min_h - cur_h) >= params.h_b);
+  double d_f = params.d_f;
+  if (d_f == 0)
+  {
+    int cell = point_density_grid.cell_from_xy(x, y);
+    float ps = pulse_spacing[cell];
+    d_f = 1.96*ps+1.42;
+    d_f = d_f*d_f;
+  }
+
+  return (sq_max_edge <= d_f) && ((min_h - cur_h) >= params.h_b);
 }
+
 }

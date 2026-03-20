@@ -4,6 +4,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 - New: Progressive TIN Densification for ground classification (`ptd()`)
 - New: Spike-free algorithm for CHM (`spikefree()`)
+- New: Locally Adaptive Spike-free algorithm for CHM (`lspikefree()`)
 - New: function `catalog_split_clusters()`
 - Doc: [lidR book](https://github.com/r-lidar/lidRbook) updated
 

@@ -16,8 +16,8 @@ using Logger = std::function<void(const std::string&)>;
 
 struct Parameters
 {
-  float d_f = 2;
-  float h_b = 0.5;
+  float d_f = 2.0f;
+  float h_b = 0.5f;
   bool verbose = false;
 };
 
@@ -75,13 +75,15 @@ private:
   double cur_h;
 
   std::vector<Point> high_points;
+  std::vector<float> pulse_spacing;
 
+  IncrementalDelaunay::Grid point_density_grid;
   IncrementalDelaunay::Grid spacing_grid;
   IncrementalDelaunay::Grid index_grid;
   IncrementalDelaunay::Triangulation* d;
 
   bool pre_tin();
-  bool freeze(int t);
+  bool freeze(int t, double x, double y);
 };
 
 }
