@@ -137,8 +137,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_spikefree
-NumericVector C_spikefree(DataFrame df, DataFrame grid, double d_f, double h_b);
-RcppExport SEXP _lidR_C_spikefree(SEXP dfSEXP, SEXP gridSEXP, SEXP d_fSEXP, SEXP h_bSEXP) {
+NumericVector C_spikefree(DataFrame df, DataFrame grid, double d_f, double h_b, double slope, double intercept);
+RcppExport SEXP _lidR_C_spikefree(SEXP dfSEXP, SEXP gridSEXP, SEXP d_fSEXP, SEXP h_bSEXP, SEXP slopeSEXP, SEXP interceptSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -146,7 +146,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< DataFrame >::type grid(gridSEXP);
     Rcpp::traits::input_parameter< double >::type d_f(d_fSEXP);
     Rcpp::traits::input_parameter< double >::type h_b(h_bSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_spikefree(df, grid, d_f, h_b));
+    Rcpp::traits::input_parameter< double >::type slope(slopeSEXP);
+    Rcpp::traits::input_parameter< double >::type intercept(interceptSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_spikefree(df, grid, d_f, h_b, slope, intercept));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -716,7 +718,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 4},
     {"_lidR_C_ptd", (DL_FUNC) &_lidR_C_ptd, 6},
-    {"_lidR_C_spikefree", (DL_FUNC) &_lidR_C_spikefree, 4},
+    {"_lidR_C_spikefree", (DL_FUNC) &_lidR_C_spikefree, 6},
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},
     {"_lidR_C_smooth", (DL_FUNC) &_lidR_C_smooth, 6},
     {"_lidR_C_highest", (DL_FUNC) &_lidR_C_highest, 2},

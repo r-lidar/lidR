@@ -8,20 +8,30 @@
 \usage{
 spikefree(freeze_distance, height_buffer = 0.5)
 
-lspikefree(height_buffer = 0.5)
+lspikefree(slope = 1.96, intercept = 1.42, height_buffer = 0.5)
 }
 \arguments{
 \item{freeze_distance}{freeze distance (see references). Recommended value: 3 times the pulse spacing or
 a little higher.}
 
 \item{height_buffer}{buffer distance (see references). Recommended value: 0.5 do not change.}
+
+\item{slope, intercept}{default values selected according to Fisher F. J. (2024). It is recommended
+to do not change.}
 }
 \description{
 The spike-free algorithm developed by Khosravipour et al. (2016), which is based on the computation
 of an incremental triangulation of all returns with triangle freezing criteria (see references).
 
-The locally adaptative spikefree by Fisher F. J. (2024) adjusts the freeze distance parameters
-automatically and locally.
+The locally adaptive spikefree algorithm by Fischer et al. 2024 adjusts the freeze distance
+automatically and locally depending on point density. Within the typical range of airborne laser
+scan densities (>1 points/m2), the original 3 parameter formula can be simplified to a
+linear relationship. This linear formula predicts freeze distance from local point spacing
+(freeze distance ~ intercept + slope*point_spacing) and can be used to adapt the degree
+of spike-removal to sampling density, so that data gaps are filled and canopy height estimates
+are consistent across point densities. By default, the point spacing is computed at a resolution
+of 5 m. It is recommended to apply this algorithm to first returns only and not at a point
+spacing > 0.7 m.
 }
 \examples{
 LASfile <- system.file("extdata", "MixedConifer.laz", package="lidR")

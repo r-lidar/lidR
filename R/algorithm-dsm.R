@@ -363,8 +363,19 @@ spikefree <- function(freeze_distance, height_buffer = 0.5)
 
 #' Locally adaptative spikefree
 #'
-#' The locally adaptative spikefree by Fisher F. J. (2024) adjusts the freeze distance parameters
-#' automatically and locally.
+#' The locally adaptive spikefree algorithm by Fischer et al. 2024 adjusts the freeze distance
+#' automatically and locally depending on point density. Within the typical range of airborne laser
+#' scan densities (>1 points/m2), the original 3 parameter formula can be simplified to a
+#' linear relationship. This linear formula predicts freeze distance from local point spacing
+#' (freeze distance ~ intercept + slope*point_spacing) and can be used to adapt the degree
+#' of spike-removal to sampling density, so that data gaps are filled and canopy height estimates
+#' are consistent across point densities. By default, the point spacing is computed at a resolution
+#' of 5 m. It is recommended to apply this algorithm to first returns only and not at a point
+#' spacing > 0.7 m.
+#'
+#'
+#' @param slope,intercept default values selected according to Fisher F. J. (2024). It is recommended
+#' to do not change.
 #'
 #' @references Fischer, F. J., Jackson, T., Vincent, G., & Jucker, T. (2024). Robust characterisation
 #' of forest structure from airborne laser scanning—A systematic assessment and sample workflow for
@@ -372,7 +383,7 @@ spikefree <- function(freeze_distance, height_buffer = 0.5)
 #'
 #' @rdname dsm_spikefree
 #' @export
-lspikefree <- function(height_buffer = 0.5)
+lspikefree <- function(slope = 1.96, intercept = 1.42, height_buffer = 0.5)
 {
   assert_all_are_non_negative(height_buffer)
   assert_is_a_number(height_buffer)
@@ -383,7 +394,7 @@ lspikefree <- function(height_buffer = 0.5)
   {
     assert_is_valid_context(LIDRCONTEXTDSM, "lspikefree")
     grid <- raster_as_dataframe(layout, na.rm = FALSE)
-    z <- C_spikefree(las@data, grid, 0, height_buffer)
+    z <- C_spikefree(las@data, grid, 0, height_buffer, slope, intercept)
     return(z)
   }
 

@@ -213,7 +213,7 @@ bool Spikefree::freeze(int t, double x, double y)
   {
     int cell = point_density_grid.cell_from_xy(x, y);
     float ps = pulse_spacing[cell];
-    d_f = 1.96*ps+1.42;
+    d_f = params.la_slope*ps+params.la_intercept ;
     d_f = d_f*d_f;
   }
 

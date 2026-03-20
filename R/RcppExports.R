@@ -37,8 +37,8 @@ C_ptd <- function(df, res, angle, distance, spacing, verbose) {
     .Call(`_lidR_C_ptd`, df, res, angle, distance, spacing, verbose)
 }
 
-C_spikefree <- function(df, grid, d_f, h_b) {
-    .Call(`_lidR_C_spikefree`, df, grid, d_f, h_b)
+C_spikefree <- function(df, grid, d_f, h_b, slope = 1.96, intercept = 1.42) {
+    .Call(`_lidR_C_spikefree`, df, grid, d_f, h_b, slope, intercept)
 }
 
 C_lmf <- function(las, ws, min_height, circular, ncpu) {

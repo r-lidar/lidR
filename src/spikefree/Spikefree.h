@@ -18,6 +18,8 @@ struct Parameters
 {
   float d_f = 2.0f;
   float h_b = 0.5f;
+  float la_slope = 1.96;
+  float la_intercept = 1.42;
   bool verbose = false;
 };
 

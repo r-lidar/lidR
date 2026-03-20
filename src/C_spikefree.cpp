@@ -5,7 +5,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector C_spikefree(DataFrame df, DataFrame grid, double d_f, double h_b)
+NumericVector C_spikefree(DataFrame df, DataFrame grid, double d_f, double h_b, double slope = 1.96, double intercept = 1.42)
 {
   NumericVector x = df[0];
   NumericVector y = df[1];
@@ -19,6 +19,8 @@ NumericVector C_spikefree(DataFrame df, DataFrame grid, double d_f, double h_b)
   Spikefree::Parameters params;
   params.d_f = d_f;
   params.h_b = h_b;
+  params.la_slope = slope;
+  params.la_intercept = intercept;
 
   // Register the bounding box of the points
   Spikefree::Bbox bb;
