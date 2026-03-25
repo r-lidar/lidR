@@ -1,5 +1,8 @@
 #include "LAS.h"
+#include "Progress.h"
 #include "SpatialIndex.h"
+
+using namespace lidR;
 
 // From data.table https://github.com/Rdatatable/data.table/pull/7451/changes
 #if R_VERSION < R_Version(4, 6, 0) || R_SVN_REVISION < 89077

@@ -8,6 +8,7 @@ SOURCES = ./Progress.cpp \
 ./C_ptd.cpp \
 ./C_chm_prep.cpp \
 ./LAS.cpp \
+./LAS_point_metrics.cpp \
 ./knn.cpp \
 ./C_Gatziolis2019.cpp \
 ./RcppFunction.cpp \
