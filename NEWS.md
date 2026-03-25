@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v4.4.0 (Release date: ...)
+
+- New: `point_metrics()` is back.
+
 ## lidR v4.3.0 (Release date: ...)
 
 - New: Progressive TIN Densification for ground classification (`ptd()`)
