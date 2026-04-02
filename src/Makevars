@@ -1,4 +1,4 @@
-PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) -I../inst/include/ -DRCPP_NO_MODULES -DWITHSETLENGTH
+PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) -I../inst/include/ -DRCPP_NO_MODULES
 PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(SHLIB_OPENMP_CXXFLAGS)
 SOURCES = ./Progress.cpp \
 ./ptd/PTD.cpp \
@@ -8,6 +8,7 @@ SOURCES = ./Progress.cpp \
 ./C_ptd.cpp \
 ./C_chm_prep.cpp \
 ./LAS.cpp \
+./LAS_point_metrics.cpp \
 ./knn.cpp \
 ./C_Gatziolis2019.cpp \
 ./RcppFunction.cpp \

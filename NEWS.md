@@ -1,12 +1,13 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
-## lidR v4.3.0 (Release date: 2026-03-25)
+## lidR v4.3.0 (Release date: 2026-04)
 
 - New: Progressive TIN Densification for ground classification (`ptd()`)
 - New: Spike-free algorithm for CHM (`spikefree()`)
 - New: Locally Adaptive Spike-free algorithm for CHM (`lspikefree()`)
 - New: function `catalog_split_clusters()`
 - Doc: [lidR book](https://github.com/r-lidar/lidRbook) updated
+- New: `point_metrics()` is back.
 
 ## lidR v4.2.3 (Release date: 2026-01-07)
 
