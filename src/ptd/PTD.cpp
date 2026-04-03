@@ -154,7 +154,7 @@ bool PTD::run()
 
 void PTD::sort_by_z()
 {
-  std::sort(candidates.begin(), candidates.end(), [](const auto& a, const auto& b)
+  std::stable_sort(candidates.begin(), candidates.end(), [](const auto& a, const auto& b)
   {
     return a.z < b.z;
   });
@@ -764,7 +764,7 @@ void PTD::sample_lowest_per_cell(const std::vector<Point>& points, IncrementalDe
 
 void PTD::deduplicate_seeds()
 {
-  std::sort(seeds.begin(), seeds.end(),
+  std::stable_sort(seeds.begin(), seeds.end(),
             [](const Point& a, const Point& b) {
               if (a.x != b.x) return a.x < b.x;
               if (a.y != b.y) return a.y < b.y;

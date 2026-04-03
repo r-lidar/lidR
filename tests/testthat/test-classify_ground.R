@@ -120,13 +120,13 @@ test_that("PTD works",
   myptd = ptd()
   las <- classify_ground(topography, myptd)
   ans <- as.numeric(table(las$Classification))
-  class = c(48988,24364,51)
+  class = c(48967,24383,53)
   expect_equal(ans, class)
 
   myptd = ptd(angle = 1, distance = 0.5)
   las <- classify_ground(topography, myptd)
   ans <- as.numeric(table(las$Classification))
-  class = c(67278,4758,1367)
+  class = c(67271,4758,1374)
   expect_equal(ans, class)
 })
 
