@@ -121,8 +121,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_ptd
-NumericVector C_ptd(DataFrame df, double res, double angle, double distance, double spacing, bool verbose);
-RcppExport SEXP _lidR_C_ptd(SEXP dfSEXP, SEXP resSEXP, SEXP angleSEXP, SEXP distanceSEXP, SEXP spacingSEXP, SEXP verboseSEXP) {
+NumericVector C_ptd(DataFrame df, double res, double angle, double distance, double spacing, bool verbose, int ncores);
+RcppExport SEXP _lidR_C_ptd(SEXP dfSEXP, SEXP resSEXP, SEXP angleSEXP, SEXP distanceSEXP, SEXP spacingSEXP, SEXP verboseSEXP, SEXP ncoresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -132,7 +132,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type distance(distanceSEXP);
     Rcpp::traits::input_parameter< double >::type spacing(spacingSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_ptd(df, res, angle, distance, spacing, verbose));
+    Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_ptd(df, res, angle, distance, spacing, verbose, ncores));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -717,7 +718,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_lidR_C_interpolate_delaunay", (DL_FUNC) &_lidR_C_interpolate_delaunay, 7},
     {"_lidR_C_tinfo", (DL_FUNC) &_lidR_C_tinfo, 2},
     {"_lidR_C_tsearch", (DL_FUNC) &_lidR_C_tsearch, 4},
-    {"_lidR_C_ptd", (DL_FUNC) &_lidR_C_ptd, 6},
+    {"_lidR_C_ptd", (DL_FUNC) &_lidR_C_ptd, 7},
     {"_lidR_C_spikefree", (DL_FUNC) &_lidR_C_spikefree, 6},
     {"_lidR_C_lmf", (DL_FUNC) &_lidR_C_lmf, 5},
     {"_lidR_C_smooth", (DL_FUNC) &_lidR_C_smooth, 6},

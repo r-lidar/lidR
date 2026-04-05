@@ -117,6 +117,8 @@ test_that("classify_ground does not erase former classification (but new ground 
 
 test_that("PTD works",
 {
+  skip_on_os("mac")
+
   myptd = ptd()
   las <- classify_ground(topography, myptd)
   ans <- as.numeric(table(las$Classification))

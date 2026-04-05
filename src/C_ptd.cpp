@@ -5,7 +5,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector C_ptd(DataFrame df, double res, double angle, double distance, double spacing, bool verbose)
+NumericVector C_ptd(DataFrame df, double res, double angle, double distance, double spacing, bool verbose, int ncores)
 {
   NumericVector x = df[0];
   NumericVector y = df[1];
@@ -18,6 +18,7 @@ NumericVector C_ptd(DataFrame df, double res, double angle, double distance, dou
   params.spacing = spacing;
   params.seed_resolution_search = res;
   params.verbose = verbose;
+  params.ncores = ncores;
 
   // Register the bounding box of the points
   PTD::Bbox bb;

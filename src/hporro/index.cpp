@@ -39,10 +39,10 @@ int Grid::cell_from_xy(double x, double y) const
 
 void Grid::get_cells(double xmin, double ymin, double xmax, double ymax, std::vector<int>& cells) const
 {
-  int colmin = (xmin - this->xmin) / xres;
-  int colmax = (xmax - this->xmin) / xres;
-  int rowmin = (this->ymax - ymax) / yres;
-  int rowmax = (this->ymax - ymin) / yres;
+  int colmin = static_cast<int>(std::floor((xmin - this->xmin) / xres));
+  int colmax = static_cast<int>(std::floor((xmax - this->xmin) / xres));
+  int rowmin = static_cast<int>(std::floor((this->ymax - ymax) / yres));
+  int rowmax = static_cast<int>(std::floor((this->ymax - ymin) / yres));
   cells.clear();
 
   for (int col = std::max(colmin,0) ; col <= std::min(colmax, (int)ncols-1) ; col++) {

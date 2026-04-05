@@ -17,8 +17,8 @@ struct Vec2
   bool operator==(const Vec2& other) const { return x == other.x && y == other.y; }
   Vec2 operator-(const Vec2& other) const { return Vec2{x - other.x, y - other.y}; }
   Vec2 operator+(const Vec2& other) const { return Vec2{x + other.x, y + other.y}; }
-  Vec2 operator/(float a) const { return Vec2{x / a, y / a}; }
-  Vec2 operator*(float a) const { return Vec2{x * a, y * a}; }
+  Vec2 operator/(double a) const { return Vec2{x / a, y / a}; }
+  Vec2 operator*(double a) const { return Vec2{x * a, y * a}; }
   Vec2& operator+=(const Vec2& other) { x += other.x; y += other.y; return *this; }
   double dot(const Vec2& other) { return x*other.x + y*other.y; }
 };

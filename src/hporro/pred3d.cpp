@@ -421,6 +421,9 @@ REAL exactinit()
 #ifdef LINUX
   int cword;
 #endif /* LINUX */
+#ifdef __APPLE__
+  unsigned short cw;
+#endif /* __APPLE__ */
 
 #ifdef CPU86
 #ifdef SINGLE
@@ -439,6 +442,22 @@ REAL exactinit()
 #endif /* not SINGLE */
   _FPU_SETCW(cword);
 #endif /* LINUX */
+#ifdef __APPLE__
+  /* Set FPU to use 53-bit precision for double on x86-64 macOS.
+   This prevents use of 80-bit extended precision which can cause
+   inconsistencies in geometric predicates. */
+#if defined(__i386__) || defined(__x86_64__)
+  /* x86/x86-64: Use inline assembly to set FPU control word */
+#ifdef SINGLE
+  cw = 0x007f;  /* 24-bit precision (single), round to nearest, all exceptions masked */
+#else /* not SINGLE */
+  cw = 0x027f;  /* 53-bit precision (double), round to nearest, all exceptions masked */
+#endif /* not SINGLE */
+  __asm__ __volatile__ ("fldcw %0" : : "m" (cw));
+#endif /* x86/x86-64 */
+  /* Note: On ARM-based Macs, this is not needed as they use IEEE 754 compliant
+   floating-point without extended precision. */
+#endif /* __APPLE__ */
 
   every_other = 1;
   half = 0.5;
@@ -506,6 +525,9 @@ void exactinit(int verbose, int noexact, int o3dfilter, int ispfilter,
 #ifdef LINUX
   int cword;
 #endif /* LINUX */
+#ifdef __APPLE__
+  unsigned short cw;
+#endif /* __APPLE__ */
 
 #ifdef CPU86
 #ifdef SINGLE
@@ -524,6 +546,22 @@ void exactinit(int verbose, int noexact, int o3dfilter, int ispfilter,
 #endif /* not SINGLE */
   _FPU_SETCW(cword);
 #endif /* LINUX */
+#ifdef __APPLE__
+  /* Set FPU to use 53-bit precision for double on x86-64 macOS.
+   This prevents use of 80-bit extended precision which can cause
+   inconsistencies in geometric predicates. */
+#if defined(__i386__) || defined(__x86_64__)
+  /* x86/x86-64: Use inline assembly to set FPU control word */
+#ifdef SINGLE
+  cw = 0x007f;  /* 24-bit precision (single), round to nearest, all exceptions masked */
+#else /* not SINGLE */
+  cw = 0x027f;  /* 53-bit precision (double), round to nearest, all exceptions masked */
+#endif /* not SINGLE */
+  __asm__ __volatile__ ("fldcw %0" : : "m" (cw));
+#endif /* x86/x86-64 */
+  /* Note: On ARM-based Macs, this is not needed as they use IEEE 754 compliant
+   floating-point without extended precision. */
+#endif /* __APPLE__ */
 
   /*if (verbose) {
     printf("  Initializing robust predicates.\n");

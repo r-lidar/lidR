@@ -33,8 +33,8 @@ C_tsearch <- function(D, P, X, ncpu) {
     .Call(`_lidR_C_tsearch`, D, P, X, ncpu)
 }
 
-C_ptd <- function(df, res, angle, distance, spacing, verbose) {
-    .Call(`_lidR_C_ptd`, df, res, angle, distance, spacing, verbose)
+C_ptd <- function(df, res, angle, distance, spacing, verbose, ncores) {
+    .Call(`_lidR_C_ptd`, df, res, angle, distance, spacing, verbose, ncores)
 }
 
 C_spikefree <- function(df, grid, d_f, h_b, slope = 1.96, intercept = 1.42) {
