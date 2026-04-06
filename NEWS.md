@@ -4,6 +4,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 - Fix: CRAN stuff
 - New: `point_metrics()` is back.
+- New: minor change in `readLAS()`, `readLASheader()`, `readLAScatalog()` to be ready to support remote files with `rlas` 1.9.0.
 
 ## lidR v4.3.0 (Release date: 2026-04-02)
 

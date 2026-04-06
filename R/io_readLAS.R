@@ -103,15 +103,15 @@ readLAS.LAScluster = function(files, select = NULL, filter = NULL)
   if (!is.null(select)) warning("Argument 'select' is not used with a LAScluster. Use opt_select() with the LAScatalog instead.", call. = FALSE)
   if (!is.null(filter)) warning("Argument 'filter' is not used with a LAScluster. Use opt_filter() with the LAScatalog instead.", call. = FALSE)
 
-  if (!all(file.exists(files@files)) && all(files@alt_dir != "")) {
+  if (!all(file_exists(files@files)) && all(files@alt_dir != "")) {
     for (alt_dir in files@alt_dir) {
       paths <- paste0(alt_dir, basename(files@files))
-      if (all(file.exists(paths))) break
+      if (all(file_exists(paths))) break
     }
     files@files <- paths
   }
 
-  if (!all(file.exists(files@files))) stop("File not found", call. = FALSE)
+  if (!all(file_exists(files@files))) stop("File not found", call. = FALSE)
 
   buffer <- X <- Y <- NULL
 
@@ -205,7 +205,7 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
 
   if (any(!islas)) stop("File(s) are not las or laz")
 
-  ifiles <- normalizePath(x)
+  ifiles <- normalizePath(x, mustWork = FALSE)
 
   if (ofile != "")
   {
@@ -276,4 +276,18 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
   }
 
   return(LAS(data, header, check = TRUE, index = NULL, no_attr_name_check = TRUE))
+}
+
+is_remote = function(paths)
+{
+  remote_pattern <- "^https?://|^/vsi(curl|s3|gs|az|adls|oss|swift)/"
+  is_remote <- grepl(remote_pattern, paths)
+}
+
+file_exists <- function(...)
+{
+  paths <- c(...)
+  is_remote = is_remote(paths)
+  result <- ifelse(is_remote, TRUE, file.exists(paths))
+  result
 }

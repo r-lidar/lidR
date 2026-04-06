@@ -64,20 +64,46 @@ readLAScatalog <- function(folder, progress = TRUE, select = "*", filter = "", c
 {
   assert_is_character(folder)
 
-  finfo <- file.info(folder)
+  is_remote_flags = is_remote(folder)
 
-  if (all(is.na(finfo$isdir)))
-    stop(glue::glue("'{folder}' does not exist."), call. = FALSE)
-  else if (all(!finfo$isdir))
-    files <- normalizePath(folder)
-  else
+  finfo <- file.info(folder[!is_remote_flags])  # only stat local paths
+
+  local_paths  <- folder[!is_remote_flags]
+  remote_paths <- folder[is_remote_flags]
+
+  # Expand local directories into file lists
+  local_files <- character(0)
+  if (length(local_paths) > 0)
   {
-    p <- list(...)
-    p$path <- folder
-    p$full.names <- TRUE
-    if (is.null(p$pattern)) p$pattern <- "(?i)\\.la(s|z)$"
-    files <- do.call(list.files, p)
+    local_finfo <- file.info(local_paths)
+
+    # Check that all local paths exist
+    if (any(is.na(local_finfo$isdir)))
+    {
+      missing <- local_paths[is.na(local_finfo$isdir)]
+      stop(glue::glue("'{paste(missing, collapse = ', ')}' does not exist."), call. = FALSE)
+    }
+
+    dirs  <- local_paths[local_finfo$isdir]
+    files <- local_paths[!local_finfo$isdir]
+
+    # Expand directories
+    if (length(dirs) > 0)
+    {
+      p <- list(...)
+      p$full.names <- TRUE
+      if (is.null(p$pattern)) p$pattern <- "(?i)\\.la(s|z)$"
+      expanded <- unlist(lapply(dirs, function(d) { p$path <- d; do.call(list.files, p) }))
+      files <- c(files, expanded)
+    }
+
+    local_files <- normalizePath(files, mustWork = FALSE)
   }
+
+  files <- c(local_files, remote_paths)
+
+  if (length(files) == 0)
+    stop("No LAS/LAZ files found.", call. = FALSE)
 
   verbose("Reading files...")
 
