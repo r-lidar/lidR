@@ -1,76 +1,54 @@
-# For help debugging build failures open an issue on the RStudio community with the 'github-actions' tag.
-# https://community.rstudio.com/new-topic?category=Package%20development&tags=github-actions
+# https://github.com/r-lib/actions/tree/v2/examples
 on:
   push:
-    branches:
-      - master
-      - devel
+    branches: [master, devel]
   pull_request:
-    branches:
-      - master
-      - devel
+    branches: [master, devel]
 
 name: R-CMD-check
 
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
-
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r: 'devel', rglusenull: "true"}
-          - {os: windows-latest, r: 'release', rglusenull: "true"}
-          - {os: macOS-latest, r: 'release', rglusenull: "true"}
-          - {os: ubuntu-latest, r: 'release'}
-          - {os: ubuntu-latest, r: 'devel'}
+          - {os: windows-latest,  r: 'devel',   rgl_null: 'true'}
+          - {os: windows-latest,  r: 'release',  rgl_null: 'true'}
+          - {os: macos-latest,    r: 'release',  rgl_null: 'true'}
+          - {os: ubuntu-latest,   r: 'release'}
+          - {os: ubuntu-latest,   r: 'devel'}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       _R_CHECK_FORCE_SUGGESTS_: false
-      RGL_USE_NULL: ${{ matrix.config.rglusenull }}
-      RSPM: ${{ matrix.config.rspm }}
+      RGL_USE_NULL: ${{ matrix.config.rgl_null || 'false' }}
       NOT_CRAN: true
       OMP_NUM_THREADS: 1
 
-
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
+          use-public-rspm: true
 
       - uses: r-lib/actions/setup-pandoc@v2
 
       - name: Install macOS system dependencies
-        if: runner.os == 'macos'
+        if: runner.os == 'macOS'
         run: brew install gdal proj
 
-      - name: Query dependencies
-        run: |
-          install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
-
-      - name: Cache R packages
-        if: runner.os != 'Windows'
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-2-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-2-
-
-      - name: Install system dependencies
+      - name: Install Linux system dependencies
         if: runner.os == 'Linux'
         run: |
-          sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
-          sudo apt update
-          sudo apt install \
+          sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
+          sudo apt-get update -y
+          sudo apt-get install -y \
             libgdal-dev \
             libgeos++-dev \
             libudunits2-dev \
@@ -83,19 +61,22 @@ jobs:
             libxt-dev \
             libfftw3-dev
 
-      - name: Install dependencies
-        run: |
-          install.packages("BiocManager")
-          BiocManager::install("EBImage")
-          remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("rcmdcheck")
-          remotes::install_cran("covr")
-        shell: Rscript {0}
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::rcmdcheck
+            any::covr
+            bioc::EBImage
 
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+        run: |
+          rcmdcheck::rcmdcheck(
+            args = c("--no-manual", "--as-cran"),
+            error_on = "warning",
+            check_dir = "check"
+          )
         shell: Rscript {0}
 
       - name: Show testthat output
@@ -105,12 +86,12 @@ jobs:
 
       - name: Upload check results
         if: failure()
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check
 
       - name: Test coverage
-        if: matrix.config.os == 'ubuntu-20.04' && matrix.config.r == 'devel'
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
         run: covr::codecov(type = "all")
         shell: Rscript {0}
