@@ -1,4 +1,3 @@
-# https://github.com/r-lib/actions/tree/v2/examples
 on:
   push:
     branches: [master, devel]
@@ -10,56 +9,32 @@ name: R-CMD-check
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.config.os }} (${{ matrix.config.rRequested }})
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest,  r: 'devel',   rgl_null: 'true'}
-          - {os: windows-latest,  r: 'release',  rgl_null: 'true'}
-          - {os: macos-latest,    r: 'release',  rgl_null: 'true'}
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'devel'}
+          - {os: windows-latest, r: 'devel',   rgl_null: 'true'}
+          - {os: windows-latest, r: 'release', rgl_null: 'true'}
+          - {os: macos-latest,   r: 'release', rgl_null: 'true'}
+          - {os: ubuntu-latest,  r: 'release'}
+          - {os: ubuntu-latest,  r: 'devel'}
 
     env:
-      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      _R_CHECK_FORCE_SUGGESTS_: false
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
       RGL_USE_NULL: ${{ matrix.config.rgl_null || 'false' }}
-      NOT_CRAN: true
-      OMP_NUM_THREADS: 1
 
     steps:
       - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
 
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
-
-      - uses: r-lib/actions/setup-pandoc@v2
-
-      - name: Install macOS system dependencies
-        if: runner.os == 'macOS'
-        run: brew install gdal proj
-
-      - name: Install Linux system dependencies
-        if: runner.os == 'Linux'
-        run: |
-          sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
-          sudo apt-get update -y
-          sudo apt-get install -y \
-            libgdal-dev \
-            libgeos++-dev \
-            libudunits2-dev \
-            libproj-dev \
-            libx11-dev \
-            libgl1-mesa-dev \
-            libglu1-mesa-dev \
-            libfreetype6-dev \
-            libnode-dev \
-            libxt-dev \
-            libfftw3-dev
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -67,31 +42,18 @@ jobs:
             any::rcmdcheck
             any::covr
             bioc::EBImage
+          # This is the 'Modern' way to fix your GDAL error:
+          # It forces sf/terra to compile from source against the system GDAL
+          install-reinstall: sf terra
 
       - name: Check
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: |
-          rcmdcheck::rcmdcheck(
-            args = c("--no-manual", "--as-cran"),
-            error_on = "warning",
-            check_dir = "check"
-          )
-        shell: Rscript {0}
-
-      - name: Show testthat output
-        if: always()
-        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
-
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@v4
+        uses: r-lib/actions/check-r-package@v2
         with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
+          args: 'c("--no-manual", "--as-cran")'
+          error-on: '"warning"'
+          check-dir: '"check"'
 
       - name: Test coverage
-        if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
+        if: success() && matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
         run: covr::codecov(type = "all")
         shell: Rscript {0}
