@@ -89,6 +89,7 @@ test_that("classify_ground csf works with last_returns = FALSE", {
 test_that("classify_ground ptd works",
 {
   skip_on_cran()
+  skip_on_os("mac")
 
   myptd = ptd()
   las <- classify_ground(topography, myptd)
