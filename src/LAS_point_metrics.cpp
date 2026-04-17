@@ -195,7 +195,7 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
             proxy.push_back(tmp);
             callenv.assign(*it3, tmp);
             R_resizeVector(tmp, sc);
-            UNPROTECT(1);
+            //UNPROTECT(1);
             break;
           }
           case INTSXP: {
@@ -203,7 +203,7 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
             proxy.push_back(tmp);
             callenv.assign(*it3, tmp);
             R_resizeVector(tmp, sc);
-            UNPROTECT(1);
+            //UNPROTECT(1);
             break;
           }
           case LGLSXP: {
@@ -211,7 +211,7 @@ List LAS::point_metrics(unsigned int k, double r, DataFrame data, int nalloc, SE
             proxy.push_back(tmp);
             callenv.assign(*it3, tmp);
             R_resizeVector(tmp, sc);
-            UNPROTECT(1);
+            //UNPROTECT(1);
             break;
           }
           default: {

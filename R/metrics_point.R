@@ -110,9 +110,9 @@
 #' @md
 point_metrics <- function(las, func, k, r,  xyz = FALSE, filter = NULL, ...) {
 
-  if (is_disable_point_metrics())
-    stop("Because of a new CRAN policy that affects numerous packages, we temporarily removed this function to give us time to find a workaround and prevent the package from being removed from CRAN.
-To get a version of the package with this function enabled you can install from r-universe rather than from CRAN: https://r-lidar.r-universe.dev/lidR", call. = FALSE)
+  #if (is_disable_point_metrics())
+  #  stop("Because of a new CRAN policy that affects numerous packages, we temporarily removed this function to give us time to find a workaround and prevent the package from being removed from CRAN.
+#To get a version of the package with this function enabled you can install from r-universe rather than from CRAN: https://r-lidar.r-universe.dev/lidR", call. = FALSE)
 
   UseMethod("point_metrics", las)
 }
@@ -120,10 +120,10 @@ To get a version of the package with this function enabled you can install from 
 #' @export
 point_metrics.LAS <- function(las, func, k, r, xyz = FALSE, filter = NULL, ...) {
 
-  if (is_disable_point_metrics())
-  {
-    C_point_metrics = function(a, b, c, d, e, f) {}
-  }
+  #if (is_disable_point_metrics())
+  #{
+  #  C_point_metrics = function(a, b, c, d, e, f) {}
+  #}
 
   if (missing(k) && missing(r))  stop("'k' or 'r' is missing", call. = FALSE)
 
