@@ -86,6 +86,23 @@ test_that("classify_ground csf works with last_returns = FALSE", {
   expect_equal(sum(las@data$Classification == 2L), 105L)
 })
 
+test_that("classify_ground ptd works",
+{
+  skip_on_cran()
+
+  myptd = ptd()
+  las <- classify_ground(topography, myptd)
+  ans <- as.numeric(table(las$Classification))
+  class = c(48967,24383,53)
+  expect_equal(ans, class)
+
+  myptd = ptd(angle = 1, distance = 0.5)
+  las <- classify_ground(topography, myptd)
+  ans <- as.numeric(table(las$Classification))
+  class = c(67271,4758,1374)
+  expect_equal(ans, class)
+})
+
 test_that("classify_ground works with last_returns = TRUE but attribute not properly populated", {
 
   skip_if_not_installed("RCSF")
@@ -115,20 +132,5 @@ test_that("classify_ground does not erase former classification (but new ground 
   expect_equal(names(table(las$Classification)), c("1", "2", "9"))
 })
 
-test_that("PTD works",
-{
-  skip_on_os("mac")
 
-  myptd = ptd()
-  las <- classify_ground(topography, myptd)
-  ans <- as.numeric(table(las$Classification))
-  class = c(48967,24383,53)
-  expect_equal(ans, class)
-
-  myptd = ptd(angle = 1, distance = 0.5)
-  las <- classify_ground(topography, myptd)
-  ans <- as.numeric(table(las$Classification))
-  class = c(67271,4758,1374)
-  expect_equal(ans, class)
-})
 
