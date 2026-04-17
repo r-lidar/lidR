@@ -1,5 +1,9 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v4.3.2 (Release date: 2026-04)
+
+- Fix: CRAN stuff
+
 ## lidR v4.3.1 (Release date: 2026-04)
 
 - Fix: CRAN stuff
