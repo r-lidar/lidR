@@ -1,48 +1,41 @@
+# lidR <img src="https://raw.githubusercontent.com/r-lidar/lidR/master/man/figures/logo200x231.png" align="right"/>
 
-lidR <img src="https://raw.githubusercontent.com/r-lidar/lidR/master/man/figures/logo200x231.png" align="right"/>
-======================================================================================================
-![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg) 
-[![R build status](https://github.com/r-lidar/lidR/workflows/R-CMD-check/badge.svg)](https://github.com/r-lidar/lidR/actions)
-[![Codecov test coverage](https://codecov.io/gh/r-lidar/lidR/branch/master/graph/badge.svg)](https://app.codecov.io/gh/r-lidar/lidR?branch=master)
+![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg) [![R build status](https://github.com/r-lidar/lidR/workflows/R-CMD-check/badge.svg)](https://github.com/r-lidar/lidR/actions) [![Codecov test coverage](https://codecov.io/gh/r-lidar/lidR/branch/master/graph/badge.svg)](https://app.codecov.io/gh/r-lidar/lidR?branch=master)
 
 **R package for Airborne LiDAR Data Manipulation and Visualization for Forestry Applications**
 
+<span style="color: red;">‼️ Since august 2026, the lidR package is no longer on CRAN. It is now hosted by r-universe. See below<span>
+
 The lidR package provides functions to read and write `.las` and `.laz` files, plot point clouds, compute metrics using an area-based approach, compute digital canopy models, thin LiDAR data, manage a collection of LAS/LAZ files, automatically extract ground inventories, process a collection of tiles using multicore processing, segment individual trees, classify points from geographic data, and provides other tools to manipulate LiDAR data in a **research and development context.**
 
-- 📖 Read [the book](https://r-lidar.github.io/lidRbook/index.html) to get started with the lidR package.
-- 💻 Install `lidR` from R with: `install.packages(c("rlas", "lidR"), repos = c("https://r-lidar.r-universe.dev", "https://cloud.r-project.org"))`
-- 💵 [Sponsor `lidR`](https://github.com/sponsors/Jean-Romain). It is free and open source, but requires time and effort to develop and maintain.
+-   📖 Read [the book](https://r-lidar.github.io/lidRbook/index.html) to get started with the lidR package.
+-   💻 Install `lidR` from R with: `install.packages("lidR", repos = c("https://r-lidar.r-universe.dev", "https://cloud.r-project.org"))`
+-   💵 [Sponsor `lidR`](https://github.com/sponsors/Jean-Romain). It is free and open source, but requires time and effort to develop and maintain.
 
-`lidR` has been cited by more than 1,000 scientific papers. To cite the package use `citation()` from within R:
-
-```r
-citation("lidR")
-#> Roussel, J.R., Auty, D., Coops, N. C., Tompalski, P., Goodbody, T. R. H., Sánchez Meador, A., Bourdon, J.F., De Boissieu, F., Achim, A. (2021). lidR : An R package for analysis of Airborne Laser Scanning (ALS) data. Remote Sensing of Environment, 251 (August), 112061. <doi:10.1016/j.rse.2020.112061>.
-#> Jean-Romain Roussel and David Auty (2023). Airborne LiDAR Data Manipulation and Visualization for Forestry Applications. R package version 3.1.0. https://cran.r-project.org/package=lidR
-```   
+`lidR` has been cited by more than 2,000 scientific papers. To cite the package use `citation("lidR")` from within R:
 
 You may also be interested by our new [`lasR`](https://github.com/r-lidar/lasR) package.
 
 # Key features
 
-<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/point-cloud-rotating.gif">
+<img src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/point-cloud-rotating.gif" align="right"/>
 
 ### Read and display a las file
 
 In R-fashion style the function `plot`, based on `rgl`, enables the user to display, rotate and zoom a point cloud.
 
-```r
+``` r
 las <- readLAS("<file.las>")
 plot(las)
 ```
 
 ### Compute a canopy height model
 
-<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/chm-Khosravipour.png">
+<img src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/chm-Khosravipour.png" align="left"/>
 
 `lidR` has several algorithms from the literature to compute canopy height models either point-to-raster based or triangulation based. This allows testing and comparison of some methods that rely on a CHM, such as individual tree segmentation or the computation of a canopy roughness index.
 
-```r
+``` r
 las <- readLAS("<file.las>")
 
 # Khosravipour et al. pitfree algorithm
@@ -57,11 +50,11 @@ plot(chm)
 
 ### Read and display a catalog of las files
 
-<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/catalog-plot_interactive.gif">
+<img src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/catalog-plot_interactive.gif" align="right"/>
 
 `lidR` enables the user to manage, use and process a collection of `las` files. The function `readLAScatalog` builds a `LAScatalog` object from a folder. The function `plot` displays this collection on an interactive map using the `mapview` package (if installed).
 
-```r
+``` r
 ctg <- readLAScatalog("<folder/>")
 plot(ctg, map = TRUE)
 ```
@@ -72,11 +65,11 @@ From a `LAScatalog` object the user can (for example) extract some regions of in
 
 ### Individual tree segmentation
 
-<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/its-rotating-tree-segmented.gif">
+<img src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/its-rotating-tree-segmented.gif" align="left"/>
 
 The `segment_trees()` function has several algorithms from the literature for individual tree segmentation, based either on the digital canopy model or on the point-cloud. Each algorithm has been coded from the source article to be as close as possible to what was written in the peer-reviewed papers. Our goal is to make published algorithms usable, testable and comparable.
 
-```r
+``` r
 las <- readLAS("<file.las>")
 
 las <- segment_trees(las, li2012())
@@ -86,11 +79,11 @@ plot(las, color = "treeID", colorPalette = col)
 
 ### Wall-to-wall dataset processing
 
-<img align="right" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/catalog-processing.gif">
+<img src="https://raw.githubusercontent.com/Jean-Romain/storage/master/README/catalog-processing.gif" align="right"/>
 
 Most of the lidR functions can seamlessly process a set of tiles and return a continuous output. Users can create their own methods using the `LAScatalog` processing engine via the `catalog_apply()` function. Among other features the engine takes advantage of point indexation with lax files, takes care of processing tiles with a buffer and allows for processing big files that do not fit in memory.
 
-```r
+``` r
 # Load a LAScatalog instead of a LAS file
 ctg <- readLAScatalog("<path/to/folder/>")
 
@@ -102,11 +95,11 @@ plot(chm, col = col)
 
 ### Full waveform
 
-<img align="left" src="https://raw.githubusercontent.com/Jean-Romain/storage/master/FWF/fwf.gif">
+<img src="https://raw.githubusercontent.com/Jean-Romain/storage/master/FWF/fwf.gif" align="left"/>
 
 lidR can read full waveform data from LAS files and provides interpreter functions to convert the raw data into something easier to manage and display in R. The support of FWF is still in the early stages of development.
 
-```r
+``` r
 fwf <- readLAS("<fullwaveform.las>")
 
 # Interpret the waveform into something easier to manage
@@ -125,7 +118,7 @@ The development of `lidR` was made possible through the financial support of [La
 
 # Install dependencies on GNU/Linux
 
-```
+```         
 # Ubuntu
 sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 sudo apt-get update
@@ -134,6 +127,3 @@ sudo apt-get install libgdal-dev libgeos++-dev libudunits2-dev libproj-dev libx1
 # Fedora
 sudo dnf install gdal-devel geos-devel udunits2-devel proj-devel mesa-libGL-devel mesa-libGLU-devel freetype-devel libjpeg-turbo-devel
 ```
-
-
-  

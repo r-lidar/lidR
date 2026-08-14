@@ -35,6 +35,7 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
+          extra-repositories: https://r-lidar.r-universe.dev
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-pandoc@v2
