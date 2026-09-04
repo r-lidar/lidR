@@ -1,5 +1,6 @@
 #' @rdname tools
 #' @export
+#' @return placeholder
 print.LAS <- function(x, ...)
 {
   show(x)

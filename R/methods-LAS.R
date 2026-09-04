@@ -221,6 +221,7 @@ LAS <- function(data, header = list(), crs = sf::NA_crs_, check = TRUE, index = 
 #' @param i string, name of elements to extract or replace.
 #' @param j Unused.
 #'
+#' @return placeholder
 #' @name Extract
 #' @examples
 #' LASfile <- system.file("extdata", "example.laz", package="rlas")

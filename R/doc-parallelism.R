@@ -128,5 +128,6 @@
 #' }
 #' lidR will no longer check for nested parallelism and will never automatically disable OpenMP.
 #' @md
+#' @return placeholder
 #' @name lidR-parallelism
 NULL

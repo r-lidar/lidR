@@ -100,6 +100,7 @@
 #' \preformatted{
 #' opt_output_files(ctg) <- paste0(tempdir(), "/mysqlitefile")}
 #' And all the `sf` will be appended in a single database. To preserve the geometry one can
+#' @return placeholder
 #' @name lidR-LAScatalog-drivers
 #' @md
 NULL

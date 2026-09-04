@@ -56,6 +56,7 @@
 #' # new scales and offsets according to LAS specification
 #' las <- las_rescale(las, xscale = 0.01, yscale = 0.01)
 #' las <- las_reoffset(las, xoffset = 300000, yoffset = 5248000)
+#' @return placeholder
 #' @rdname las_utilities
 #' @name las_utilities
 #' @family las utilities

@@ -20,6 +20,7 @@
 #' thinned1 = decimate_points(las, random(1))
 #' plot(rasterize_density(las))
 #' plot(rasterize_density(thinned1))
+#' @return placeholder
 #' @name sample_random
 random = function(density, use_pulse = FALSE)
 {
@@ -91,6 +92,7 @@ random = function(density, use_pulse = FALSE)
 #' # Select points randomly to reach an homogeneous density of 1
 #' thinned <- decimate_points(las, homogenize(1,5))
 #' plot(rasterize_density(thinned, 10))
+#' @return placeholder
 #' @name sample_homogenize
 homogenize = function(density, res = 5, use_pulse = FALSE)
 {
@@ -153,6 +155,7 @@ homogenize = function(density, res = 5, use_pulse = FALSE)
 #' # Select the lowest point within each cell of an overlayed grid
 #' thinned = decimate_points(las, lowest(4))
 #' #plot(thinned)
+#' @return placeholder
 #' @name sample_maxima
 highest = function(res = 1)
 {
@@ -213,6 +216,7 @@ lowest = function(res = 1)
 #' #plot(thinned)
 #' @family point cloud decimation algorithms
 #' @export
+#' @return placeholder
 #' @name sample_per_voxel
 random_per_voxel = function(res = 1, n = 1)
 {

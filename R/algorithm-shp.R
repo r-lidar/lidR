@@ -82,6 +82,7 @@
 #' #plot(las, color = "line")
 #' #plot(las, color = "hline")
 #' #plot(las, color = "vline")
+#' @return placeholder
 #' @name shape_detection
 #' @rdname shape_detection
 NULL

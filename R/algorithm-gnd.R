@@ -55,6 +55,7 @@
 #' #plot(las, color = "Classification")
 #' }
 #' @export
+#' @return placeholder
 #' @name gnd_mcc
 mcc <- function(s = 1.5, t = 0.3)
 {
@@ -136,6 +137,7 @@ mcc <- function(s = 1.5, t = 0.3)
 #'
 #' las <- classify_ground(las, pmf(ws, th))
 #' #plot(las, color = "Classification")
+#' @return placeholder
 #' @name gnd_pmf
 pmf = function(ws, th)
 {
@@ -192,6 +194,7 @@ pmf = function(ws, th)
 #' las <- classify_ground(las, mycsf)
 #' #plot(las, color = "Classification")
 #' }
+#' @return placeholder
 #' @name gnd_csf
 csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0.5, rigidness = 1L, iterations = 500L, time_step = 0.65)
 {
@@ -280,6 +283,7 @@ csf = function(sloop_smooth = FALSE, class_threshold = 0.5, cloth_resolution = 0
 #' myptd <- ptd(res = 20, distance = 1, angle = 20)
 #' las <- classify_ground(las, myptd)
 #' #plot(las, color = "Classification")
+#' @return placeholder
 ptd = function(res = 10, angle = 30, distance = 2, spacing = 0.25, verbose = FALSE)
 {
   res     <- lazyeval::uq(res)

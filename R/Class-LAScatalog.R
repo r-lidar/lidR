@@ -164,6 +164,7 @@
 #' output <- catalog_apply(ctg, FUN, ...)
 #' }
 #' @md
+#' @return placeholder
 setClass(
   Class = "LAScatalog",
   representation(

@@ -6,6 +6,7 @@
 #'
 #' @param ctg an object of class \code{LAScatalog}
 #' @param x LAS, Raster, stars, SpatRaster,sf, sfc, Spatial
+#' @return placeholder
 #' @name engine
 #' @rdname engine
 #' @family LAScatalog processing engine

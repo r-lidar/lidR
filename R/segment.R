@@ -38,6 +38,7 @@
 #'
 #' @template section-uniqueness
 #'
+#' @return placeholder
 #' @name segment
 #' @rdname segment
 #' @md

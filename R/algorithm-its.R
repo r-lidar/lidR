@@ -54,6 +54,7 @@
 #' ttops <- locate_trees(chm, lmf(4, 2))
 #' las   <- segment_trees(las, dalponte2016(chm, ttops))
 #' #plot(las, color = "treeID", colorPalette = col)
+#' @return placeholder
 #' @name its_dalponte2016
 #' @md
 dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55, max_cr = 10, ID = "treeID")
@@ -198,6 +199,7 @@ dalponte2016 = function(chm, treetops, th_tree = 2, th_seed = 0.45, th_cr = 0.55
 #' ttops <- locate_trees(chm, lmf(4, 2))
 #' las   <- segment_trees(las, silva2016(chm, ttops))
 #' #plot(las, color = "treeID", colorPalette = col)
+#' @return placeholder
 #' @name its_silva2016
 #' @md
 silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "treeID")
@@ -324,6 +326,7 @@ silva2016 = function(chm, treetops, max_cr_factor = 0.6, exclusion = 0.3, ID = "
 #' plot(las, color = "treeID", colorPalette = col)
 #' }
 #' @md
+#' @return placeholder
 #' @name its_watershed
 watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 {
@@ -414,6 +417,7 @@ watershed = function(chm, th_tree = 2, tol = 1, ext = 1)
 #'
 #' las <- segment_trees(las, li2012(dt1 = 1.4))
 #' #plot(las, color = "treeID", colorPalette = col)
+#' @return placeholder
 #' @name its_li2012
 #' @md
 li2012 = function(dt1 = 1.5, dt2 = 2, R = 2, Zu = 15, hmin = 2, speed_up = 10)

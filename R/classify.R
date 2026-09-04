@@ -35,6 +35,7 @@
 #' \code{'ReturnNumber'} or \code{'NumberOfReturns'} are absent, \code{'last_returns'} is turned
 #' to \code{FALSE} automatically.
 #'
+#' @return placeholder
 #' @name classify
 #' @rdname classify
 #' @md

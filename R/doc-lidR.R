@@ -29,4 +29,5 @@
 #' @useDynLib lidR, .registration = TRUE
 #' @import data.table
 #' @import methods
+#' @return placeholder
 "_PACKAGE"

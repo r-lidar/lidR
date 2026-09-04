@@ -25,6 +25,7 @@
 #'
 #' #plot(dtm)
 #' #plot_dtm3d(dtm)
+#' @return placeholder
 #' @name dtm_tin
 tin = function(..., extrapolate = knnidw(3,1,50))
 {
@@ -78,6 +79,7 @@ tin = function(..., extrapolate = knnidw(3,1,50))
 #'
 #' #plot(dtm)
 #' #plot_dtm3d(dtm)
+#' @return placeholder
 #' @name dtm_idw
 knnidw = function(k = 10, p = 2, rmax = 50)
 {
@@ -124,6 +126,7 @@ knnidw = function(k = 10, p = 2, rmax = 50)
 #' plot(dtm)
 #' plot_dtm3d(dtm)
 #' }
+#' @return placeholder
 #' @name dtm_kriging
 #' @md
 kriging = function(model = gstat::vgm(.59, "Sph", 874), k = 10L)

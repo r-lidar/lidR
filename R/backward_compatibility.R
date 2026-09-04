@@ -27,6 +27,7 @@
 #' @references Edzer Pebesma, Roger Bivand Spatial Data Science with applications in R
 #' https://keen-swartz-3146c4.netlify.app/older.html
 #' @md
+#' @return placeholder
 #' @name old_spatial_packages
 #' @rdname old_spatial_packages
 NULL

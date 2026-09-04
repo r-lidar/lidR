@@ -6,6 +6,7 @@
 #' @param files,select,filter,sort See the new functions that replace the old ones
 #' @param folder,... See the new functions that replace the old ones
 #'
+#' @return placeholder
 #' @rdname deprecated
 #' @name deprecated
 #'

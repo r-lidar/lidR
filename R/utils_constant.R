@@ -21,6 +21,7 @@ LIDRRIGHTBUFFER       <- 4L
 #' las2 = filter_poi(las, Classification %in% c(LASGROUND, LASWATER))
 #'
 #' print(LASGROUND)
+#' @return placeholder
 #' @rdname asprs
 #' @name asprs
 #' @export

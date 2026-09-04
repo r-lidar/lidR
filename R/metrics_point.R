@@ -108,6 +108,7 @@
 #' @export
 #' @family metrics
 #' @md
+#' @return placeholder
 point_metrics <- function(las, func, k, r,  xyz = FALSE, filter = NULL, ...) {
 
   #if (is_disable_point_metrics())

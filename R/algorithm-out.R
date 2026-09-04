@@ -36,6 +36,7 @@
 #' @references
 #' https://pointclouds.org/documentation/tutorials/statistical_outlier.html \cr
 #' https://www.cloudcompare.org/doc/wiki/index.php?title=SOR_filter
+#' @return placeholder
 #' @name noise_sor
 sor = function(k = 10, m = 3, quantile = FALSE)
 {
@@ -98,6 +99,7 @@ sor = function(k = 10, m = 3, quantile = FALSE)
 #' las$Z[id] = las$Z[id] + err
 #'
 #' las <- classify_noise(las, ivf(5,2))
+#' @return placeholder
 #' @name noise_ivf
 ivf = function(res = 5, n = 6)
 {

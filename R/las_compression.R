@@ -20,6 +20,7 @@
 #' format(object.size(las), units = "MB")
 #' format(las_size(las), units = "MB")
 #'
+#' @return placeholder
 #' @name las_compression
 #' @rdname las_compression
 #' @md

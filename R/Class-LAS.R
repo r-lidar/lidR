@@ -13,6 +13,7 @@
 #'
 #' @exportClass LASheader
 #' @md
+#' @return placeholder
 setClass(
   Class = "LASheader",
   representation(PHB = "list", VLR = "list", EVLR = "list")

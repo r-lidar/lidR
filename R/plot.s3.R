@@ -17,6 +17,7 @@
 #' @export
 #' @method plot lasmetrics3d
 #' @md
+#' @return placeholder
 plot.lasmetrics3d = function(x, y, ...)
 {
   cl <- class(x)
@@ -53,6 +54,7 @@ plot.lasmetrics3d = function(x, y, ...)
 #' their coordinates. The drawback is that the objects are not plotted at their actual coordinates.
 #' @param center_x,center_y,radius,height horizontal circle parameters
 #'
+#' @return placeholder
 #' @name plot_3d
 #' @examples
 #' \dontrun{

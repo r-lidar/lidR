@@ -57,6 +57,7 @@ plugin <- function(f, class_t, omp = FALSE)
 #' @param raster_based logical. For ITS and ITD algorithms, is the method raster-based or
 #' or point-cloud-based?
 #'
+#' @return placeholder
 #' @name plugins
 #' @rdname plugins
 #' @examples

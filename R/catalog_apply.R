@@ -238,6 +238,7 @@
 #' }
 #' @export
 #' @md
+#' @return placeholder
 catalog_apply <- function(ctg, FUN, ..., .options = NULL)
 {
   # Assert correctness of inputs

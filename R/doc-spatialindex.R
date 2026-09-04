@@ -155,6 +155,7 @@
 #' system.time(classify_noise(las, sor(15, 8)))
 #' #> 4.3 sec
 #' }
+#' @return placeholder
 #' @name lidR-spatial-index
 #' @md
 NULL

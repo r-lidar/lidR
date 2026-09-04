@@ -77,6 +77,7 @@
 #'
 #' @export
 #' @method plot LAS
+#' @return placeholder
 setGeneric("plot", function(x, y, ...)
   standardGeneric("plot"))
 
