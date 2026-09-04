@@ -28,6 +28,9 @@ can replace each return with a circle composed of 8 points (see details).}
 \item{highest}{bool. By default it keeps only the highest point per pixel before to triangulate to
 decrease computation time. If highest = FALSE all first returns are used.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{rasterize_canopy}. It implements the pit-free algorithm
 developed by Khosravipour et al. (2014), which is based on the computation of a set of classical
@@ -73,7 +76,7 @@ Generating pit-free canopy height models from airborne lidar. Photogrammetric En
 Remote Sensing, 80(9), 863-872.
 }
 \seealso{
-Other digital surface model algorithms: 
+Other digital surface model algorithms:
 \code{\link{dsm_point2raster}},
 \code{\link{dsm_spikefree}},
 \code{\link{dsm_tin}}

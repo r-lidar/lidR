@@ -32,6 +32,7 @@
 #' If `algorithm = tin()` and `dtm = raster` the ground points are not used and the DTM is
 #' interpolated as if it were made of regularly-spaced ground points.
 #'
+#' @return A LAS object with coordinates normalized
 #' @name normalize
 #' @rdname normalize
 #' @md

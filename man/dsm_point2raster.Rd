@@ -15,6 +15,9 @@ can replace each return with a circle composed of 8 points (see details).}
 to fill the empty pixel often left by points-to-raster methods. \code{lidR} has \link{knnidw},
 \link{tin}, and \link{kriging} (see also \link{rasterize_terrain} for more details).}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{rasterize_canopy}. It implements an algorithm for digital
 surface model computation based on a points-to-raster method: for each pixel of the output raster
@@ -43,7 +46,7 @@ plot(chm, col = col)
 }
 }
 \seealso{
-Other digital surface model algorithms: 
+Other digital surface model algorithms:
 \code{\link{dsm_pitfree}},
 \code{\link{dsm_spikefree}},
 \code{\link{dsm_tin}}

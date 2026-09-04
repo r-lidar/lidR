@@ -38,6 +38,7 @@
 #'
 #' @template section-uniqueness
 #'
+#' @return A LAS object with extra attributes
 #' @name segment
 #' @rdname segment
 #' @md

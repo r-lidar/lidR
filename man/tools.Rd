@@ -65,6 +65,9 @@ density(x, ...)
 
 \item{object}{A \code{LAS*} object or other lidR related objects.}
 }
+\value{
+Use for side effect of printing
+}
 \description{
 Tools inherited from base R for LAS* objects
 }

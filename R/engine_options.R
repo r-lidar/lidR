@@ -14,6 +14,7 @@
 #' @param ctg An object of class \link[=LAScatalog-class]{LAScatalog}
 #' @param value An appropriate value depending on the expected input.
 #'
+#' @return A List
 #' @name engine_options
 #' @rdname engine_options
 #' @family LAScatalog processing engine

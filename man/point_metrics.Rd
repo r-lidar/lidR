@@ -40,6 +40,9 @@ in an optimized way. See examples.}
 
 \item{coeffs}{logical. Principal component coefficients are returned}
 }
+\value{
+A LAS object with new attributes
+}
 \description{
 Computes a series of user-defined descriptive statistics for a LiDAR dataset for each point based
 on its k-nearest neighbours or its sphere neighbourhood.

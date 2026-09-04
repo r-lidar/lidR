@@ -108,6 +108,7 @@
 #' @export
 #' @family metrics
 #' @md
+#' @return A LAS object with new attributes
 point_metrics <- function(las, func, k, r,  xyz = FALSE, filter = NULL, ...) {
 
   #if (is_disable_point_metrics())

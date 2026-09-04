@@ -106,6 +106,7 @@
 #' @rdname stdmetrics
 #' @export
 #' @md
+#' @return A List
 stdmetrics = function(x, y, z, i, rn, class, dz = 1, th = 2, zmin = 0)
 {
   C  <- stdmetrics_ctrl(x, y, z)

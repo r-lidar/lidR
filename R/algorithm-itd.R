@@ -68,6 +68,7 @@
 #'
 #' plot(chm, col = height.colors(30))
 #' plot(sf::st_geometry(ttops), add = TRUE, col = "black", cex = 0.5, pch = 3)
+#' @return A function
 #' @name itd_lmf
 lmf = function(ws, hmin = 2, shape = c("circular", "square"), ws_args = "Z")
 {
@@ -144,6 +145,7 @@ lmf = function(ws, hmin = 2, shape = c("circular", "square"), ws_args = "Z")
 #' ttops = locate_trees(las, lmf(5))
 #' ttops = locate_trees(las, manual(ttops))
 #' }
+#' @return A function
 #' @name itd_manual
 manual = function(detected = NULL, radius = 0.5, color = "red", button = "middle", ...) # nocov start
 {

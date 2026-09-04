@@ -38,6 +38,9 @@ Default is 10.}
 \item{ID}{character. If \code{treetops} contains an attribute with the ID for
 each tree, the name of this attribute. This way, original IDs will be preserved.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{segment_trees}. It implements an algorithm for tree
 segmentation based on Dalponte and Coomes (2016) algorithm (see reference).
@@ -77,12 +80,12 @@ Dalponte, M. and Coomes, D. A. (2016), Tree-centric mapping of forest carbon den
 airborne laser scanning and hyperspectral data. Methods Ecol Evol, 7: 1236–1245. doi:10.1111/2041-210X.12575.
 }
 \seealso{
-Other individual tree segmentation algorithms: 
+Other individual tree segmentation algorithms:
 \code{\link{its_li2012}},
 \code{\link{its_silva2016}},
 \code{\link{its_watershed}}
 
-Other raster based tree segmentation algorithms: 
+Other raster based tree segmentation algorithms:
 \code{\link{its_silva2016}},
 \code{\link{its_watershed}}
 }

@@ -84,6 +84,9 @@ opt_filter(ctg) <- value
 
 \item{value}{An appropriate value depending on the expected input.}
 }
+\value{
+A List
+}
 \description{
 The names of the options and their roles are documented in \link[=LAScatalog-class]{LAScatalog}.
 The options are used by all the functions that support a \code{LAScatalog} as input. Most options are
@@ -120,7 +123,7 @@ opt_output_files(ctg) <- "/path/to/folder/templated_filename_{XBOTTOM}_{ID}"
 summary(ctg)
 }
 \seealso{
-Other LAScatalog processing engine: 
+Other LAScatalog processing engine:
 \code{\link{engine}}
 }
 \concept{LAScatalog processing engine}

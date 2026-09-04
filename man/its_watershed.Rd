@@ -17,6 +17,9 @@ an external file.}
 
 \item{ext}{numeric. see ?EBImage::watershed.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{segment_trees}. It implements an algorithm for tree
 segmentation based on a watershed. It is based on the bioconductor package \code{EBIimage}. You
@@ -50,12 +53,12 @@ plot(las, color = "treeID", colorPalette = col)
 }
 }
 \seealso{
-Other individual tree segmentation algorithms: 
+Other individual tree segmentation algorithms:
 \code{\link{its_dalponte2016}},
 \code{\link{its_li2012}},
 \code{\link{its_silva2016}}
 
-Other raster based tree segmentation algorithms: 
+Other raster based tree segmentation algorithms:
 \code{\link{its_dalponte2016}},
 \code{\link{its_silva2016}}
 }

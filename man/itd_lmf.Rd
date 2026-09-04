@@ -23,6 +23,9 @@ or "circular".}
 
 \item{ws_args}{list. Named list of argument for the function `ws` if `ws` is a function.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{locate_trees}. It implements an algorithm for tree
 detection based on a local maximum filter. The windows size can be fixed or variable and its
@@ -76,7 +79,7 @@ Multispectral Data Fusion with Local Filtering and Variable Window Size for Esti
 Photogrammetric Engineering and Remote Sensing. 70. 589-604. 10.14358/PERS.70.5.589.
 }
 \seealso{
-Other individual tree detection algorithms: 
+Other individual tree detection algorithms:
 \code{\link{itd_manual}}
 }
 \concept{individual tree detection algorithms}

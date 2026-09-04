@@ -24,6 +24,9 @@ for most scenarios.}
 
 \item{verbose}{bool}
 }
+\value{
+A function
+}
 \description{
 Classify ground points using a modified version of the Progressive TIN
 densification method by Axelsson (2000) (see references). The approach involves iteratively
@@ -62,7 +65,7 @@ Archives of Photogrammetry and Remote Sensing, 33(B4), 110–117.
 https://www.isprs.org/proceedings/xxxiii/congress/part4/111_xxxiii-part4.pdf
 }
 \seealso{
-Other ground segmentation algorithms: 
+Other ground segmentation algorithms:
 \code{\link{gnd_csf}},
 \code{\link{gnd_mcc}},
 \code{\link{gnd_pmf}}

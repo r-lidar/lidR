@@ -14,6 +14,9 @@ interval (post spacing) of the lidar data.}
 
 \item{t}{numeric. Curvature threshold}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{classify_ground}. It implements an
 algorithm for segmentation of ground points base on a Multiscale Curvature
@@ -66,9 +69,9 @@ algorithm for classifying discrete return LiDAR in forested environments.
 IEEE Transactions on Geoscience and Remote Sensing. 45(4): 1029-1038.
 }
 \seealso{
-Other ground segmentation algorithms: 
+Other ground segmentation algorithms:
 \code{\link{gnd_csf}},
 \code{\link{gnd_pmf}},
-\code{\link{ptd}()}
+\code{\link[=ptd]{ptd()}}
 }
 \concept{ground segmentation algorithms}

@@ -26,6 +26,9 @@ good because this parameter does not affect the result. However, it greatly affe
 computation speed by restricting the number of comparisons to perform.
 The lower the value, the faster the method. Default is 10.}
 }
+\value{
+A function
+}
 \description{
 This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
 segmentation based on Li et al. (2012) (see reference). This method is a growing region
@@ -48,7 +51,7 @@ Li, W., Guo, Q., Jakubowski, M. K., & Kelly, M. (2012). A new method for segment
 trees from the lidar point cloud. Photogrammetric Engineering & Remote Sensing, 78(1), 75-84.
 }
 \seealso{
-Other individual tree segmentation algorithms: 
+Other individual tree segmentation algorithms:
 \code{\link{its_dalponte2016}},
 \code{\link{its_silva2016}},
 \code{\link{its_watershed}}

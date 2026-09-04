@@ -32,6 +32,9 @@ in an optimized way. See the examples.}
 \item{uniqueness}{character. A method to compute a unique ID. Can be 'incremental', 'gpstime' or
 'bitmerge'. See section 'Uniqueness'. This feature must be considered as 'experimental'.}
 }
+\value{
+A LAS object with extra attributes
+}
 \description{
 Segment a point cloud using different methods. \verb{segment_*} functions add a new attribute to the
 point cloud to label each point. They segment either individual trees, snags, or

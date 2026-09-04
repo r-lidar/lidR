@@ -14,6 +14,9 @@
 \item{\dots}{Supplementary parameters for \link[lidR:plot]{plot}. The function internally uses the
 same plot function than LAS objects.}
 }
+\value{
+Use for side effect of opening a rgl 3D windows. Returns a size 2 vector of scene offset.
+}
 \description{
 This function implements a 3D plot method for 'lasmetrics3d' objects
 }

@@ -38,6 +38,7 @@
 #' chm <- rasterize_canopy(las, res = 0.5, p2r(0.2, na.fill = tin()))
 #' plot(chm, col = col)
 #' }
+#' @return A function
 #' @name dsm_point2raster
 p2r = function(subcircle = 0, na.fill = NULL)
 {
@@ -136,6 +137,7 @@ p2r = function(subcircle = 0, na.fill = NULL)
 #' chm = rasterize_canopy(las2, res = 0.5, dsmtin(max_edge = 3))
 #' plot(chm, col = col)
 #' }
+#' @return A function
 #' @name dsm_tin
 dsmtin = function(max_edge = 0, highest = TRUE)
 {
@@ -205,6 +207,7 @@ dsmtin = function(max_edge = 0, highest = TRUE)
 #' plot(chm, col = col)
 #' }
 #' @export
+#' @return A function
 #' @name dsm_pitfree
 pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcircle = 0, highest = TRUE)
 {
@@ -338,6 +341,7 @@ pitfree <- function(thresholds = c(0, 2, 5, 10, 15), max_edge = c(0, 1), subcirc
 #' chm <- rasterize_canopy(las, res = 0.25, lspikefree())
 #' plot(chm, col = col)
 #' @export
+#' @return A function
 #' @name dsm_spikefree
 spikefree <- function(freeze_distance, height_buffer = 0.5)
 {

@@ -238,6 +238,7 @@
 #' }
 #' @export
 #' @md
+#' @return Any object returned by FUN
 catalog_apply <- function(ctg, FUN, ..., .options = NULL)
 {
   # Assert correctness of inputs

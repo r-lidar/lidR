@@ -26,6 +26,9 @@ position and the elevation of the sensor respectively. If the input contains 3 c
 \item{las}{an object of class LAS. \code{get_range()} is a regular function documented here for
 convenience.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{normalize_intensity}. It corrects intensity with a
 range correction according to the formula (see references):

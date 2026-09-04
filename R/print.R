@@ -1,5 +1,6 @@
 #' @rdname tools
 #' @export
+#' @return Use for side effect of printing
 print.LAS <- function(x, ...)
 {
   show(x)

@@ -77,6 +77,7 @@
 #'
 #' @export
 #' @method plot LAS
+#' @return Use for side effect of opening a rgl 3D windows. Returns a size 2 vector of scene offset.
 setGeneric("plot", function(x, y, ...)
   standardGeneric("plot"))
 

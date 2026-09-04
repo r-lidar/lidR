@@ -13,6 +13,9 @@ get_lidr_threads()
 \item{threads}{Positive scalar. Default 0 means use all CPU available. Values > 1 mean
 using n cores, values in ]0, 1[ mean using a fraction of the cores e.g. 0.5 = half.}
 }
+\value{
+Integer. Number of cores.
+}
 \description{
 Set and get number of threads to be used in lidR functions that are parallelized with OpenMP.
 0 means to utilize all CPU available. \code{get_lidr_threads()} returns the number

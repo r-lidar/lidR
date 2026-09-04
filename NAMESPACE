@@ -415,18 +415,22 @@ import(Rcpp)
 import(data.table)
 import(methods)
 importFrom(data.table,":=")
-importFrom(sf,"st_crs<-")
-importFrom(sf,st_area)
-importFrom(sf,st_as_sf)
-importFrom(sf,st_bbox)
-importFrom(sf,st_convex_hull)
-importFrom(sf,st_coordinates)
-importFrom(sf,st_crs)
-importFrom(sf,st_transform)
+importFrom(sf,
+  "st_crs<-",
+  st_area,
+  st_as_sf,
+  st_bbox,
+  st_convex_hull,
+  st_coordinates,
+  st_crs,
+  st_transform
+)
 importFrom(stats,na.omit)
-importFrom(terra,area)
-importFrom(terra,ext)
-importFrom(terra,is.empty)
+importFrom(terra,
+  area,
+  ext,
+  is.empty
+)
 importMethodsFrom(terra,"crs<-")
 importMethodsFrom(terra,crs)
 useDynLib(lidR, .registration = TRUE)

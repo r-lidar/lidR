@@ -47,7 +47,7 @@ las <- readLAS(LASfile)
 las_check(las)
 }
 \seealso{
-Other las utilities: 
+Other las utilities:
 \code{\link{las_utilities}}
 }
 \concept{las utilities}

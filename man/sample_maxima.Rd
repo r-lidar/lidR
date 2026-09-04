@@ -13,6 +13,9 @@ lowest(res = 1)
 \arguments{
 \item{res}{numeric. The resolution of the grid used to filter the point cloud}
 }
+\value{
+A function
+}
 \description{
 These functions are made to be used in \link{decimate_points}. They implement algorithms that
 create a grid with a given resolution and filters the point cloud by selecting the highest/lowest
@@ -31,12 +34,7 @@ thinned = decimate_points(las, lowest(4))
 #plot(thinned)
 }
 \seealso{
-Other point cloud decimation algorithms: 
-\code{\link{sample_homogenize}},
-\code{\link{sample_per_voxel}},
-\code{\link{sample_random}}
-
-Other point cloud decimation algorithms: 
+Other point cloud decimation algorithms:
 \code{\link{sample_homogenize}},
 \code{\link{sample_per_voxel}},
 \code{\link{sample_random}}

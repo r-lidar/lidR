@@ -20,6 +20,9 @@ for rotation and right for dragging using one of left or right will disable eith
 
 \item{...}{supplementary parameters to be passed to \link{plot}.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{locate_trees}. It implements an algorithm for manual
 tree detection. Users can pinpoint the tree top positions manually and interactively using the mouse.
@@ -45,7 +48,7 @@ ttops = locate_trees(las, manual(ttops))
 }
 }
 \seealso{
-Other individual tree detection algorithms: 
+Other individual tree detection algorithms:
 \code{\link{itd_lmf}}
 }
 \concept{individual tree detection algorithms}

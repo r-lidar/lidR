@@ -13,6 +13,9 @@ las_size(las)
 \arguments{
 \item{las}{A LAS object.}
 }
+\value{
+A boolean or a size in byte.
+}
 \description{
 Package rlas 1.6.0 supports compact representation of non populated attributes. For example \code{UserData}
 is usually populated with zeros (not populated). Yet it takes 32 bits per point to store each 0.

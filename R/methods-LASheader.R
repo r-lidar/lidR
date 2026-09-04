@@ -60,6 +60,7 @@ LASheader <- function(data = list()) {return(new("LASheader", data))}
 #' @method as.list LASheader
 #' @name as
 #' @export
+#' @return A List
 as.list.LASheader <- function(x, ...)
 {
   PHB  <- x@PHB

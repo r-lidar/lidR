@@ -44,6 +44,9 @@ flightlines. Only for XY geometries Ignored if the input have XYZ geometries}
 
 \item{center_x, center_y, radius, height}{horizontal circle parameters}
 }
+\value{
+Use for side effect of opening a rgl 3D windows. Returns a size 2 vector of scene offset.
+}
 \description{
 Add a raster (`raster`, `stars` `terra`) object that represents a digital terrain model or a
 `SpatialPointsDataFrame` or `sf` that represents tree tops to a point cloud scene. To add elements

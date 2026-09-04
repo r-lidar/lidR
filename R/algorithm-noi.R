@@ -39,6 +39,7 @@
 #'
 #' # This might be useful for some applications
 #' R = get_range(las, sensor)
+#' @return A function
 range_correction = function(sensor, Rs, f = 2.3, gpstime = "gpstime", elevation = "Z")
 {
   assert_is_a_number(Rs)

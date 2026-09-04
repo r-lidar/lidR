@@ -12,6 +12,9 @@
 
 \item{...}{unused}
 }
+\value{
+A List
+}
 \description{
 Functions to construct, coerce and check for both kinds of R lists.
 }

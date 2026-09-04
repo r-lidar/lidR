@@ -13,6 +13,9 @@ random(density, use_pulse = FALSE)
 \item{use_pulse}{logical. Decimate by removing random pulses instead of random points (requires running
 \link{retrieve_pulses} first)}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{decimate_points}. It implements an algorithm that
 randomly removes points or pulses to reach the desired density over the area.
@@ -27,7 +30,7 @@ plot(rasterize_density(las))
 plot(rasterize_density(thinned1))
 }
 \seealso{
-Other point cloud decimation algorithms: 
+Other point cloud decimation algorithms:
 \code{\link{sample_homogenize}},
 \code{\link{sample_maxima}},
 \code{\link{sample_per_voxel}}

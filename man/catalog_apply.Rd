@@ -21,6 +21,9 @@ catalog_map(ctg, FUN, ..., .options = NULL)
 
 \item{.options}{See dedicated section and examples.}
 }
+\value{
+Any object returned by FUN
+}
 \description{
 This function gives users access to the \link[=LAScatalog-class]{LAScatalog} processing engine.
 It allows the application of a user-defined routine over a collection of LAS/LAZ files. The

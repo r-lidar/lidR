@@ -15,6 +15,9 @@ on non-convex areas. If \code{max_edge = 0} no trimming is done (see examples).}
 \item{highest}{bool. By default it keeps only the highest point per pixel before to triangulate to
 decrease computation time. If highest = FALSE all first returns are used.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{rasterize_canopy}. It implements an algorithm for digital
 surface model computation using a Delaunay triangulation of first returns with a linear interpolation
@@ -48,7 +51,7 @@ plot(chm, col = col)
 }
 }
 \seealso{
-Other digital surface model algorithms: 
+Other digital surface model algorithms:
 \code{\link{dsm_pitfree}},
 \code{\link{dsm_point2raster}},
 \code{\link{dsm_spikefree}}

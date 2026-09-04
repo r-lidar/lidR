@@ -14,6 +14,9 @@ Gatziolis2019(SEGLENFactor = 1.0059, AngleFactor = 0.8824, deltaT = 0.5)
 
 \item{deltaT}{scalar. TimeBlock duration (in seconds)}
 }
+\value{
+placeholder
+}
 \description{
 This function is made to be used in \link{track_sensor}. It implements an algorithm from Gatziolis
 and McGaughey 2019 (see reference) for sensor tracking using multiple returns to estimate the positioning

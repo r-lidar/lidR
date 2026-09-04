@@ -19,6 +19,9 @@ a little higher.}
 \item{slope, intercept}{default values selected according to Fisher F. J. (2024). It is recommended
 to do not change.}
 }
+\value{
+A function
+}
 \description{
 The spike-free algorithm developed by Khosravipour et al. (2016), which is based on the computation
 of an incremental triangulation of all returns with triangle freezing criteria (see references).
@@ -57,7 +60,7 @@ of forest structure from airborne laser scanning—A systematic assessment and s
 ecologists. Methods in Ecology and Evolution, 15, 1873–1888. https://doi.org/10.1111/2041-210X.14416
 }
 \seealso{
-Other digital surface model algorithms: 
+Other digital surface model algorithms:
 \code{\link{dsm_pitfree}},
 \code{\link{dsm_point2raster}},
 \code{\link{dsm_tin}}

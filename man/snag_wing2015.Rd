@@ -34,6 +34,9 @@ classes: 1) general snag 2) small snag 3) live crown edge snag 4) high canopy
 cover snag. See Wing et al. (2015) page 172 and Table 2. This matrix must be provided by
 the user.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{segment_snags}. It implements an algorithms for snags segmentation
 based on Wing et al (2015) (see references). This is an automated filtering algorithm that utilizes

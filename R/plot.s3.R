@@ -17,6 +17,7 @@
 #' @export
 #' @method plot lasmetrics3d
 #' @md
+#' @return Use for side effect of opening a rgl 3D windows. Returns a size 2 vector of scene offset.
 plot.lasmetrics3d = function(x, y, ...)
 {
   cl <- class(x)
@@ -53,6 +54,7 @@ plot.lasmetrics3d = function(x, y, ...)
 #' their coordinates. The drawback is that the objects are not plotted at their actual coordinates.
 #' @param center_x,center_y,radius,height horizontal circle parameters
 #'
+#' @return Use for side effect of opening a rgl 3D windows. Returns a size 2 vector of scene offset.
 #' @name plot_3d
 #' @examples
 #' \dontrun{

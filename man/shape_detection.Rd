@@ -24,6 +24,9 @@ shp_vline(th1 = 10, th2 = 0.98, k = 8)
 
 \item{k}{integer. Number of neighbours used to estimate the neighborhood.}
 }
+\value{
+A function
+}
 \description{
 These functions are made to be used in \link{segment_shapes}. They implement algorithms for local
 neighbourhood shape estimation.

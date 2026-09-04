@@ -13,6 +13,9 @@ or weighted least squares prediction.}
 
 \item{k}{numeric. Number of k-nearest neighbours. Default 10.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{rasterize_terrain} or \link{normalize_height}. It
 implements an algorithm for spatial interpolation. Spatial interpolation is based on universal
@@ -35,7 +38,7 @@ plot_dtm3d(dtm)
 }
 }
 \seealso{
-Other dtm algorithms: 
+Other dtm algorithms:
 \code{\link{dtm_idw}},
 \code{\link{dtm_tin}}
 }

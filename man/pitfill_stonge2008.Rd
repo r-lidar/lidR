@@ -28,6 +28,9 @@ value will be considered a spike). A negative value.}
 
 \item{dil_radius}{integer. Dilation radius (integer value, in pixels).}
 }
+\value{
+raster. SpatRaster, RasterLayer, stars.
+}
 \description{
 Pits and spikes filling for raster. Typically used for post-processing CHM. This algorithm
 is from St-Onge 2008 (see reference).

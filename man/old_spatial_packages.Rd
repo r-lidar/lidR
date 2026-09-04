@@ -79,6 +79,9 @@ delineate_crowns(
 
 \item{concavity, length_threshold}{see \link{concaveman}}
 }
+\value{
+Raster Spatial* objects
+}
 \description{
 lidR 4.0.0 no longer uses the \code{sp} and \code{raster} packages. New functions are based on \code{sf}, \code{terra} and \code{stars}.
 However, to maintain backward compatibility the old functions from v<4.0.0 were preserved.\cr\cr

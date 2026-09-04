@@ -23,6 +23,9 @@ highest_attribute_per_voxel(res, attribute = "Z")
 
 \item{attribute}{string name of an attribute (such as 'intensity')}
 }
+\value{
+A function
+}
 \description{
 These functions are made to be used in \link{decimate_points}. They implements algorithm that
 creates a 3D grid with a given resolution and filters the point cloud by selecting
@@ -38,7 +41,7 @@ thinned <- decimate_points(las, random_per_voxel(8, 1))
 #plot(thinned)
 }
 \seealso{
-Other point cloud decimation algorithms: 
+Other point cloud decimation algorithms:
 \code{\link{sample_homogenize}},
 \code{\link{sample_maxima}},
 \code{\link{sample_random}}

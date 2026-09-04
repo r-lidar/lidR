@@ -44,6 +44,9 @@ filter_surfacepoints(las, res)
 
 \item{las, res}{See the new functions that replace the old ones}
 }
+\value{
+LAS objects
+}
 \description{
 These functions are provided for compatibility with older versions of lidR but are deprecated.
 }

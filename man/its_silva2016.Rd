@@ -23,6 +23,9 @@ multiplied by the tree height will be removed. Thus, this number belongs between
 \item{ID}{character. If \code{treetops} contains an attribute with the ID for
 each tree, the name of this attribute. This way, original IDs will be preserved.}
 }
+\value{
+A function
+}
 \description{
 This functions is made to be used in \link{segment_trees}. It implements an algorithm for tree
 segmentation based on Silva et al. (2016) (see reference). This is a simple method
@@ -63,12 +66,12 @@ Tree Attributes from Field and LiDAR Data. Canadian Journal of Remote Sensing, 4
 https://doi.org/10.1080/07038992.2016.1196582.
 }
 \seealso{
-Other individual tree segmentation algorithms: 
+Other individual tree segmentation algorithms:
 \code{\link{its_dalponte2016}},
 \code{\link{its_li2012}},
 \code{\link{its_watershed}}
 
-Other raster based tree segmentation algorithms: 
+Other raster based tree segmentation algorithms:
 \code{\link{its_dalponte2016}},
 \code{\link{its_watershed}}
 }

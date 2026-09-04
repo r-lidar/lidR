@@ -17,6 +17,9 @@ If \code{quantile = TRUE}, \code{m} becomes the quantile threshold.}
 threshold instead of a standard deviation multiplier. In this case the maximum
 distance will be: \code{quantile(distances, probs = m)}}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{classify_noise}. It implements an
 algorithm for outliers (noise) segmentation based on Statistical Outliers
@@ -45,7 +48,7 @@ https://pointclouds.org/documentation/tutorials/statistical_outlier.html \cr
 https://www.cloudcompare.org/doc/wiki/index.php?title=SOR_filter
 }
 \seealso{
-Other noise segmentation algorithms: 
+Other noise segmentation algorithms:
 \code{\link{noise_ivf}}
 }
 \concept{noise segmentation algorithms}

@@ -48,6 +48,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Jean-Romain Roussel \email{info@r-lidar.com} [copyright holder]
   \item David Auty (Reviews the documentation) [contributor]
 }
 

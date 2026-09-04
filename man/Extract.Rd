@@ -80,6 +80,9 @@
 
 \item{drop}{Unused}
 }
+\value{
+A LAS object
+}
 \description{
 Operators acting on \code{LAS*} objects. However, some have modified behaviors to prevent some
 irrelevant modifications. Indeed, a \code{LAS*} object cannot contain anything, as the content

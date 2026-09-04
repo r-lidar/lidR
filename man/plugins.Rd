@@ -45,6 +45,9 @@ plugin_its(f, omp = FALSE, raster_based = FALSE)
 \item{raster_based}{logical. For ITS and ITD algorithms, is the method raster-based or
 or point-cloud-based?}
 }
+\value{
+A function with extra instrumentation to be compatible with lidR
+}
 \description{
 Tools to build plugin functions for lidR
 }

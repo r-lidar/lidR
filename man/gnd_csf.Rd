@@ -33,6 +33,9 @@ there is no need to change this value.}
 \item{time_step}{scalar. Time step when simulating the cloth under gravity. The default value
 is 0.65. Usually, there is no need to change this value. It is suitable for most cases.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{classify_ground}. It implements an algorithm for segmentation
 of ground points base on a Cloth Simulation Filter. This method is a strict implementation of
@@ -56,9 +59,9 @@ Filtering Method Based on Cloth Simulation,” Remote Sens., vol. 8, no. 6, p. 5
 (http://www.mdpi.com/2072-4292/8/6/501/htm)
 }
 \seealso{
-Other ground segmentation algorithms: 
+Other ground segmentation algorithms:
 \code{\link{gnd_mcc}},
 \code{\link{gnd_pmf}},
-\code{\link{ptd}()}
+\code{\link[=ptd]{ptd()}}
 }
 \concept{ground segmentation algorithms}

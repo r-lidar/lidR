@@ -15,6 +15,9 @@ a position at a given timepoint t.}
 For a given interval, the sensor position is not computed if the number of pulses is lower than
 \code{pmin}.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{track_sensor}. It implements an algorithm from Roussel et
 al. 2020 (see reference) for sensor tracking using multiple returns to estimate the positioning of

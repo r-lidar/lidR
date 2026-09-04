@@ -58,6 +58,9 @@ evlr(las)
 
 \item{...}{Unused.}
 }
+\value{
+A LAS object, a vector or NULL if used for side effect of updating in place
+}
 \description{
 Tools to manipulate LAS objects maintaining compliance with
 \href{https://community.asprs.org/leadership-restricted/leadership-content/public-documents/standards}{ASPRS specification}
@@ -110,7 +113,7 @@ las <- las_rescale(las, xscale = 0.01, yscale = 0.01)
 las <- las_reoffset(las, xoffset = 300000, yoffset = 5248000)
 }
 \seealso{
-Other las utilities: 
-\code{\link{las_check}()}
+Other las utilities:
+\code{\link[=las_check]{las_check()}}
 }
 \concept{las utilities}

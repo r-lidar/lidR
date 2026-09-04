@@ -25,6 +25,7 @@
 #'
 #' #terra::plot(c(chm, sto), col = lidR::height.colors(25))
 #' @export
+#' @return raster. SpatRaster, RasterLayer, stars.
 pitfill_stonge2008 = function(x, lap_size = 3L, thr_lap = 0.1, thr_spk = -0.1, med_size = 3L, dil_radius = 0L)
 {
   res <- raster_res(x)

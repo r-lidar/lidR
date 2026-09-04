@@ -46,6 +46,9 @@ are classified \code{class}.}
 
 \item{by_reference}{bool. Updates the classification in place (LAS only).}
 }
+\value{
+A LAS object with updated classifcation
+}
 \description{
 Classify points that meet some criterion and/or that belong in a region of interest. The
 functions updates the attribute \code{Classification} of the LAS object according to

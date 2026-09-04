@@ -38,6 +38,9 @@ the number of windows created.}
 
 \item{exp}{logical. The window size can be increased linearly or exponentially (eq. 4 or 5).}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{classify_ground}. It implements an algorithm for segmentation
 of ground points based on a progressive morphological filter. This method is an implementation of
@@ -79,9 +82,9 @@ morphological filter for removing nonground measurements from airborne LIDAR dat
 Transactions on Geoscience and Remote Sensing, 41(4 PART I), 872–882. http:#doi.org/10.1109/TGRS.2003.810682.
 }
 \seealso{
-Other ground segmentation algorithms: 
+Other ground segmentation algorithms:
 \code{\link{gnd_csf}},
 \code{\link{gnd_mcc}},
-\code{\link{ptd}()}
+\code{\link[=ptd]{ptd()}}
 }
 \concept{ground segmentation algorithms}

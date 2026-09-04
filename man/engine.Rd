@@ -66,16 +66,16 @@ chunk to fit the grid alignment.}
 
 \item{drivers}{list. Drivers of a LAScatalog}
 }
+\value{
+No documented
+}
 \description{
 Functions for the LAScatalog processing engine not meant to be called directly by users.
 They are exported for debugging and to simplify export of internal functions when processing in
 parallel
 }
 \seealso{
-Other LAScatalog processing engine: 
-\code{\link{engine_options}}
-
-Other LAScatalog processing engine: 
+Other LAScatalog processing engine:
 \code{\link{engine_options}}
 }
 \concept{LAScatalog processing engine}

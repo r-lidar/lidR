@@ -101,6 +101,9 @@ Since v4.0.4 `mapview = TRUE` is also possible with LAS objects.}
 
 \item{n}{The number of colors (> 1) to be in the palette}
 }
+\value{
+Use for side effect of opening a rgl 3D windows. Returns a size 2 vector of scene offset.
+}
 \description{
 Plot displays a 3D interactive windows based on rgl for \link{LAS} objects\cr\cr
 Plot displays an interactive view for \link[=LAScatalog-class]{LAScatalog} objects with pan and

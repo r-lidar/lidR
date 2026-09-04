@@ -20,6 +20,7 @@
 #' format(object.size(las), units = "MB")
 #' format(las_size(las), units = "MB")
 #'
+#' @return A boolean or a size in byte.
 #' @name las_compression
 #' @rdname las_compression
 #' @md

@@ -12,6 +12,9 @@ ivf(res = 5, n = 6)
 
 \item{n}{integer. The maximal number of 'other points' in the 27 voxels}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{classify_noise}. It implements an
 algorithm for outliers (noise) segmentation based on isolated voxels filter (IVF).
@@ -32,7 +35,7 @@ las$Z[id] = las$Z[id] + err
 las <- classify_noise(las, ivf(5,2))
 }
 \seealso{
-Other noise segmentation algorithms: 
+Other noise segmentation algorithms:
 \code{\link{noise_sor}}
 }
 \concept{noise segmentation algorithms}

@@ -14,6 +14,9 @@ tin(..., extrapolate = knnidw(3, 1, 50))
 points at the very edge of the dataset, that cannot be interpolated with a triangulation.
 Extrapolation is done using \link{knnidw} by default.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{rasterize_terrain} or \link{normalize_height}. It
 implements an algorithm for spatial interpolation. Spatial interpolation is based on a Delaunay
@@ -33,7 +36,7 @@ dtm = rasterize_terrain(las, algorithm = tin())
 #plot_dtm3d(dtm)
 }
 \seealso{
-Other dtm algorithms: 
+Other dtm algorithms:
 \code{\link{dtm_idw}},
 \code{\link{dtm_kriging}}
 }

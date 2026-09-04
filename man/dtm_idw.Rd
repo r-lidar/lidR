@@ -14,6 +14,9 @@ knnidw(k = 10, p = 2, rmax = 50)
 
 \item{rmax}{numeric. Maximum radius where to search for knn. Default 50.}
 }
+\value{
+A function
+}
 \description{
 This function is made to be used in \link{rasterize_terrain} or \link{normalize_height}. It implements an algorithm
 for spatial interpolation. Interpolation is done using a k-nearest neighbour (KNN) approach with
@@ -31,7 +34,7 @@ dtm = rasterize_terrain(las, algorithm = knnidw(k = 6L, p = 2))
 #plot_dtm3d(dtm)
 }
 \seealso{
-Other dtm algorithms: 
+Other dtm algorithms:
 \code{\link{dtm_kriging}},
 \code{\link{dtm_tin}}
 }

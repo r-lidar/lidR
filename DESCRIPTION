@@ -2,7 +2,7 @@ Package: lidR
 Type: Package
 Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
     Applications
-Version: 4.3.2
+Version: 4.3.3
 Authors@R: c(
     person("Jean-Romain", "Roussel", email = "info@r-lidar.com", role = c("aut", "cre", "cph")),
     person("David", "Auty", email = "", role = c("aut", "ctb"), comment = "Reviews the documentation"),
@@ -56,7 +56,6 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
-RoxygenNote: 7.3.3
 LinkingTo: BH (>= 1.72.0),Rcpp,RcppArmadillo
 Encoding: UTF-8
 ByteCompile: true
@@ -178,3 +177,4 @@ Collate:
     'utils_threads.R'
     'voxelize_points.R'
     'zzz.R'
+Config/roxygen2/version: 8.1.0
