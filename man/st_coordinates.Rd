@@ -6,16 +6,14 @@
 \alias{st_coordinates.LAScatalog}
 \title{Coordinates of a LAS* object in a matrix form}
 \usage{
-\method{st_coordinates}{LAS}(x, z = TRUE, ...)
+\method{st_coordinates}{LAS}(x, ...)
 
 \method{st_coordinates}{LAScatalog}(x, ...)
 }
 \arguments{
 \item{x}{A LAS* object}
 
-\item{z}{bool. Return XY or XYZ matrix}
-
-\item{...}{unused.}
+\item{...}{support z = FALSE to return XY or XYZ matrix}
 }
 \value{
 matrix

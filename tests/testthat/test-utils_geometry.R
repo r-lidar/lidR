@@ -112,7 +112,7 @@ test_that("tsearch passes computer precision tests", {
   P = structure(c(
     488094.617850573, 488094.682850573, 488095.461850573,
     5189348.04894701, 5189348.79694701, 5189348.25294701),
-    .Dim = 3:2, .Dimnames = list(NULL, c("X", "Y")))
+    dim = 3:2, dimnames = list(NULL, c("X", "Y")))
 
   X = matrix(c(488094.75, 5189348.75), nrow = 1)
 
@@ -131,9 +131,9 @@ test_that("tsearch passes computer precision tests", {
   P = structure(c(
     488100.025850573, 488099.663850573, 488099.916850573,
     5189337.35594701, 5189337.44894701, 5189336.86194701),
-    .Dim = 3:2, .Dimnames = list(NULL, c("X", "Y")))
+    dim = 3:2, dimnames = list(NULL, c("X", "Y")))
 
-  X = structure(c(488099.75, 5189337.25), .Dim = 1:2)
+  X = structure(c(488099.75, 5189337.25), dim = 1:2)
 
   D = matrix(1:3, nrow = 1)
 

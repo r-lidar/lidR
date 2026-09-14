@@ -4,8 +4,7 @@
 #' because of the coercion from `data.frame` to `matrix`. This function inherits `sf::st_coordinates`
 #'
 #' @param x A LAS* object
-#' @param z bool. Return XY or XYZ matrix
-#' @param ... unused.
+#' @param ... support z = FALSE to return XY or XYZ matrix
 #'
 #' @return matrix
 #'
@@ -21,9 +20,12 @@ NULL
 
 #' @rdname st_coordinates
 #' @export
-st_coordinates.LAS <- function(x, z = TRUE, ...)
+st_coordinates.LAS <- function(x, ...)
 {
-  if (isTRUE(z))
+  p = list(...)
+  if (is.null(p$z)) p$z = TRUE
+
+  if (isTRUE(p$z))
     return(as.matrix(coordinates3D(x)))
   else
     return(as.matrix(coordinates(x)))

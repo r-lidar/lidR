@@ -95,8 +95,7 @@ Not relevant if \code{chunk_size = 0}. See \link{opt_chunk_alignment}.
 \item \strong{drop}: integers. A vector of integers that specify the IDs of the chunks that should not be
 created. This is designed to enable users to restart a computation that failed without reprocessing
 everything. See \link{opt_restart<-}. Technically, this option may be used for partial processing of
-a collection, but it generally should not be. Partial processing is already a feature of the engine. See
-\href{https://cran.r-project.org/package=lidR/vignettes/lidR-LAScatalog-engine.html#partial-processing}{this vignette}
+a collection, but it generally should not be. Partial processing is already a feature of the engine.
 }
 }
 

@@ -9,7 +9,7 @@ test_that("Boosted delaunay produces the correct output", {
     X = c(0,  1, -1, 1, -1),
     Y = c(0, -1, 1, 1, -1))
 
-  expected = structure(c(3L, 1L, 3L, 4L, 5L, 5L, 1L, 1L, 1L, 2L, 4L, 2L), .Dim = 4:3)
+  expected = structure(c(3L, 1L, 3L, 4L, 5L, 5L, 1L, 1L, 1L, 2L, 4L, 2L), dim = 4:3)
 
   ts <- lidR:::tDelaunay(ps, scales = c(1,1), offsets = c(0,0))
 
@@ -26,7 +26,7 @@ test_that("Old delaunay produces the correct output", {
     Y = c(0, -1, 1, 1, -1))
   ps <- as.matrix(ps)
 
-  expected <- structure(c(1L, 1L, 5L, 5L, 4L, 4L, 1L, 1L, 3L, 2L, 3L, 2L), .Dim = 4:3)
+  expected <- structure(c(1L, 1L, 5L, 5L, 4L, 4L, 1L, 1L, 3L, 2L, 3L, 2L), dim = 4:3)
 
   ts <- lidR:::tDelaunay(ps)
 
@@ -133,7 +133,7 @@ test_that("Internal C_Delaunay works with degenerated points", {
     X = c(0, -1, 1, -1, 1, -1, 1, -1, 1, 0),
     Y = c(0, -1, -1, 1, 1, -1, -1, 1, 1, 0))
 
-  expected = structure(c(4L, 1L, 4L, 5L, 2L, 2L, 1L, 1L, 1L, 3L, 5L, 3L), .Dim = 4:3)
+  expected = structure(c(4L, 1L, 4L, 5L, 2L, 2L, 1L, 1L, 1L, 3L, 5L, 3L), dim = 4:3)
 
   ts <- lidR:::C_delaunay(ps, scales = c(1,1), offsets = c(0,0))
 

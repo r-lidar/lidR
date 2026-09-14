@@ -79,8 +79,7 @@
 #' - **drop**: integers. A vector of integers that specify the IDs of the chunks that should not be
 #' created. This is designed to enable users to restart a computation that failed without reprocessing
 #' everything. See \link{opt_restart<-}. Technically, this option may be used for partial processing of
-#' a collection, but it generally should not be. Partial processing is already a feature of the engine. See
-#' [this vignette](https://cran.r-project.org/package=lidR/vignettes/lidR-LAScatalog-engine.html#partial-processing)
+#' a collection, but it generally should not be. Partial processing is already a feature of the engine.
 #'
 #' @section Output options:
 #' The slot `@output_options` contains a `list` of options that determine how chunks

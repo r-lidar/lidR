@@ -1,6 +1,6 @@
 Package: lidR
 Type: Package
-Title: Airborne LiDAR Data Manipulation and Visualization for Forestry
+Title: Airborne Point Cloud Data Manipulation and Visualization for Forestry
     Applications
 Version: 4.3.3
 Authors@R: c(
@@ -13,7 +13,7 @@ Authors@R: c(
     person("Leon", "Steinmeier", email = "", role = ("ctb"), comment = "Contributed to parallelization management"),
     person("Stanislaw", "Adaszewski", email = "", role = ("cph"), comment = "Author of the C++ concaveman code"),
     person("Benoît", "St-Onge", email = "", role = "cph", comment = "Author of the 'chm_prep' function"))
-Description: Airborne LiDAR (Light Detection and Ranging) interface for data
+Description: Airborne point cloud interface for data
     manipulation and visualization. Read/write 'las' and 'laz' files, computation
     of metrics in area based approach, point filtering, artificial point reduction,
     classification from geographic data, normalization, individual tree segmentation
