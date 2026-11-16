@@ -169,6 +169,7 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
         res <- terra::vect(res)
 
       output[[j]] <- res
+      futures[j] <- list(NULL)
     }
   }
 
@@ -226,6 +227,7 @@ engine_apply = function(.CHUNKS, .FUN, .PROCESSOPT, .OUTPUTOPT, .GLOBALS = NULL,
         res <- terra::vect(res)
 
       output[[j]] <- res
+      futures[j] <- list(NULL)
       attr(output[[j]], "state") <- NULL ;
     }
 
