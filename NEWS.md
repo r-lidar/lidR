@@ -1,5 +1,10 @@
 If you are viewing this file on CRAN, please check [the latest news on GitHub](https://github.com/r-lidar/lidR/blob/master/NEWS.md) where the formatting is also better
 
+## lidR v4.3.4 (in development)
+
+- New: with `rlas` >= 1.9.6, `readLAS()` decodes the points of local .laz files with `get_lidr_threads()` threads.
+  When processing a `LAScatalog` in parallel the number of threads is reduced in each worker to avoid nested parallelism.
+
 ## lidR v4.3.3 (Release date: 2026-09)
 
 - Reupload

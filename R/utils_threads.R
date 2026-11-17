@@ -9,6 +9,7 @@ LIDRTHREADS$input <- 1L
 #' of threads that will be used. This affects \code{lidR} package but also the \code{data.table} package
 #' by internally calling \link[data.table:openmp-utils]{setDTthreads} because several functions  of
 #' lidR rely on \code{data.table} but it does not change R itself or other packages using OpenMP.
+#' It also sets the number of threads used by \link{readLAS} to decode the points (with \code{rlas} >= 1.9.6).
 #'
 #' @seealso \link{lidR-parallelism}
 #'

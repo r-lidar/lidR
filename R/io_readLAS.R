@@ -240,9 +240,17 @@ streamLAS.character = function(x, ofile, select = "*", filter = "", filter_wkt =
     }
   }
 
-  if (utils::packageVersion("rlas") >= "1.8.0") {
+  if (utils::packageVersion("rlas") >= "1.9.6")
+  {
+    ncores <- max(1L, as.integer(min(get_lidr_threads(), parallelly::availableCores())))
+    data <- rlas::read_and_write.las(ifiles, ofile, select, filter, geom, ncores = ncores)
+  }
+  else if (utils::packageVersion("rlas") >= "1.8.0")
+  {
     data <- rlas::read_and_write.las(ifiles, ofile, select, filter, geom)
-  } else {
+  }
+  else
+  {
     data <- rlas::read_and_write.las(ifiles, ofile, select, filter, filter_wkt)
   }
 

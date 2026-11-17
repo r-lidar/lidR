@@ -1,6 +1,6 @@
 options(lidR.progress = FALSE)
 options(rgl.useNULL = TRUE)
-set_lidr_threads(1)
+set_lidr_threads(2) # CRAN policy: at most 2 cores
 
 cat("Tests using raster:", getOption("lidR.raster.default"), "\n")
 cat("Tests using future:", lidR:::engine_use_future(), "\n")
