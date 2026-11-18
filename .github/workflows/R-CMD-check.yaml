@@ -53,8 +53,3 @@ jobs:
           args: 'c("--no-manual", "--as-cran")'
           error-on: '"warning"'
           check-dir: '"check"'
-
-      - name: Test coverage
-        if: success() && matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
-        run: covr::codecov(type = "all")
-        shell: Rscript {0}
