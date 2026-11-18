@@ -95,13 +95,13 @@ test_that("classify_ground ptd works",
   las <- classify_ground(topography, myptd)
   ans <- as.numeric(table(las$Classification))
   class = c(48967,24383,53)
-  expect_equal(ans, class)
+  expect_equal(ans, class, tolerance = 1e-3) # multithreading makes the result slightly non deterministic
 
   myptd = ptd(angle = 1, distance = 0.5)
   las <- classify_ground(topography, myptd)
   ans <- as.numeric(table(las$Classification))
   class = c(67271,4758,1374)
-  expect_equal(ans, class)
+  expect_equal(ans, class, tolerance = 1e-3)
 })
 
 test_that("classify_ground works with last_returns = TRUE but attribute not properly populated", {

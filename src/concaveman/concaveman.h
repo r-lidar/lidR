@@ -17,6 +17,7 @@
 #include <iomanip>
 #include <stdlib.h>
 #include <limits>
+#include <cmath>
 #include <set>
 #include <queue>
 #include <assert.h>
@@ -32,9 +33,22 @@ public:
     }
 };
 
+// a*b - c*d computed with Kahan's algorithm. The result is accurate to ~1 ulp and,
+// unlike the naive expression, does not depend on whether the compiler contracts
+// the expression into fused multiply-adds (FMA). This matters because the
+// predicates below rely on exact ties (collinear points) that are very common with
+// quantized LiDAR coordinates. With naive expression the hull was platform dependent.
+template<class T> T diff_of_products(T a, T b, T c, T d)
+{
+    T w = c * d;
+    T e = std::fma(-c, d, w);
+    T f = std::fma(a, b, -w);
+    return f + e;
+}
+
 template<class T> T orient2d(const std::array<T, 2> &p1, const std::array<T, 2> &p2, const std::array<T, 2> &p3)
 {
-    T res = (p2[1] - p1[1]) * (p3[0] - p2[0]) - (p2[0] - p1[0]) * (p3[1] - p2[1]);
+    T res = diff_of_products(p2[1] - p1[1], p3[0] - p2[0], p2[0] - p1[0], p3[1] - p2[1]);
     return res;
 }
 
