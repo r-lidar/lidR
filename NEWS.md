@@ -4,7 +4,7 @@ If you are viewing this file on CRAN, please check [the latest news on GitHub](h
 
 - New: with `rlas` >= 1.9.6, `readLAS()` decodes the points of local .laz files with `get_lidr_threads()` threads.
   When processing a `LAScatalog` in parallel the number of threads is reduced in each worker to avoid nested parallelism.
-- New: `homogenize()` gains an argument `complete_pulses`. With `use_pulse = TRUE, complete_pulses = TRUE`, each pulse is kept or removed with all its returns, also across tiles of a `LAScatalog`. The default `FALSE` keeps the former behaviour (#823).
+- Fix: `homogenize(use_pulse = TRUE)` keeps or removes each pulse with all its returns. Pulses are sampled in the cell of their last return, also consistently across the tiles of a `LAScatalog`. `retrieve_pulses()` is no longer needed. Results differ from previous versions (#823).
 
 ## lidR v4.3.3 (Release date: 2026-09)
 

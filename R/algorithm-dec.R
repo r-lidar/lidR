@@ -78,31 +78,23 @@ random = function(density, use_pulse = FALSE)
 #'
 #' @param res numeric. The resolution of the grid used to filter the point cloud
 #'
-#' @param use_pulse logical. Decimate by removing random pulses instead of random points (requires running
-#' \link{retrieve_pulses} first, unless \code{complete_pulses = TRUE}). See section 'Pulse based thinning'.
-#'
-#' @param complete_pulses logical. Only used with \code{use_pulse = TRUE}. If \code{TRUE}, a pulse is
-#' always kept or removed with all its returns (recommended). Default is \code{FALSE} to keep the
-#' results of existing scripts unchanged. See section 'Pulse based thinning'.
+#' @param use_pulse logical. Decimate by removing random pulses instead of random points. A pulse is
+#' always kept or removed with all its returns. See section 'Pulse based thinning'.
 #'
 #' @section Pulse based thinning:
 #' A pulse can have several returns (e.g. one in the canopy and one on the ground). When the laser is
 #' tilted, these returns are not at the same place and may fall into different cells of the grid.
-#' \itemize{
-#' \item With \code{use_pulse = TRUE} only, each cell is thinned on its own. A pulse may then be kept in
-#' one cell and removed in the next one, leaving pulses with missing returns.
-#' \item With \code{use_pulse = TRUE, complete_pulses = TRUE}, each pulse is counted once, in the cell
-#' of its last return, and is then kept or removed with all its returns. The output has the requested
-#' number of pulses per cell and no pulses with missing returns. The data must contain \code{gpstime},
-#' \code{ReturnNumber} and \code{NumberOfReturns}. Pulses whose last return is not in the data are
-#' removed.
-#' }
-#' With \code{complete_pulses = TRUE} the result is the same each time the code is run (it does not
-#' depend on \code{set.seed()}), and processing a \code{LAScatalog} gives the same result as processing
-#' the same data loaded in memory. To achieve this with a \code{LAScatalog}, the buffer is increased to
-#' \code{res} + \code{opt_chunk_buffer(ctg)} (30 m by default). This is more than enough for usual
-#' data. It can be reduced, but should stay larger than the horizontal distance between the first and
-#' the last return of a pulse.
+#' With \code{use_pulse = TRUE}, each pulse is counted once, in the cell of its last return, and is
+#' then kept or removed with all its returns. The output has the requested number of pulses per cell
+#' and no pulses with missing returns. Pulses are identified by their \code{gpstime}: the data must
+#' contain \code{gpstime}, \code{ReturnNumber} and \code{NumberOfReturns}, otherwise points are used.
+#' Pulses whose last return is not in the data are removed.\cr\cr
+#' The result is the same each time the code is run (it does not depend on \code{set.seed()}), and
+#' processing a \code{LAScatalog} gives the same result as processing the same data loaded in memory.
+#' To achieve this with a \code{LAScatalog}, the buffer is increased to \code{res} +
+#' \code{opt_chunk_buffer(ctg)} (30 m by default). This is more than enough for usual data. It can be
+#' reduced, but should stay larger than the horizontal distance between the first and the last return
+#' of a pulse.
 #'
 #' @export
 #'
@@ -116,54 +108,41 @@ random = function(density, use_pulse = FALSE)
 #' thinned <- decimate_points(las, homogenize(1,5))
 #' plot(rasterize_density(thinned, 10))
 #'
-#' # Select complete pulses to reach an homogeneous pulse density of 0.5
+#' # Select pulses randomly to reach an homogeneous pulse density of 0.5
 #' las = readLAS(LASfile, select = "xyzrnt")
-#' thinned <- decimate_points(las, homogenize(0.5, 5, use_pulse = TRUE, complete_pulses = TRUE))
+#' thinned <- decimate_points(las, homogenize(0.5, 5, use_pulse = TRUE))
 #' @return A function
 #' @name sample_homogenize
-homogenize = function(density, res = 5, use_pulse = FALSE, complete_pulses = FALSE)
+homogenize = function(density, res = 5, use_pulse = FALSE)
 {
   assert_is_a_number(density)
   assert_all_are_positive(density)
   assert_is_a_bool(use_pulse)
-  assert_is_a_bool(complete_pulses)
   assert_is_a_number(res)
   assert_all_are_positive(res)
-
-  if (complete_pulses && !use_pulse)
-    warning("'complete_pulses = TRUE' is ignored because 'use_pulse = FALSE'.", call. = FALSE)
 
   density   <- lazyeval::uq(density)
   res       <- lazyeval::uq(res)
   use_pulse <- lazyeval::uq(use_pulse)
-  complete_pulses <- lazyeval::uq(complete_pulses)
 
   f = function(las)
   {
     assert_is_valid_context(LIDRCONTEXTDEC, "homogenize")
 
-    if (use_pulse && complete_pulses)
-    {
-      n <- round(density*res^2)
-      return(.homogenize_last_return_pulses(las, res, n))
-    }
-
-    if (use_pulse & !"pulseID" %in% names(las))
-    {
-      warning("No 'pulseID' attribute found. Decimation by points is used.")
-      use_pulse <- FALSE
-    }
-
-    pulseID <- NULL
-
-    n       <- round(density*res^2)
-    layout  <- raster_layout(las, res)
-    cells   <- get_group(layout, las)
+    n <- round(density*res^2)
 
     if (use_pulse)
-      return(las@data[, .I[.selected_pulses(pulseID, n)], by = cells]$V1)
-    else
-      return(las@data[, .I[.selected_pulses(1:.N, n)], by = cells]$V1)
+    {
+      has_pulses <- all(c("gpstime", "ReturnNumber", "NumberOfReturns") %in% names(las)) && any(las@data[["gpstime"]] != 0)
+      if (has_pulses)
+        return(.homogenize_pulses(las, res, n))
+
+      warning("Pulses cannot be identified without 'gpstime', 'ReturnNumber' and 'NumberOfReturns'. Decimation by points is used.", call. = FALSE)
+    }
+
+    layout <- raster_layout(las, res)
+    cells  <- get_group(layout, las)
+    return(las@data[, .I[.selected_pulses(1:.N, n)], by = cells]$V1)
   }
 
   f <- plugin_decimate(f)
@@ -370,21 +349,13 @@ highest_attribute_per_voxel = function(res, attribute = "Z")
 }
 
 # Pulse-based homogenization (#823). Pulses are identified by gpstime and sampled in the cell of a
-# global grid (aligned on 0,0, same cells as raster_layout()) that contains their last return. Then all the returns of the selected
-# pulses are kept. The sampling uses a seed derived from the cell coordinates so a cell sampled
-# in two different chunks of a LAScatalog gives the same result.
-.homogenize_last_return_pulses = function(las, res, n)
+# global grid (aligned on 0,0, same cells as raster_layout()) that contains their last return. Then
+# all the returns of the selected pulses are kept. The sampling uses a seed derived from the cell
+# coordinates so a cell sampled in two different chunks of a LAScatalog gives the same result.
+.homogenize_pulses = function(las, res, n)
 {
-  needed <- c("gpstime", "ReturnNumber", "NumberOfReturns")
-  missing <- needed[!needed %in% names(las)]
-  if (length(missing) > 0)
-    stop(paste0("Attribute(s) ", paste(missing, collapse = ", "), " not found. Pulse based decimation is not possible."), call. = FALSE)
-
-  gpstime  <- las@data[["gpstime"]]
-  if (length(gpstime) > 0 && all(gpstime == 0))
-    stop("'gpstime' attribute is populated with 0 only. Pulse based decimation is not possible.", call. = FALSE)
-
-  last <- las@data[["ReturnNumber"]] == las@data[["NumberOfReturns"]]
+  gpstime <- las@data[["gpstime"]]
+  last    <- las@data[["ReturnNumber"]] == las@data[["NumberOfReturns"]]
   ref  <- data.table::data.table(
     cx = floor(las@data[["X"]][last] / res),
     cy = ceiling(las@data[["Y"]][last] / res) - 1,  # same convention as raster_layout(): rows from the top

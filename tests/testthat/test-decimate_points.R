@@ -50,10 +50,10 @@ test_that("decimate_points works with a LAScatalog", {
   expect_gt(npoints(ctg), npoints(ctg2))
 })
 
-test_that("homogenize with complete_pulses keeps or removes whole pulses (#823)", {
+test_that("homogenize with use_pulse keeps or removes whole pulses (#823)", {
   set.seed(1)
   seed <- .Random.seed
-  dec  <- decimate_points(megaplot, homogenize(0.5, 5, use_pulse = TRUE, complete_pulses = TRUE))
+  dec  <- decimate_points(megaplot, homogenize(0.5, 5, use_pulse = TRUE))
 
   # The user's random number generator is not affected
   expect_identical(.Random.seed, seed)
@@ -68,13 +68,13 @@ test_that("homogenize with complete_pulses keeps or removes whole pulses (#823)"
   expect_equal(max(np[], na.rm = TRUE), 12)
 })
 
-test_that("homogenize with complete_pulses gives the same result with a LAScatalog (#823)", {
+test_that("homogenize with use_pulse gives the same result with a LAScatalog (#823)", {
   ctg <- megaplot_ctg
   opt_progress(ctg) <- FALSE
   opt_chunk_size(ctg) <- 100
   opt_output_files(ctg) <- paste0(tempdir(), "/dec823_{ID}")
 
-  alg <- homogenize(0.5, 5, use_pulse = TRUE, complete_pulses = TRUE)
+  alg <- homogenize(0.5, 5, use_pulse = TRUE)
   out <- unique(readLAS(decimate_points(ctg, alg))$gpstime)
   ref <- unique(decimate_points(megaplot, alg)$gpstime)
 
