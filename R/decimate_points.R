@@ -9,7 +9,9 @@
 #' @section Non-supported LAScatalog options:
 #' The option `select` is not supported and not respected because it always preserves the file format
 #' and all the attributes. `select = "*"` is imposed internally.\cr
-#' The options `chunk buffer` is not supported and not respected because it is not needed.
+#' The options `chunk buffer` is not supported and not respected because it is not needed, except
+#' with `homogenize(use_pulse = TRUE)` where the buffer is `res` + `chunk buffer`
+#' to ensure that pulses crossing chunk borders are kept or removed consistently.
 #'
 #' @template return-lasfilter-las-lascatalog
 #'
@@ -54,11 +56,17 @@ decimate_points.LAScatalog = function(las, algorithm)
   assert_is_algorithm_dec(algorithm)
 
   # Enforce some options
+  user_buffer <- opt_chunk_buffer(las)
   opt_select(las) <- "*"
   opt_chunk_buffer(las) <- 0
 
   e <- environment(algorithm)
   if (!is.null(e[["res"]])) opt_chunk_buffer(las) <- e[["res"]]
+
+  # Pulse based homogenize: the returns of a pulse may be spread over several metres so the buffer
+  # must contain the full cells plus the horizontal spread of the pulses (#823)
+  if (!is.null(e[["res"]]) && isTRUE(e[["use_pulse"]]))
+    opt_chunk_buffer(las) <- e[["res"]] + user_buffer
 
   # Processing
   options <- list(need_buffer = FALSE, drop_null = TRUE, need_output_file = TRUE)

@@ -23,7 +23,9 @@ Reduce the number of points using several possible algorithms.
 
 The option `select` is not supported and not respected because it always preserves the file format
 and all the attributes. `select = "*"` is imposed internally.\cr
-The options `chunk buffer` is not supported and not respected because it is not needed.
+The options `chunk buffer` is not supported and not respected because it is not needed, except
+with `homogenize(use_pulse = TRUE)` where the buffer is `res` + `chunk buffer`
+to ensure that pulses crossing chunk borders are kept or removed consistently.
 }
 
 \examples{
