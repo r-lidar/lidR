@@ -5,7 +5,7 @@
 \alias{homogenize}
 \title{Point Cloud Decimation Algorithm}
 \usage{
-homogenize(density, res = 5, use_pulse = FALSE)
+homogenize(density, res = 5, use_pulse = FALSE, complete_pulses = FALSE)
 }
 \arguments{
 \item{density}{numeric. The desired output density.}
@@ -13,7 +13,11 @@ homogenize(density, res = 5, use_pulse = FALSE)
 \item{res}{numeric. The resolution of the grid used to filter the point cloud}
 
 \item{use_pulse}{logical. Decimate by removing random pulses instead of random points (requires running
-\link{retrieve_pulses} first)}
+\link{retrieve_pulses} first, unless \code{complete_pulses = TRUE}). See section 'Pulse based thinning'.}
+
+\item{complete_pulses}{logical. Only used with \code{use_pulse = TRUE}. If \code{TRUE}, a pulse is
+always kept or removed with all its returns (recommended). Default is \code{FALSE} to keep the
+results of existing scripts unchanged. See section 'Pulse based thinning'.}
 }
 \value{
 A function
@@ -29,6 +33,27 @@ large enough to compute a coherent local density. For example, in a 2 points/m^2
 meters would be feasible; however 1 square meter cells would not be feasible because density does
 not have meaning at this scale.
 }
+\section{Pulse based thinning}{
+
+A pulse can have several returns (e.g. one in the canopy and one on the ground). When the laser is
+tilted, these returns are not at the same place and may fall into different cells of the grid.
+\itemize{
+\item With \code{use_pulse = TRUE} only, each cell is thinned on its own. A pulse may then be kept in
+one cell and removed in the next one, leaving pulses with missing returns.
+\item With \code{use_pulse = TRUE, complete_pulses = TRUE}, each pulse is counted once, in the cell
+of its last return, and is then kept or removed with all its returns. The output has the requested
+number of pulses per cell and no pulses with missing returns. The data must contain \code{gpstime},
+\code{ReturnNumber} and \code{NumberOfReturns}. Pulses whose last return is not in the data are
+removed.
+}
+With \code{complete_pulses = TRUE} the result is the same each time the code is run (it does not
+depend on \code{set.seed()}), and processing a \code{LAScatalog} gives the same result as processing
+the same data loaded in memory. To achieve this with a \code{LAScatalog}, the buffer is increased to
+\code{res} + \code{opt_chunk_buffer(ctg)} (30 m by default). This is more than enough for usual
+data. It can be reduced, but should stay larger than the horizontal distance between the first and
+the last return of a pulse.
+}
+
 \examples{
 LASfile <- system.file("extdata", "Megaplot.laz", package="lidR")
 las = readLAS(LASfile, select = "xyz")
@@ -36,6 +61,10 @@ las = readLAS(LASfile, select = "xyz")
 # Select points randomly to reach an homogeneous density of 1
 thinned <- decimate_points(las, homogenize(1,5))
 plot(rasterize_density(thinned, 10))
+
+# Select complete pulses to reach an homogeneous pulse density of 0.5
+las = readLAS(LASfile, select = "xyzrnt")
+thinned <- decimate_points(las, homogenize(0.5, 5, use_pulse = TRUE, complete_pulses = TRUE))
 }
 \seealso{
 Other point cloud decimation algorithms:
